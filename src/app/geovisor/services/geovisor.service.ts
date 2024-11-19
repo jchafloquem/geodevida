@@ -35,13 +35,11 @@ export class GeovisorSharedService {
 		}
 	}
 	//*Servicio de delitos fuente INEI
-	public layerUrlsmtc = {
-		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/INTERFERENCIAS_PMD/FeatureServer',
+	public layerUrlDevida = {
+		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/ZONAS/FeatureServer',
 		interferencias: {
-			pmd_limAmpliado: '3',
-			pmd_actual: '1',
-			pmd_amppliaciones: '2',
-			pmd_interferencias: '0'
+			zonas: '0',
+
 
 		}
 	};
@@ -78,45 +76,18 @@ export class GeovisorSharedService {
 			group: 'LIMITES POLITICOS',
 		},
 		{
-			title: 'PDMs ACTUAL',
-			url: `${this.layerUrlsmtc.baseServicio}/${this.layerUrlsmtc.interferencias.pmd_actual}`,
+			title: 'ZONAS',
+			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.interferencias.zonas}`,
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
 			visible: true,
 			labelsVisible: false,
-			group: 'INTERFERENCIAS',
+			group: 'ZONAS',
 		},
-		{
-			title: 'PDMs AMPLIACIONES',
-			url: `${this.layerUrlsmtc.baseServicio}/${this.layerUrlsmtc.interferencias.pmd_amppliaciones}`,
-			labelingInfo: undefined,
-			popupTemplate: undefined,
-			renderer: undefined,
-			visible: true,
-			labelsVisible: false,
-			group: 'INTERFERENCIAS',
-		},
-		{
-			title: 'PDMs LIMITE AMPLIADO',
-			url: `${this.layerUrlsmtc.baseServicio}/${this.layerUrlsmtc.interferencias.pmd_limAmpliado}`,
-			labelingInfo: undefined,
-			popupTemplate: undefined,
-			renderer: undefined,
-			visible: true,
-			labelsVisible: false,
-			group: 'INTERFERENCIAS',
-		},
-		{
-			title: 'PDMs INTERFERENCIAS',
-			url: `${this.layerUrlsmtc.baseServicio}/${this.layerUrlsmtc.interferencias.pmd_interferencias}`,
-			labelingInfo: undefined,
-			popupTemplate: undefined,
-			renderer: undefined,
-			visible: true,
-			labelsVisible: false,
-			group: 'INTERFERENCIAS',
-		},
+
+
+
 	];
 
 	public lis: [] = [];
