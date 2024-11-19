@@ -1,0 +1,41 @@
+<div class="h-full">
+	<mat-accordion>
+		@for (layerG of LayerGroup ; track layerG) {
+		<mat-expansion-panel
+			class="m-0 text-accent"
+			(opened)="panelOpenState.set(true)"
+			(closed)="panelOpenState.set(false)"
+		>
+			<mat-expansion-panel-header>
+				<mat-panel-title>{{ layerG.groupTitle }}</mat-panel-title>
+				<mat-panel-description class="flex-grow-0">
+					<span
+						class="text-s w-5 h-5 p-0.5 text-center text-white bg-textPrimary rounded-full"
+						>{{ layerG.layers.length }}</span
+					>
+				</mat-panel-description>
+			</mat-expansion-panel-header>
+			<div class="flex flex-col w-full gap-1.5">
+				@for (layer of layerG.layers ; track layer ;let last = $last) {
+
+				<div class="flex flex-row justify-between items-center">
+					<div>
+						<mat-checkbox
+							class="example-margin"
+							[checked]="layer.visible"
+							(click)="toggleLayer(layer.title)"
+						></mat-checkbox>
+					</div>
+					<div class="text-textPrimary text-sm text-right">{{ layer.title }}</div>
+				</div>
+				@if (!last) {
+
+				<div
+					class="border-0 border-b border-dashed border-gray-300 w-full"
+				></div>
+				} }
+			</div>
+		</mat-expansion-panel>
+		}
+	</mat-accordion>
+</div>

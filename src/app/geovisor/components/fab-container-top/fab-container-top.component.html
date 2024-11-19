@@ -1,0 +1,40 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<div class="absolute top-16 right-0 mt-4 mr-4 flex flex-col gap-2 z-50">
+	<div class="relative w-12 h-12 rounded-full bg-primary">
+		<div
+			id="animated-div"
+			(click)="mapaBaseView = !mapaBaseView"
+			(keyup)="mapaBaseView = !mapaBaseView"
+			class="btn-tool cursor-pointer flex justify-center items-center w-full h-full">
+			<span></span>
+		</div>
+		@if (!mapaBaseView) {
+		<div class="absolute flex flex-row top-0 right-16 gap-4">
+			<div
+				(click)="mapabase('satellite')"
+				(keyup)="mapabase('satellite')"
+				class="relative cursor-pointer flex justify-center items-center w-12 h-12 bg-black rounded-full">
+				<div id="animated-div-base" class="satelite btn-tool flex justify-center items-center w-full h-full">
+					<span></span>
+				</div>
+			</div>
+			<div
+				(click)="mapabase('topo-vector')"
+				(keyup)="mapabase('topo-vector')"
+				class="relative cursor-pointer flex justify-center items-center w-12 h-12 bg-black rounded-full">
+				<div id="animated-div-base" class="osm btn-tool flex justify-center items-center w-full h-full">
+					<span></span>
+				</div>
+			</div>
+			<div
+				(click)="mapabase('streets')"
+				(keyup)="mapabase('streets')"
+				class="relative cursor-pointer flex justify-center items-center w-12 h-12 bg-black rounded-full">
+				<div id="animated-div-base" class="topo btn-tool flex justify-center items-center w-full h-full">
+					<span></span>
+				</div>
+			</div>
+		</div>
+		}
+	</div>
+</div>

@@ -1,0 +1,143 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	list-style: none;
+	text-decoration: none;
+	border: none;
+	outline: none;
+
+
+}
+html,
+body {
+	height: 100%;
+}
+body {
+	margin: 0;
+	font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+.mat-mdc-icon-button .mat-mdc-button-persistent-ripple {
+	border-radius: 0% !important;
+	-webkit-border-radius: 0% !important;
+	-moz-border-radius: 0% !important;
+	-ms-border-radius: 0% !important;
+	-o-border-radius: 0% !important;
+}
+
+.esri-ui-top-right.esri-ui-corner {
+	top: 80px;
+}
+.esri-widget {
+	box-sizing: border-box;
+	--esri-widget-padding-x: 15px;
+	--esri-widget-padding-y: 12px;
+	--esri-widget-padding: var(--esri-widget-padding-y)
+		var(--esri-widget-padding-x);
+	background-color: #fff;
+	font-family: Avenir Next, Helvetica Neue, helvetica, arial, sans-serif;
+
+	font-size: 14px;
+	line-height: 1.3em;
+
+
+}
+.esri-component {
+	background-size: auto;
+	cursor: pointer;
+	background-position: center;
+	background-repeat: no-repeat;
+	border: none;
+	border-radius: 20px;
+	padding: 6px;
+	color: black;
+}
+.esri-component.esri-widget {
+	background-color: #fff;
+}
+.esri-component.esri-expand {
+	--esri-widget-panel-max-height: 5vh;
+	--calcite-sheet-max-height: var(--esri-widget-panel-max-height);
+	--calcite-sheet-height: auto;
+	min-width: 32px;
+	min-height: 32px;
+	color: black;
+}
+.esri-component.esri-widget .esri-widget--button {
+	background-color: #fff;
+	color: #000;
+}
+.esri-component.esri-widget .esri-widget--button.hover {
+	background-color: #fff;
+	color: #000;
+}
+
+.esri-collapse__icon {
+	opacity: 0.5;
+	color: #000;
+}
+.button-padding.content--slotted.icon-start-empty.icon-end-empty {
+	background-color: #fff;
+	color: #000;
+}
+
+:root {
+	--mdc-shape-small: 12px;
+	--matformRadius: 8px;
+}
+
+.mdc-text-field--outlined {
+	border-radius: var(--matformRadius) !important;
+	background-color: white;
+	--mdc-outlined-text-field-outline-width: 1px;
+	--mdc-outlined-text-field-focus-outline-width: 2px;
+	--mdc-outlined-text-field-container-shape: var(--matformRadius) !important;
+}
+div.mat-mdc-select-panel {
+	border-top-left-radius: 4px !important;
+	border-top-right-radius: 4px !important;
+	border-bottom-left-radius: var(--matformRadius) !important;
+	border-bottom-right-radius: var(--matformRadius) !important;
+}
+.mat-mdc-form-field-infix {
+	min-height: 40px !important;
+}
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.mat-mdc-text-field-wrapper
+	.mat-mdc-form-field-flex
+	.mat-mdc-floating-label:not(.mdc-floating-label--float-above) {
+	top: 50% !important;
+}
+.mat-mdc-text-field-wrapper
+	.mat-mdc-form-field-flex.mat-mdc-floating-label
+	.mdc-floating-label--float-above {
+	top: 28px !important;
+}
+
+.mdc-checkbox__background {
+	border-radius: 4px !important;
+}
+
+.mat-form-field.mat-form-field-appearance-fill
+	.mat-form-field-wrapper
+	.mat-form-field-flex {
+	min-height: 38px !important;
+}
+.mat-form-field.mat-form-field-appearance-outline
+	.mat-form-field-wrapper
+	.mat-form-field-flex {
+	min-height: 38px !important;
+}
+
+.buttonCustom {
+	height: 44px;
+	width: 44px;
+}

@@ -1,0 +1,92 @@
+<div class="flex items-center justify-center min-h-screen bg-green-700">
+	<div
+		class="relative flex flex-col m-6 space-y-8 bg-white shadow-2xl rounded-2xl md:flex-row md:space-y-0"
+	>
+		<div class="flex flex-col justify-center p-8 md:p-14">
+			<div class="sm:mx-auto sm:w-full sm:max-w-sm">
+				<img
+					class="mx-auto h-20 w-auto"
+					src="assets/images/logodevida.png"
+					alt="DEVIDA"
+				/>
+				<h2
+					class="mt-14 text-center text-2xl font-black leading-9  text-green-950"
+				>
+					Iniciar sesion
+				</h2>
+			</div>
+
+			<div class="py-4">
+				<span class="block text-sm font-medium leading-6 text-gray-900"
+					>Correo electronico:</span
+				>
+				<input
+					type="email"
+					autocomplete="email"
+					class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+					name="email"
+					id="email"
+				/>
+			</div>
+			<div class="py-4">
+				<span class="block text-sm font-medium leading-6 text-gray-900"
+					>Contraseña:</span
+				>
+				<input
+					type="password"
+					autocomplete="password"
+					class="	block
+									w-full
+									rounded-md
+									border-0 py-1.5
+									text-gray-900
+									shadow-sm
+									ring-1
+									ring-inset
+									ring-gray-300
+									placeholder:text-gray-400
+									focus:ring-2
+									focus:ring-inset
+									focus:ring-green-700
+									sm:text-sm sm:leading-6"
+					name="password"
+					id="password"
+				/>
+			</div>
+
+			<div class="mt-10">
+				<button
+					type="submit"
+					routerLink="/geovisor"
+					class="	flex
+									w-full
+									justify-center
+									rounded-md
+									bg-cyan-600
+									px-3
+									py-1.5
+									text-sm
+									font-normal
+									leading-6
+									text-white
+									shadow-sm
+									hover:bg-green-700
+									focus-visible:outline
+									focus-visible:outline-2
+									focus-visible:outline-offset-2
+									focus-visible:outline-green-700"
+				>
+					INGRESAR
+				</button>
+			</div>
+		</div>
+
+		<div class="relative">
+			<img
+				src="assets/images/fotologin.png"
+				alt="logo"
+				class="w-[400px] h-full hidden rounded-r-2xl md:block object-cover"
+			/>
+		</div>
+	</div>
+</div>

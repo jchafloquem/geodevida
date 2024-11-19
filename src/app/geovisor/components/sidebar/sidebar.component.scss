@@ -1,0 +1,67 @@
+#left-panel:hover::before,
+.active-left-panel::before {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 60px;
+	height: 60px;
+	margin: -30px 0 0 -30px;
+	border-radius: 50%;
+	border: 2px solid transparent;
+	border-top-color: #da323c;
+	-webkit-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite;
+	
+
+}
+
+#left-panel:hover::after,
+.active-left-panel::after {
+	content: '';
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	right: 5px;
+	bottom: 5px;
+	border-radius: 50%;
+	border: 2px solid transparent;
+	border-top-color: #da323c;
+	-webkit-animation: spin 1.5s linear infinite;
+	animation: spin 1.5s linear infinite;
+
+}
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+.menu__container {
+	left: -224px !important;
+	transition: left 0.5s ease;
+	border-radius: 0 8px 8px 0;
+	-webkit-border-radius: 0 8px 8px 0;
+	-moz-border-radius: 0 8px 8px 0;
+	-ms-border-radius: 0 8px 8px 0;
+	-o-border-radius: 0 8px 8px 0;
+
+}
+.menu__container--open {
+	left: 48px !important;
+	transition: left 0.5s ease;
+	-webkit-transition: left 0.5s ease;
+	-moz-transition: left 0.5s ease;
+	-ms-transition: left 0.5s ease;
+	-o-transition: left 0.5s ease;
+
+}
+#legend-container {
+	max-height: 400px; /* Ajusta la altura máxima según tu diseño */
+	overflow-y: auto; /* Añade un scroll vertical si es necesario */
+	padding: 10px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+}

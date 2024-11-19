@@ -1,0 +1,82 @@
+@use '@angular/material' as mat;
+@include mat.core();
+$my-primary-color: (
+	50: #f0fdf5,
+	100: #dbfde9,
+	200: #baf8d4,
+	300: #84f1b3,
+	400: #47e18a,
+	500: #1ec969,
+	600: #13a654,
+	700: #138244,
+	800: #14673a,
+	900: #125230,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #000000,
+		500: #000000,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+	),
+);
+$my-accent-color: (
+	50: #f3f6fc,
+	100: #e6eef8,
+	200: #c7dbf0,
+	300: #95bce4,
+	400: #5d9bd3,
+	500: #387ebf,
+	600: #2b6cb0,
+	700: #214f83,
+	800: #1f456d,
+	900: #1f3b5b,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #000000,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+	),
+);
+
+//* paleta de colores
+$my-palette-primary: mat.m2-define-palette($my-primary-color, 900);
+//
+$my-palette-accent: mat.m2-define-palette($my-accent-color, 600);
+// my-palette-warn: mat.define-palette($my-warn-color, 300);
+// * font
+
+$my-custom-level: mat.m2-define-typography-config(
+	$body-2: mat.m2-define-typography-level(14px, 24px, 500),
+	$body-1: mat.m2-define-typography-level(14px, 20px, 400),
+	$headline-1: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-2: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-3: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-4: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-5: mat.m2-define-typography-level(24px, 32px, 400),
+	$headline-6: mat.m2-define-typography-level(24px, 32px, 400),
+	$caption: mat.m2-define-typography-level(12px, 20px, 400),
+	$button: mat.m2-define-typography-level(14px, 14px, 400),
+);
+
+//* tema propio
+$my-theme: mat.m2-define-light-theme(
+	(
+		color: (
+			primary: $my-palette-primary,
+			accent: $my-palette-accent,
+		),
+		typography: $my-custom-level,
+	)
+);
+@include mat.all-component-themes($my-theme);

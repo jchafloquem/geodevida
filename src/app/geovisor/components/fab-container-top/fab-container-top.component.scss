@@ -1,0 +1,96 @@
+.btn-tool {
+	position: relative; /* Necesario para el posicionamiento absoluto del pseudo-elemento */
+	z-index: 0; /* Asegura que el pseudo-elemento esté encima del botón */
+}
+.btn-tool:hover:before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 54px;
+	height: 54px;
+	margin: -27px 0 0 -27px;
+	border-radius: 50%;
+	border: 2px solid transparent;
+	border-top-color: #2b6cb0;
+	animation: spin 2s linear infinite;
+	-webkit-animation: spin 2s linear infinite;
+	z-index: 1 !important;
+}
+.btn-tool-activate:before {
+	content: "";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 54px;
+	height: 54px;
+	margin: -27px 0 0 -27px;
+	border-radius: 50%;
+	border: 2px solid transparent;
+	border-top-color: #2b6cb0;
+	animation: spin 2s linear infinite;
+	-webkit-animation: spin 2s linear infinite;
+	z-index: 1 !important;
+}
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.satelite {
+	background: url("/assets/images/esrisatellite.webp") 0 0 / 200px 133px;
+}
+.osm {
+	background: url("/assets/images/osmmapnik.webp") 0 0 / 200px 133px;
+}
+.topo {
+	background: url("/assets/images/esriroad.webp") 0 0 / 200px 133px;
+}
+#animated-div-base {
+	width: 48px;
+	height: 48px;
+	background-size: cover;
+	border-radius: 50%;
+	box-shadow: rgb(0 0 0 / 17%) 0px -11px 13px 0px inset,
+		rgb(0 0 0 / 15%) 0px -18px 15px 0px inset,
+		rgb(0 0 0 / 10%) 0px -17px 10px 0px inset, rgb(0 0 0 / 6%) 0px 2px 1px,
+		rgb(0 0 0 / 9%) 0px 2px 1px, rgb(0 0 0 / 9%) 0px 2px 1px,
+		rgb(0 0 0 / 9%) 0px 4px 2px, rgb(0 0 0 / 9%) 0px 4px 2px;
+	animation: animacionBase 25s linear 0s infinite;
+	-webkit-animation: animacionBase 25s linear 0s infinite;
+}
+@keyframes animacionBase {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 200px 0; /* Cambia -90px a la altura de tu imagen para crear el efecto de desplazamiento vertical */
+	}
+}
+#animated-div {
+	width: 48px;
+	height: 48px;
+	background: url("/assets/images/word.webp") 0 0 / 167px 62px;
+	background-size: cover;
+	border-radius: 50%;
+	box-shadow: rgb(0 0 0 / 17%) 0px -11px 13px 0px inset,
+		rgb(0 0 0 / 15%) 0px -18px 15px 0px inset,
+		rgb(0 0 0 / 10%) 0px -17px 10px 0px inset, rgb(0 0 0 / 6%) 0px 2px 1px,
+		rgb(0 0 0 / 9%) 0px 2px 1px, rgb(0 0 0 / 9%) 0px 2px 1px,
+		rgb(0 0 0 / 9%) 0px 4px 2px, rgb(0 0 0 / 9%) 0px 4px 2px;
+	animation: animacion 25s linear 0s infinite;
+	-webkit-animation: animacion 25s linear 0s infinite;
+}
+
+@keyframes animacion {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 167px 0;
+	}
+}

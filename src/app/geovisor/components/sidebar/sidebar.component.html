@@ -1,0 +1,105 @@
+<div
+	class="absolute top-[62px] z-50 h-[calc(100%-62px)] w-[48px] bg-white flex flex-row border"
+>
+	<div
+		class="z-50 bg-[#ffff] w-[48px] flex flex-col items-start border-0 border-r border-solid border-gray-300 justify-between"
+	>
+		<div>
+			<button
+				mat-icon-button
+				class=""
+				color="accent"
+				[ngClass]="{
+					'text-white bg-green-600 rounded-none ': subMenu === 'capas'
+				}"
+				(click)="clickToogleMenu('capas')"
+			>
+				<mat-icon class="material-icons-round">layers</mat-icon>
+			</button>
+			<button
+				mat-icon-button
+				class=""
+				color="accent"
+				[ngClass]="{
+					'text-white bg-green-600 rounded-none ': subMenu === 'leyendas'
+				}"
+				(click)="clickToogleMenu('leyendas')"
+			>
+				<mat-icon class="material-icons-round">view_list</mat-icon>
+			</button>
+			<!-- <button
+				mat-icon-button
+				class=""
+				color="accent"
+				[ngClass]="{
+					'text-black bg-slate-400 rounded-none ': subMenu === 'filtros'
+				}"
+				(click)="clickToogleMenu('filtros')"
+			>
+				<mat-icon class="material-icons-round">search</mat-icon>
+			</button> -->
+			<button
+				mat-icon-button
+				class=""
+				color="accent"
+				[ngClass]="{
+					'text-white bg-green-600 rounded-none ': subMenu === 'acerca'
+				}"
+				(click)="clickToogleMenu('acerca')"
+			>
+				<mat-icon class="material-icons-round">info</mat-icon>
+			</button>
+		</div>
+		<div>
+			<button
+				mat-icon-button
+				class=""
+				color="accent"
+				[ngClass]="{
+					'text-white bg-green-600 rounded-none ': subMenu === 'logout'
+				}"
+				(click)="clickToogleMenu('logout')"
+			>
+				<mat-icon class="material-icons-round">logout </mat-icon>
+			</button>
+			<button
+				mat-icon-button
+				class="bg-green-600 text-white rounded-none"
+				color="primary"
+				(click)="clickToogleMenu()"
+			>
+				<mat-icon class="material-icons-round">{{
+					this.toogleMenu ? "chevron_left" : "chevron_right"
+				}}</mat-icon>
+			</button>
+		</div>
+	</div>
+	<div
+		class="z-40 h-[calc(100%-64px)] min-h-full bg-white w-[272px] menu__container top-0 absolute left-[48px] shadow-lg"
+		[ngClass]="{ 'menu__container--open': toogleMenu }"
+	>
+		<div
+			class="bg-green-600 h-[48px] w-full text-left text-base text-white font-medium flex flex-row justify-start items-end border-0 border-b-4 border-solid bg-green-600 pl-2"
+		>
+			<span>
+				{{ subMenu | uppercase }}
+			</span>
+		</div>
+		<div class="overflow-y-auto overflow-x-hidden max-h-[calc(100%-48px)]">
+			@if (subMenu==='capas') {
+			<app-capas class="h-full"></app-capas>
+			} @if (subMenu==='leyendas') {
+			<app-leyenda class="h-full"></app-leyenda>
+			} @if (subMenu==='acerca') {
+			<app-acerca class="h-full"></app-acerca>
+			} @if (subMenu==='logout') {
+			<app-logout></app-logout>
+			}
+
+			<!-- <app-filtro
+				class="h-full"
+				[ngClass]="{ hidden: subMenu !== 'filtros' }"
+			></app-filtro> -->
+		</div>
+	</div>
+</div>

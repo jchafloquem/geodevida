@@ -1,0 +1,26 @@
+<div id="navbar" class="fixed top-0 flex w-full flex-row bg-white  px-1 justify-start h-16 gap-3 items-center">
+	<div class="inline">
+		<img class="h-16" src="assets/images/logodevida.png" alt="logo" />
+	</div>
+	<div class="hidden sm:block">
+		<span class="text-base text-white"><strong>NOMBRE</strong></span>
+	</div>
+</div>
+<!-- Navbar end -->
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', () => {
+		const navbar = document.getElementById('navbar');
+		const sidebar = document.getElementById('sidebar');
+		const btnSidebarToggler = document.getElementById('btnSidebarToggler');
+		const navClosed = document.getElementById('navClosed');
+		const navOpen = document.getElementById('navOpen');
+
+		btnSidebarToggler.addEventListener('click', (e) => {
+			e.preventDefault();
+			sidebar.classList.toggle('show');
+			navClosed.classList.toggle('hidden');
+			navOpen.classList.toggle('hidden');
+		});
+		sidebar.style.top = parseInt(navbar.clientHeight) - 1 + 'px';
+	});
+</script>
