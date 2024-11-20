@@ -72,18 +72,19 @@ export class GeovisorSharedService {
 			popupTemplate: undefined,
 			renderer: undefined,
 			visible: true,
-			labelsVisible: false,
+			labelsVisible: true,
+
 			group: 'LIMITES POLITICOS',
 		},
 		{
-			title: 'ZONAS',
+			title: 'AMBITO MUESTRA PIRDAIS 2024',
 			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.interferencias.zonas}`,
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
 			visible: true,
 			labelsVisible: false,
-			group: 'ZONAS',
+			group: 'LIMITES DE AMBITO',
 		},
 
 
