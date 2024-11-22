@@ -1,8 +1,12 @@
 <div id="navbar" class="fixed top-0 flex w-full flex-row bg-white  px-1 justify-start h-16 gap-3 items-center z-10">
+	 <!-- Logo grande (ocultado en dispositivos móviles) -->
 	<div class="hidden md:block">
 		<img class="h-16" src="assets/images/logodevida.png" alt="logo" />
-
 	</div>
+	 <!-- Logo pequeño (visible solo en dispositivos móviles) -->
+	 <div class="inline sm:hidden"> <!-- Logo pequeño se muestra en pantallas menores a 'sm' -->
+    <img class="h-8" src="assets/images/logodevida.png" alt="logo pequeño" />
+  </div>
 	<!-- Busqueda de api de ArcGIS -->
 	<div class="searchDiv" id="searchDiv" ></div>
 	<div class="hidden sm:block">
