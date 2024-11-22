@@ -50,8 +50,7 @@ export class GeovisorSharedService {
 			pueblo:'3'
 		}
 	};
-
-	//*Servicio de COFOPRI - FORMALIZACION
+	//*Servicio de MIDAGRI
 	public layerUrlMIDAGRI = {
 		baseServicio: 'https://georural.midagri.gob.pe/geoservicios/rest/services/servicios_ogc/Catastro_Rural/MapServer',
 		data: {
@@ -94,16 +93,18 @@ export class GeovisorSharedService {
 
 			group: 'LIMITES POLITICOS',
 		},
+		//*Capas de DEVIDA
 		{
 			title: 'AMBITO MUESTRA PIRDAIS 2024',
 			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.interferencias.zonas}`,
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: false,
 			group: 'LIMITES DE AMBITO',
 		},
+		//*Capas de COFOPRI
 		{
 			title: 'PUEBLOS',
 			url: `${this.layerUrlgeollaqta.baseServicio}/${this.layerUrlgeollaqta.formalizacion.pueblo}`,
@@ -134,13 +135,14 @@ export class GeovisorSharedService {
 			labelsVisible: false,
 			group: 'COFOPRI - FORMALIZACION',
 		},
+		//*Capas de MIDAGRI
 		{
 			title: 'PREDIO RURAL',
 			url: `${this.layerUrlMIDAGRI.baseServicio}/${this.layerUrlMIDAGRI.data.predioRural}`,
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: false,
 			group: 'MIDAGRI',
 		},
@@ -150,7 +152,7 @@ export class GeovisorSharedService {
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: false,
 			group: 'MIDAGRI',
 		},
@@ -160,10 +162,11 @@ export class GeovisorSharedService {
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: false,
 			group: 'MIDAGRI',
 		},
+		//*Capas de MIDAGRI
 
 
 
