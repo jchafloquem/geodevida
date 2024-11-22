@@ -76,6 +76,20 @@ export class GeovisorSharedService {
 				redVialNacional:'10'
 			}
 		};
+		//*Servicio de ANA
+		public layerUrlAna = {
+			baseServicio: 'https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/ANA_WMS/FeatureServer',
+			baseCapas: {
+				cochas: '0',
+				humedalesCosteros:'1',
+				manantial:'2',
+				glaciales:'3',
+				hidrometeorologica:'4',
+				autAdmAgua:'5',
+				unidadHidrograficas:'6',
+				marinoCostero:'11',
+			}
+		};
 
 	public layers: LayerConfig[] = [
 	//*Servicios de capas base
@@ -295,6 +309,16 @@ export class GeovisorSharedService {
 			group: 'MTC',
 		},
 		//*Capas de ANA
+		{
+			title: 'MARINO COSTERO',
+			url: `${this.layerUrlAna.baseServicio}/${this.layerUrlAna.baseCapas.marinoCostero}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'ANA',
+		},
 
 
 
