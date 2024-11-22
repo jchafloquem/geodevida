@@ -19,13 +19,18 @@ ul.breadcrumb li + li::before {
 	background-color: #1f2937;
 }
 
+#elevacion{
+	position: relative;
+	z-index: -10;
+}
 #searchDiv {
   position: absolute;
-  top: 0;  /* Align it at the top of the navbar */
-  right: 10px;  /* Push it to the right side with a 10px margin */
-  margin-top: 10px;  /* Optional: add some spacing from the top */
+  top: 0;
+  right: 10px;
+  margin-top: 10px;
   background-color: white;
   padding: 5px;
-  border-radius: 5px;
-	z-index: 1;
+  //border-radius: 5px;
+	z-index: 999;
+
 }
