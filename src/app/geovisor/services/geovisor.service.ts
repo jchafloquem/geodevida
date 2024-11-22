@@ -294,7 +294,7 @@ export class GeovisorSharedService {
 			labelsVisible: false,
 			group: 'MTC',
 		},
-
+		//*Capas de ANA
 
 
 
