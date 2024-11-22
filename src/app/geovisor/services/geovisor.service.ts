@@ -59,6 +59,23 @@ export class GeovisorSharedService {
 			comunidadesNativas:'2'
 		}
 	};
+		//*Servicio de MTC
+		public layerUrlMtc = {
+			baseServicio: 'https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/FeatureServer',
+			baseCapas: {
+				aerodromo: '0',
+				estacionesTren:'1',
+				lineaFerrea:'2',
+				terminalPortuario:'3',
+				terminalTerrestre:'4',
+				peajes:'5',
+				postesSOS:'6',
+				puentes:'7',
+				redVialVecinal:'8',
+				redVialDepartamental:'9',
+				redVialNacional:'10'
+			}
+		};
 
 	public layers: LayerConfig[] = [
 	//*Servicios de capas base
@@ -166,7 +183,119 @@ export class GeovisorSharedService {
 			labelsVisible: false,
 			group: 'MIDAGRI',
 		},
-		//*Capas de MIDAGRI
+		//*Capas de MTC
+		{
+			title: 'AERODROMO',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.aerodromo}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'ESTACION DE TREN',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.estacionesTren}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'LINEA FERREA',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.lineaFerrea}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'TERMINAL PORTUARIO',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.terminalPortuario}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'TERMINAL TERRESTRE',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.terminalTerrestre}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'PEAJES',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.peajes}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'POSTES SOS',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.postesSOS}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'PUENTES',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.puentes}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'RED VIAL VECINAL',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.redVialVecinal}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'RED VIAL DEPARTAMENTAL',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.redVialDepartamental}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+		{
+			title: 'RED VIAL NACIONAL',
+			url: `${this.layerUrlMtc.baseServicio}/${this.layerUrlMtc.baseCapas.redVialNacional}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'MTC',
+		},
+
+
 
 
 
