@@ -41,13 +41,23 @@ export class GeovisorSharedService {
 			zonas: '0'
 		}
 	};
-	//*Servicio de delitos fuente INEI
+	//*Servicio de COFOPRI - FORMALIZACION
 	public layerUrlgeollaqta = {
 		baseServicio: 'https://geoportal.cofopri.gob.pe/cofopri/rest/services/Cofopri/FORMALIZACION_PSAD56/MapServer',
 		formalizacion: {
 			lotes: '1',
 			manzanas:'2',
 			pueblo:'3'
+		}
+	};
+
+	//*Servicio de COFOPRI - FORMALIZACION
+	public layerUrlMIDAGRI = {
+		baseServicio: 'https://georural.midagri.gob.pe/geoservicios/rest/services/servicios_ogc/Catastro_Rural/MapServer',
+		data: {
+			predioRural: '0',
+			comunidadesCampesina:'1',
+			comunidadesNativas:'2'
 		}
 	};
 
@@ -100,7 +110,7 @@ export class GeovisorSharedService {
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: false,
 			group: 'COFOPRI - FORMALIZACION',
 		},
@@ -123,6 +133,36 @@ export class GeovisorSharedService {
 			visible: false,
 			labelsVisible: false,
 			group: 'COFOPRI - FORMALIZACION',
+		},
+		{
+			title: 'PREDIO RURAL',
+			url: `${this.layerUrlMIDAGRI.baseServicio}/${this.layerUrlMIDAGRI.data.predioRural}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'MIDAGRI',
+		},
+		{
+			title: 'COMUNIDADES CAMPESINAS',
+			url: `${this.layerUrlMIDAGRI.baseServicio}/${this.layerUrlMIDAGRI.data.comunidadesCampesina}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'MIDAGRI',
+		},
+		{
+			title: 'COMUNIDADES NATIVAS',
+			url: `${this.layerUrlMIDAGRI.baseServicio}/${this.layerUrlMIDAGRI.data.comunidadesNativas}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'MIDAGRI',
 		},
 
 
