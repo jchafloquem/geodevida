@@ -38,11 +38,19 @@ export class GeovisorSharedService {
 	public layerUrlDevida = {
 		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/ZONAS/FeatureServer',
 		interferencias: {
-			zonas: '0',
-
-
+			zonas: '0'
 		}
 	};
+	//*Servicio de delitos fuente INEI
+	public layerUrlgeollaqta = {
+		baseServicio: 'https://geoportal.cofopri.gob.pe/cofopri/rest/services/Cofopri/FORMALIZACION_PSAD56/MapServer',
+		formalizacion: {
+			lotes: '1',
+			manzanas:'2',
+			pueblo:'3'
+		}
+	};
+
 	public layers: LayerConfig[] = [
 	//*Servicios de capas base
 		//*Capas de Limites Politicos
@@ -85,6 +93,36 @@ export class GeovisorSharedService {
 			visible: true,
 			labelsVisible: false,
 			group: 'LIMITES DE AMBITO',
+		},
+		{
+			title: 'PUEBLOS',
+			url: `${this.layerUrlgeollaqta.baseServicio}/${this.layerUrlgeollaqta.formalizacion.pueblo}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'COFOPRI - FORMALIZACION',
+		},
+		{
+			title: 'MANZANAS',
+			url: `${this.layerUrlgeollaqta.baseServicio}/${this.layerUrlgeollaqta.formalizacion.manzanas}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'COFOPRI - FORMALIZACION',
+		},
+		{
+			title: 'LOTES',
+			url: `${this.layerUrlgeollaqta.baseServicio}/${this.layerUrlgeollaqta.formalizacion.lotes}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'COFOPRI - FORMALIZACION',
 		},
 
 
