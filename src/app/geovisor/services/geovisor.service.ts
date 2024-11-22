@@ -181,15 +181,15 @@ export class GeovisorSharedService {
 		});
 
 		//CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
-		view.ui.add(new Search({
+		const searchWidget = new Search({
 			view,
 			allPlaceholder:'Buscar direccion',
 			label:'Buscar',
 			locationEnabled:true,
 			maxResults:5,
-
-		}),
-			{position:'top-right', index:0})
+			container: "searchDiv"
+		})
+			//{position:'top-right', index:0})
 		view.ui.add(new Zoom({view}),{position:'top-right',index:1});
 		view.ui.add(new Home({view }), {position:'top-right',index:2});
 		view.ui.add(new Locate({view, icon:'gps-on-f'}),{position:'top-right', index:3});

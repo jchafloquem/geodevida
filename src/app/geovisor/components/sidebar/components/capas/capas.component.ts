@@ -2,7 +2,6 @@ import {Component, inject, OnInit, signal} from '@angular/core';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {LayerConfig} from '../../../../interfaces/layerConfig';
 import {GeovisorSharedService} from '../../../../services/geovisor.service';
-import {MatSlideToggle} from '@angular/material/slide-toggle';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 interface LayerGroup {
 	groupTitle: string;
@@ -11,7 +10,7 @@ interface LayerGroup {
 @Component({
 	selector: 'app-capas',
 	standalone: true,
-	imports: [MatExpansionModule, MatSlideToggle, MatCheckboxModule],
+	imports: [MatExpansionModule, MatCheckboxModule],
 	templateUrl: './capas.component.html',
 	styleUrl: './capas.component.scss',
 })
