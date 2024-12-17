@@ -15,9 +15,52 @@ import MapView from '@arcgis/core/views/MapView.js';
 import Point from '@arcgis/core/geometry/Point';
 import Search from "@arcgis/core/widgets/Search.js";
 import SpatialReference from '@arcgis/core/geometry/SpatialReference';
+import PopupTemplate from "@arcgis/core/PopupTemplate.js";
 import Zoom from '@arcgis/core/widgets/Zoom.js';
 
 //* Popup y Clusters
+const popCultivo = new PopupTemplate({
+	title: 'CULTIVO DE: {CUTIVO}',
+	content: [
+		{
+			type: 'fields',
+			fieldInfos: [
+				{
+					fieldName: 'APELLIDO_P',
+					label: '<b><font>Apellido Paterno</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+				{
+					fieldName: 'APELLIDO_M',
+					label: '<b><font>Apellido Materno</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+				{
+					fieldName: 'NOMBRES',
+					label: '<b><font>Nombres</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+				{
+					fieldName: 'DNI',
+					label: '<b><font>Nro de DNI</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+				{
+					fieldName: 'OZ',
+					label: '<b><font>Oficina Zonal</font></b>',
+					format: {
+						digitSeparator: true, // Uses a comma separator in numbers >999
+						places: 5, // Sets the number of decimal places to 0 and rounds up
+					},
+				},
+			],
+		},
+	],
+});
 
 @Injectable({
 	providedIn: 'root',
@@ -131,7 +174,7 @@ export class GeovisorSharedService {
 			title: 'CULTIVO',
 			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.cultivos}`,
 			labelingInfo: undefined,
-			popupTemplate: undefined,
+			popupTemplate: popCultivo,
 			renderer: undefined,
 			visible: true,
 			labelsVisible: false,
@@ -341,10 +384,6 @@ export class GeovisorSharedService {
 			labelsVisible: false,
 			group: 'ANA',
 		},
-
-
-
-
 	];
 
 	public lis: [] = [];
@@ -442,7 +481,7 @@ export class GeovisorSharedService {
 			allPlaceholder:'Buscar direccion',
 			label:'Buscar',
 			locationEnabled:true,
-			maxResults:5,
+			maxResults:10,
 			container: "searchDiv"
 		})
 			//{position:'top-right', index:0})
@@ -459,6 +498,7 @@ export class GeovisorSharedService {
 		}); this.view = view;
 		 return this.view.when();
 	} //*Fin <initializeMap>
+
 	//*Inicio del Toogle
 	toggleLayerVisibility(layerTitle: string, visibility: boolean): void {
 		const layer = this.mapa.layers.find((layer) => layer.title === layerTitle);
@@ -518,6 +558,4 @@ export class GeovisorSharedService {
 			maximumFractionDigits: 0,
 		});
 	}
-
-
 }
