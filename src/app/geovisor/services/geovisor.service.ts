@@ -37,8 +37,10 @@ export class GeovisorSharedService {
 	//*Servicio de delitos fuente INEI
 	public layerUrlDevida = {
 		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/ZONAS/FeatureServer',
-		interferencias: {
-			zonas: '0'
+		capasdevida: {
+			zonas: '0',
+			ofiZonales:'4',
+			cultivos:'3'
 		}
 	};
 	//*Servicio de COFOPRI - FORMALIZACION
@@ -126,8 +128,28 @@ export class GeovisorSharedService {
 		},
 		//*Capas de DEVIDA
 		{
-			title: 'AMBITO MUESTRA PIRDAIS 2024',
-			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.interferencias.zonas}`,
+			title: 'CULTIVO',
+			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.cultivos}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'PARCELAS',
+		},
+		{
+			title: 'MUESTRA PIRDAIS 2024',
+			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.zonas}`,
+			labelingInfo: undefined,
+			popupTemplate: undefined,
+			renderer: undefined,
+			visible: false,
+			labelsVisible: false,
+			group: 'LIMITES DE AMBITO',
+		},
+		{
+			title: 'OFICINAS ZONALES',
+			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.ofiZonales}`,
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
@@ -204,7 +226,7 @@ export class GeovisorSharedService {
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: false,
 			group: 'MTC',
 		},
@@ -304,7 +326,7 @@ export class GeovisorSharedService {
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: false,
 			group: 'MTC',
 		},
