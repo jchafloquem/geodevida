@@ -483,11 +483,11 @@ export class GeovisorSharedService {
 
 		//CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
 		const buscarDatos = new Search({
-			view,
-			allPlaceholder:'Buscar direccion',
-			label:'Buscar',
-			locationEnabled:true,
-			maxResults:10,
+			view: view,
+			allPlaceholder: 'Buscar dirección o lugar',
+			label: 'Buscar',
+			locationEnabled: true,
+			maxResults: 10,
 			container: "searchDiv"
 		});
 			//{position:'top-right', index:0})
