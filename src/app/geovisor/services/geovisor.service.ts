@@ -50,6 +50,12 @@ const popCultivo = new PopupTemplate({
 					stringFieldOption: 'text-box',
 				},
 				{
+					fieldName: 'AREA_HA',
+					label: '<b><font>HECTAREAS</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+				{
 					fieldName: 'OZ',
 					label: '<b><font>Oficina Zonal</font></b>',
 					format: {
@@ -476,14 +482,14 @@ export class GeovisorSharedService {
 		});
 
 		//CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
-		const searchWidget = new Search({
+		const buscarDatos = new Search({
 			view,
 			allPlaceholder:'Buscar direccion',
 			label:'Buscar',
 			locationEnabled:true,
 			maxResults:10,
 			container: "searchDiv"
-		})
+		});
 			//{position:'top-right', index:0})
 		view.ui.add(new Zoom({view}),{position:'top-right',index:1});
 		view.ui.add(new Home({view }), {position:'top-right',index:2});
