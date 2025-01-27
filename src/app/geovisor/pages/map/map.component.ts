@@ -4,11 +4,10 @@ import {GeovisorSharedService} from '../../services/geovisor.service';
 
 //libreria de ArcGIS
 @Component({
-	selector: 'app-map',
-	standalone: true,
-	imports: [],
-	templateUrl: './map.component.html',
-	styleUrl: './map.component.scss',
+    selector: 'app-map',
+    imports: [],
+    templateUrl: './map.component.html',
+    styleUrl: './map.component.scss'
 })
 export default class MapComponent implements OnInit, OnDestroy {
 

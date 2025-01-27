@@ -8,11 +8,10 @@ interface LayerGroup {
 	layers: LayerConfig[];
 }
 @Component({
-	selector: 'app-capas',
-	standalone: true,
-	imports: [MatExpansionModule, MatCheckboxModule],
-	templateUrl: './capas.component.html',
-	styleUrl: './capas.component.scss',
+    selector: 'app-capas',
+    imports: [MatExpansionModule, MatCheckboxModule],
+    templateUrl: './capas.component.html',
+    styleUrl: './capas.component.scss'
 })
 export class CapasComponent implements OnInit {
 	public _geovisorSharedService = inject(GeovisorSharedService);

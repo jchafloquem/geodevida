@@ -7,16 +7,15 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 
 @Component({
-	selector: 'app-geovisor',
-	standalone: true,
-	imports: [
-		RouterModule,
-		NavbarComponent,
-		SidebarComponent,
-		FabContainerTopComponent,
-		InfoCoordenadasComponent,
-	],
-	templateUrl: './geovisor.component.html',
-	styles:	``,
+    selector: 'app-geovisor',
+    imports: [
+        RouterModule,
+        NavbarComponent,
+        SidebarComponent,
+        FabContainerTopComponent,
+        InfoCoordenadasComponent,
+    ],
+    templateUrl: './geovisor.component.html',
+    styles: ``
 })
 export default class GeovisorComponent {}

@@ -11,11 +11,10 @@ import { AcercaComponent } from './components/acerca/acerca.component';
 import { LogoutComponent } from '../../../auth/pages/logout/logout.component';
 
 @Component({
-	selector: 'app-sidebar',
-	standalone: true,
-	imports: [CommonModule, MatIconModule, NgClass, MatButtonModule, CapasComponent, LeyendaComponent, AcercaComponent, LogoutComponent],
-	templateUrl: './sidebar.component.html',
-	styleUrl: './sidebar.component.scss',
+    selector: 'app-sidebar',
+    imports: [CommonModule, MatIconModule, NgClass, MatButtonModule, CapasComponent, LeyendaComponent, AcercaComponent, LogoutComponent],
+    templateUrl: './sidebar.component.html',
+    styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
 	public _geovisorSharedService = inject(GeovisorSharedService);

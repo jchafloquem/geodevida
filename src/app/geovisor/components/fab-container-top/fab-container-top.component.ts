@@ -3,11 +3,10 @@ import Basemap from '@arcgis/core/Basemap';
 import {GeovisorSharedService} from '../../services/geovisor.service';
 
 @Component({
-	selector: 'app-fab-container-top',
-	standalone: true,
-	imports: [],
-	templateUrl: './fab-container-top.component.html',
-	styleUrl: './fab-container-top.component.scss',
+    selector: 'app-fab-container-top',
+    imports: [],
+    templateUrl: './fab-container-top.component.html',
+    styleUrl: './fab-container-top.component.scss'
 })
 export class FabContainerTopComponent {
 	public _geovisorSharedService = inject(GeovisorSharedService);
