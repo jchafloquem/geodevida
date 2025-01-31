@@ -83,13 +83,20 @@ export class GeovisorSharedService {
 			distritos: 'DATOS_GEOESPACIALES/LÍMITES/FeatureServer/5',
 		}
 	}
-	//*Servicio de delitos fuente INEI
+	//*Servicio de DEVIDA
 	public layerUrlDevida = {
 		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/ZONAS/FeatureServer',
 		capasdevida: {
 			zonas: '0',
 			ofiZonales:'4',
 			cultivos:'3'
+		}
+	};
+	//*Servicio de DEVIDA
+	public layerUrlDevida1 = {
+		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/UbicacionAcuicola/FeatureServer',
+		capasdevida: {
+			acuicola: '0',
 		}
 	};
 	//*Servicio de COFOPRI - FORMALIZACION
@@ -176,6 +183,16 @@ export class GeovisorSharedService {
 			group: 'LIMITES POLITICOS',
 		},
 		//*Capas de DEVIDA
+		{
+			title: 'PRODUCCION DE PACOS Y TRUCHAS',
+			url: `${this.layerUrlDevida1.baseServicio}/${this.layerUrlDevida1.capasdevida.acuicola}`,
+			labelingInfo: undefined,
+			popupTemplate: popCultivo,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: false,
+			group: 'ACUICOLA',
+		},
 		{
 			title: 'CULTIVO',
 			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.cultivos}`,
