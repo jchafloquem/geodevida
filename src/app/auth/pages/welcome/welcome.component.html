@@ -6,23 +6,28 @@
 		class="absolute inset-0 bg-cover bg-center bg-no-repeat animate-zoom"
 		style="background-image: url('assets/images/fondo.avif')"
 	></div>
-
 	<!-- Overlay oscuro para mejorar contraste -->
 	<div class="absolute inset-0 bg-gray-700 bg-opacity-60"></div>
-
 	<!-- Contenido en primer plano -->
 	<div class="relative z-10 text-white text-center">
-		<div class="sm:mx-auto sm:w-full sm:max-w-sm bg-white p-1 rounded-lg">
+		<div class="bg-white bg-opacity-60 rounded-lg shadow">
 			<img
-				class="mx-auto h-20 w-auto drop-shadow-lg"
+				class="h-28 w-120 object-contain"
 				src="assets/images/logodevida.png"
 				alt="DEVIDA"
 			/>
 		</div>
-		<h1 class="text-6xl font-bold p-5">GEOPORTAL</h1>
+		<h1 class="mt-2 text-6xl font-bold p-5">GEOPORTAL</h1>
 		<h1 class="text-3xl font-bold p-5">DIRECCION DE MONITOREO</h1>
 		<p class="mt-2 text-lg p-5">
 			Accede a información cartográfica y georreferenciada
 		</p>
+		<button
+			type="submit"
+			routerLink="/geovisor"
+			class="flex w-full justify-center rounded-md bg-cyan-400 px-3 py-1.5 text-sm font-normal leading-6 text-white shadow-sm hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-700"
+		>
+			INGRESAR
+		</button>
 	</div>
 </div>
