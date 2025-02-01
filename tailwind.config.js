@@ -8,6 +8,7 @@ module.exports = {
 	content: ['./src/app/**/*.component.{html,ts}'],
 	theme: {
 		extend: {
+
 			lineHeight: {
 				xs: '0.5rem',
 				s: '0.625rem',
@@ -65,4 +66,5 @@ module.exports = {
 			center: true,
 		},
 	},
+	
 };
