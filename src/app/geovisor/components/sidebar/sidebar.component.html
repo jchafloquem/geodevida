@@ -1,8 +1,8 @@
 <div
-	class="absolute top-[62px] z-50 h-[calc(100%-62px)] w-[48px] bg-white flex flex-row border"
+	class="absolute top-[62px] z-50 h-[calc(100%-62px)] w-[48px] bg-primary flex flex-row border"
 >
 	<div
-		class="z-50 bg-[#f1f5f9] w-[48px] flex flex-col items-start border-0 border-r border-solid border-gray-300 justify-between"
+		class="z-50 bg-[#fff] w-[48px] flex flex-col items-start border-0 border-r border-solid border-green-900 justify-between"
 	>
 		<div>
 			<button
@@ -10,7 +10,7 @@
 				class=""
 				color="accent"
 				[ngClass]="{
-					'text-white bg-green-600 rounded-none ': subMenu === 'capas'
+					'text-white bg-primary rounded-none ': subMenu === 'capas'
 				}"
 				(click)="clickToogleMenu('capas')"
 			>
@@ -21,7 +21,7 @@
 				class=""
 				color="accent"
 				[ngClass]="{
-					'text-white bg-green-600 rounded-none ': subMenu === 'leyendas'
+					'text-white bg-primary rounded-none ': subMenu === 'leyendas'
 				}"
 				(click)="clickToogleMenu('leyendas')"
 			>
@@ -43,7 +43,7 @@
 				class=""
 				color="accent"
 				[ngClass]="{
-					'text-white bg-green-600 rounded-none ': subMenu === 'acerca'
+					'text-white bg-primary rounded-none ': subMenu === 'acerca'
 				}"
 				(click)="clickToogleMenu('acerca')"
 			>
@@ -56,7 +56,7 @@
 				class=""
 				color="accent"
 				[ngClass]="{
-					'text-white bg-green-600 rounded-none ': subMenu === 'logout'
+					'text-white bg-primary rounded-none ': subMenu === 'logout'
 				}"
 				(click)="clickToogleMenu('logout')"
 			>
@@ -64,7 +64,7 @@
 			</button>
 			<button
 				mat-icon-button
-				class="bg-green-600 text-white rounded-none"
+				class="bg-primary text-white rounded-none"
 				color="primary"
 				(click)="clickToogleMenu()"
 			>
@@ -79,7 +79,7 @@
 		[ngClass]="{ 'menu__container--open': toogleMenu }"
 	>
 		<div
-			class="bg-green-600 h-[48px] w-full text-left text-base text-white font-medium flex flex-row justify-start items-end border-0 border-b-4 border-solid pl-2"
+			class="bg-primary h-[48px] w-full text-left text-base text-white font-medium flex flex-row justify-start items-end border-0 border-b-4 border-solid pl-2"
 		>
 			<span>
 				{{ subMenu | uppercase }}
@@ -95,11 +95,6 @@
 			} @if (subMenu==='logout') {
 			<app-logout></app-logout>
 			}
-
-			<!-- <app-filtro
-				class="h-full"
-				[ngClass]="{ hidden: subMenu !== 'filtros' }"
-			></app-filtro> -->
 		</div>
 	</div>
 </div>
