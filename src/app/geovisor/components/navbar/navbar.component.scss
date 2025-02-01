@@ -14,9 +14,24 @@
   top: 0;
   right: 20px;
   margin-top: 10px;
-  background-color: #ffff;
-  padding: 5px;
+  background-color: #ffffff; /* Blanco */
+  padding: 8px 12px; /* Aumenté un poco el padding */
   border-radius: 5px;
-	z-index: 20;
-
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  z-index: 20;
+  display: flex;
+  align-items: center; /* Centra el contenido si tienes un input o icono */
 }
+
+#searchDiv input {
+  border: 1px solid #ccc; /* Borde gris claro */
+  padding: 5px 10px;
+  border-radius: 4px;
+  outline: none;
+}
+
+#searchDiv input:focus {
+  border-color: #007bff; /* Color de borde cuando el input está enfocado */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra alrededor del input al enfocarlo */
+}
+
