@@ -294,7 +294,7 @@ export class GeovisorSharedService {
 			renderer: undefined,
 			visible: false,
 			labelsVisible: false,
-			group: 'MTC',
+			group: 'MINISTERIO DE TRANSPORTE Y COMUNICACIONES',
 		},
 		{
 			title: 'ESTACION DE TREN',
@@ -403,7 +403,7 @@ export class GeovisorSharedService {
 			labelingInfo: undefined,
 			popupTemplate: undefined,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: false,
 			group: 'ANA',
 		},
