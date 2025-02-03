@@ -11,9 +11,9 @@ import { RouterModule } from '@angular/router';
 })
 export default class WelcomeComponent {
   public botones = [
-    { link: '/geovisor/map', icono: 'assets/images/welcome/geoico1.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Geovisor', texto: 'VISOR' },
+    { link: '/geovisor', icono: 'assets/images/welcome/geoico1.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Geovisor', texto: 'VISOR' },
     { link: '/', icono: 'assets/images/welcome/geoico2.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Documentacion', texto: 'REPOSITORIO' },
-    { link: '/', icono: 'assets/images/welcome/geoico3.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Geovisor', texto: 'DASHBOARD' },
+    { link: '/geovisor/dashboard', icono: 'assets/images/welcome/geoico3.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Geovisor', texto: 'DASHBOARD' },
     { link: '/', icono: 'assets/images/welcome/geoico4.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Geovisor', texto: 'METADATA' }
   ];
 }

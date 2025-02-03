@@ -1,11 +1,21 @@
 import {Component, OnInit, ViewChild, ElementRef, OnDestroy, inject} from '@angular/core';
+
 import {GeovisorSharedService} from '../../services/geovisor.service';
+import { RouterModule } from '@angular/router';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
+import { SidebarComponent } from '../../components/sidebar/sidebar.component';
+import { FabContainerTopComponent } from '../../components/fab-container-top/fab-container-top.component';
+import { InfoCoordenadasComponent } from '../../components/info-coordenadas/info-coordenadas.component';
 
 
 //libreria de ArcGIS
 @Component({
     selector: 'app-map',
-    imports: [],
+    imports: [RouterModule,
+			NavbarComponent,
+			SidebarComponent,
+			FabContainerTopComponent,
+			InfoCoordenadasComponent,],
     templateUrl: './map.component.html',
     styleUrl: './map.component.scss'
 })

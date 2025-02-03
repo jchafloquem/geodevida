@@ -53,7 +53,7 @@
 			<!-- Iteramos sobre una lista de botones -->
 			<div *ngFor="let boton of botones" class="flex flex-col items-center">
 				<a
-					[routerLink]="boton.link"
+					routerLink="{{boton.link}}"
 					class="relative flex w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 justify-center items-center bg-[#2091c7] text-white text-sm font-normal rounded-full border-2 border-white shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 overflow-hidden"
 				>
 					<img
