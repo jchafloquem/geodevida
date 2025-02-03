@@ -3,17 +3,17 @@
     transform: scale(1);
   }
   25% {
-    transform: scale(1.5);
+    transform: scale(2);
   }
   50% {
-    transform: scale(1.75);
+    transform: scale(3);
   }
   75% {
-    transform: scale(2);
+    transform: scale(4);
   }
 }
 .animate-zoom {
-  animation: zoomInOut 60s ease-in-out infinite;
+  animation: zoomInOut 5s ease-in-out infinite;
 }
 
 @keyframes backgroundChange {
