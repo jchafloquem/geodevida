@@ -2,17 +2,37 @@
   0%, 100% {
     transform: scale(1);
   }
-	75% {
-    transform: scale(1.25);
-  }
-  50% {
+  25% {
     transform: scale(1.5);
   }
-	25% {
+  50% {
     transform: scale(1.75);
   }
+  75% {
+    transform: scale(2);
+  }
 }
-
 .animate-zoom {
   animation: zoomInOut 60s ease-in-out infinite;
+}
+
+@keyframes backgroundChange {
+  0% {
+    background-image: url('/assets/images/welcome/welcome1.jpg');
+  }
+  25% {
+    background-image: url('/assets/images/welcome/welcome2.avif');
+  }
+  50% {
+    background-image: url('/assets/images/welcome/welcome3.jpg');
+  }
+  75% {
+    background-image: url('/assets/images/welcome/welcome2.avif');
+  }
+  100% {
+    background-image: url('/assets/images/welcome/welcome1.jpg');
+  }
+}
+.animate-background {
+  animation: backgroundChange 25s infinite;
 }
