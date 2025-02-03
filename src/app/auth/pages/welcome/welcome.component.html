@@ -48,90 +48,24 @@
 		</p>
 
 		<div
-			class="w-fit bg-opacity-60 rounded-lg shadow mx-auto p-8 text-center flex flex-row gap-4"
+			class="w-fit bg-opacity-60 rounded-lg mx-auto p-8 text-center grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8"
 		>
-			<!-- Primer Botón -->
-			<div class="flex flex-col items-center">
+			<!-- Iteramos sobre una lista de botones -->
+			<div *ngFor="let boton of botones" class="flex flex-col items-center">
 				<a
-					routerLink="/geovisor"
-					class="relative flex w-[100px] h-[100px] justify-center items-center bg-[#2091c7] text-white text-sm font-normal rounded-full border-2 border-white shadow-lg hover:shadow-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 overflow-hidden"
-					aria-label="Ingresar al Geovisor"
+					[routerLink]="boton.link"
+					class="relative flex w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 justify-center items-center bg-[#2091c7] text-white text-sm font-normal rounded-full border-2 border-white shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 overflow-hidden"
 				>
 					<img
-						src="assets/images/geoico.png"
-						alt="Ícono de acceso al visor GIS"
+						[src]="boton.icono"
+						[alt]="boton.alt"
 						class="w-[70%] h-[70%] object-contain"
 					/>
 				</a>
-				<span class="mt-2 text-center font-semibold">VISOR GIS</span>
-			</div>
-
-			<!-- Segundo Botón -->
-			<div class="flex flex-col items-center">
-				<a
-					routerLink="/geovisor"
-					class="relative flex w-[120px] h-[100px] justify-center items-center bg-[#2091c7] text-white text-sm font-normal shadow-md transition-all duration-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"
-					aria-label="Ingresar al Geovisor"
-					style="
-						clip-path: polygon(
-							25% 0%,
-							75% 0%,
-							100% 50%,
-							75% 100%,
-							25% 100%,
-							0% 50%
-						);
-					"
+				<span
+					class="mt-2 text-center font-semibold text-sm md:text-base lg:text-lg"
+					>{{ boton.texto }}</span
 				>
-					<svg
-						class="w-12 h-12 text-current"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-						<polyline points="2 17 12 22 22 17"></polyline>
-						<polyline points="2 12 12 17 22 12"></polyline>
-					</svg>
-				</a>
-				<span>REPOSITORIO</span>
-			</div>
-			<div class="flex flex-col items-center">
-				<a
-					routerLink="/geovisor"
-					class="relative flex w-[120px] h-[100px] justify-center items-center bg-[#2091c7] text-white text-sm font-normal shadow-md transition-all duration-300 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"
-					aria-label="Ingresar al Geovisor"
-					style="
-						clip-path: polygon(
-							25% 0%,
-							75% 0%,
-							100% 50%,
-							75% 100%,
-							25% 100%,
-							0% 50%
-						);
-					"
-				>
-					<svg
-						class="w-12 h-12 text-current"
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-						<polyline points="2 17 12 22 22 17"></polyline>
-						<polyline points="2 12 12 17 22 12"></polyline>
-					</svg>
-				</a>
-				<span>DATOS</span>
 			</div>
 		</div>
 	</div>

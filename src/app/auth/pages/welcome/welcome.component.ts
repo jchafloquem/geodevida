@@ -1,12 +1,19 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-welcome',
-  imports: [RouterModule],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './welcome.component.html',
-  styleUrl: './welcome.component.scss'
+  styleUrls: ['./welcome.component.scss']
 })
 export default class WelcomeComponent {
-
+  public botones = [
+    { link: '/geovisor/map', icono: 'assets/images/welcome/geoico1.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Geovisor', texto: 'VISOR' },
+    { link: '/', icono: 'assets/images/welcome/geoico2.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Documentacion', texto: 'REPOSITORIO' },
+    { link: '/', icono: 'assets/images/welcome/geoico3.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Geovisor', texto: 'DASHBOARD' },
+    { link: '/', icono: 'assets/images/welcome/geoico4.png', alt: 'Ícono de acceso al visor GIS', label: 'Ingresar al Geovisor', texto: 'METADATA' }
+  ];
 }

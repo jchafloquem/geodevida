@@ -39,6 +39,10 @@ export const routes: Routes = [
 				loadComponent: () => import('./geovisor/pages/map/map.component'),
 			},
 			{
+				path: 'dashboard',
+				loadComponent: () => import('./geovisor/pages/dashboard/dashboard.component'),
+			},
+			{
 				path: '',
 				redirectTo: 'map',
 				pathMatch: 'full',
