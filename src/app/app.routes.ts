@@ -39,8 +39,16 @@ export const routes: Routes = [
 				loadComponent: () => import('./geovisor/pages/map/map.component'),
 			},
 			{
+				path: 'repositorio',
+				loadComponent: () => import('./geovisor/pages/repositorio/repositorio.component'),
+			},
+			{
 				path: 'dashboard',
 				loadComponent: () => import('./geovisor/pages/dashboard/dashboard.component'),
+			},
+			{
+				path: 'metadata',
+				loadComponent: () => import('./geovisor/pages/metadata/metadata.component'),
 			},
 			{
 				path: '',
