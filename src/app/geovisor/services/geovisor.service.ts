@@ -86,69 +86,11 @@ export class GeovisorSharedService {
 	}
 	//*Servicio de DEVIDA
 	public layerUrlDevida = {
-		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/ZONAS/FeatureServer',
-		capasdevida: {
-			zonas: '0',
-			ofiZonales:'4',
-			cultivos:'3'
-		}
-	};
-	//*Servicio de DEVIDA
-	public layerUrlDevida1 = {
 		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/UbicacionAcuicola/FeatureServer',
 		capasdevida: {
 			acuicola: '0',
 		}
 	};
-	//*Servicio de COFOPRI - FORMALIZACION
-	public layerUrlgeollaqta = {
-		baseServicio: 'https://geoportal.cofopri.gob.pe/cofopri/rest/services/Cofopri/FORMALIZACION_PSAD56/MapServer',
-		formalizacion: {
-			lotes: '1',
-			manzanas:'2',
-			pueblo:'3'
-		}
-	};
-	//*Servicio de MIDAGRI
-	public layerUrlMIDAGRI = {
-		baseServicio: 'https://georural.midagri.gob.pe/geoservicios/rest/services/servicios_ogc/Catastro_Rural/MapServer',
-		data: {
-			predioRural: '0',
-			comunidadesCampesina:'1',
-			comunidadesNativas:'2'
-		}
-	};
-		//*Servicio de MTC
-		public layerUrlMtc = {
-			baseServicio: 'https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/MTC/FeatureServer',
-			baseCapas: {
-				aerodromo: '0',
-				estacionesTren:'1',
-				lineaFerrea:'2',
-				terminalPortuario:'3',
-				terminalTerrestre:'4',
-				peajes:'5',
-				postesSOS:'6',
-				puentes:'7',
-				redVialVecinal:'8',
-				redVialDepartamental:'9',
-				redVialNacional:'10'
-			}
-		};
-		//*Servicio de ANA
-		public layerUrlAna = {
-			baseServicio: 'https://www.idep.gob.pe/geoportal/rest/services/INSTITUCIONALES/ANA_WMS/FeatureServer',
-			baseCapas: {
-				cochas: '0',
-				humedalesCosteros:'1',
-				manantial:'2',
-				glaciales:'3',
-				hidrometeorologica:'4',
-				autAdmAgua:'5',
-				unidadHidrograficas:'6',
-				marinoCostero:'11',
-			}
-		};
 
 	public layers: LayerConfig[] = [
 	//*Servicios de capas base
@@ -186,7 +128,7 @@ export class GeovisorSharedService {
 		//*Capas de DEVIDA
 		{
 			title: 'PRODUCCION DE PACOS Y TRUCHAS',
-			url: `${this.layerUrlDevida1.baseServicio}/${this.layerUrlDevida1.capasdevida.acuicola}`,
+			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`,
 			labelingInfo: undefined,
 			popupTemplate: popCultivo,
 			renderer: undefined,
@@ -194,7 +136,7 @@ export class GeovisorSharedService {
 			labelsVisible: false,
 			group: 'ACUICOLA',
 		},
-		
+
 
 	];
 
