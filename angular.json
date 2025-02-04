@@ -28,7 +28,12 @@
 								"input": "public"
 							}
 						],
-						"styles": ["src/themes/theme.scss", "src/styles.scss","node_modules/@fortawesome/fontawesome-free/css/all.min.css"],
+						"styles": [
+							"src/themes/theme.scss",
+							"src/styles.scss",
+							"node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+							"node_modules/ngx-spinner/animations/ball-scale-multiple.css"
+						],
 						"scripts": []
 					},
 					"configurations": {

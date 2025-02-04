@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
 @Component({
   selector: 'app-welcome',
   standalone: true,
@@ -9,8 +8,9 @@ import { RouterModule } from '@angular/router';
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss']
 })
-export default class WelcomeComponent {
-  public botones = [
+export default class WelcomeComponent  {
+
+	  public botones = [
     { link: '/geovisor',
 			icono: 'assets/images/welcome/geoico1.png',
 			alt: 'Ícono de acceso al visor GIS',
