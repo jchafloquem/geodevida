@@ -1,17 +1,17 @@
-import { Component, OnInit} from '@angular/core';
+import { Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgxSpinnerModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './welcome.component.html',
   styleUrls: ['./welcome.component.scss']
 })
-export default class WelcomeComponent implements OnInit {
+export default class WelcomeComponent {
 
 	  public botones = [
     { link: '/geovisor',
@@ -39,15 +39,5 @@ export default class WelcomeComponent implements OnInit {
 			texto: 'METADATA'
 		}
   ];
-
-	constructor(private spinner: NgxSpinnerService) {}
-	ngOnInit(): void {
-    // Muestra el spinner al iniciar el componente
-    this.spinner.show();
-
-    // Oculta el spinner después de 3 segundos
-    setTimeout(() => {
-      this.spinner.hide();
-    }, 3000);
-  }
 }
+
