@@ -501,6 +501,7 @@ export class GeovisorSharedService {
 		//CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
 		const buscarDatos = new Search({
 			view: view,
+			//sources: [this.capas.layerUrlDevida1],
 			allPlaceholder: 'Buscar dirección o lugar',
 			label: 'Buscar',
 			locationEnabled: true,
