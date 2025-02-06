@@ -23,7 +23,7 @@ export default class GeovisorComponent implements OnInit {
     // Oculta el spinner después de 3 segundos
     setTimeout(() => {
       this.spinner.hide();
-    }, 3000);
+    }, 5000);
   }
 }
 

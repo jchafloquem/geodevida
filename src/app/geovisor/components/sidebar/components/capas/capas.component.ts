@@ -1,6 +1,6 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {MatExpansionModule} from '@angular/material/expansion';
-import {LayerConfig} from '../../../../interfaces/layerConfig';
+import {LayerConfig} from '../../../../interface/layerConfig';
 import {GeovisorSharedService} from '../../../../services/geovisor.service';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 interface LayerGroup {

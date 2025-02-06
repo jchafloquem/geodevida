@@ -1,5 +1,5 @@
 import {ElementRef, Injectable} from '@angular/core';
-import {LayerConfig} from '../interfaces/layerConfig';
+import {LayerConfig} from '../interface/layerConfig';
 
 //*Libreria de ArcGIS 4.30
 import * as projection from '@arcgis/core/geometry/projection';
@@ -76,12 +76,14 @@ export class GeovisorSharedService {
 	public mapa = new Map({basemap: 'topo'});
 	public view!: MapView;
 
+//*DATOS_GEOESPACIALES DE IDEP
 	public layerUrls = {
 		baseService: 'https://www.idep.gob.pe/geoportal/rest/services',
 		limits: {
 			departamentos: 'DATOS_GEOESPACIALES/LÍMITES/FeatureServer/3',
 			provincias: 'DATOS_GEOESPACIALES/LÍMITES/FeatureServer/4',
 			distritos: 'DATOS_GEOESPACIALES/LÍMITES/FeatureServer/5',
+
 		}
 	}
 	//*Servicio de DEVIDA
@@ -95,6 +97,7 @@ export class GeovisorSharedService {
 	public layers: LayerConfig[] = [
 	//*Servicios de capas base
 		//*Capas de Limites Politicos
+
 		{
 			title: 'DISTRITOS',
 			url: `${this.layerUrls.baseService}/${this.layerUrls.limits.distritos}`,
@@ -165,8 +168,6 @@ export class GeovisorSharedService {
 					visible: layerConfig.visible,
 					outFields: layerConfig.outFields,
 					featureReduction:layerConfig.featureReduction
-
-
 				});
 			}
 			else if (layerConfig.popupTemplate && layerConfig.renderer == undefined) {
