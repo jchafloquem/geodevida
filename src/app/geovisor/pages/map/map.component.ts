@@ -12,10 +12,11 @@ import { InfoCoordenadasComponent } from '../../components/info-coordenadas/info
 @Component({
     selector: 'app-map',
     imports: [RouterModule,
-			NavbarComponent,
-			SidebarComponent,
-			FabContainerTopComponent,
-			InfoCoordenadasComponent,],
+							NavbarComponent,
+							SidebarComponent,
+							FabContainerTopComponent,
+							InfoCoordenadasComponent
+						],
     templateUrl: './map.component.html',
     styleUrl: './map.component.scss'
 })

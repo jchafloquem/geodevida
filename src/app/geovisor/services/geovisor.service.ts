@@ -19,51 +19,22 @@ import PopupTemplate from "@arcgis/core/PopupTemplate.js";
 import Zoom from '@arcgis/core/widgets/Zoom.js';
 
 
+
 //* Popup y Clusters
 const popCultivo = new PopupTemplate({
-	title: 'CULTIVO DE: {CUTIVO}',
+	title: 'CULTIVO DE: {PRODUCCIÓ}',
+	outFields: ["*"],
 	content: [
 		{
 			type: 'fields',
 			fieldInfos: [
 				{
 					fieldName: 'APELLIDO_P',
-					label: '<b><font>Apellido Paterno</font></b>',
+					label: '<b><font>Nombre Completo</font></b>',
 					visible: true,
 					stringFieldOption: 'text-box',
 				},
-				{
-					fieldName: 'APELLIDO_M',
-					label: '<b><font>Apellido Materno</font></b>',
-					visible: true,
-					stringFieldOption: 'text-box',
-				},
-				{
-					fieldName: 'NOMBRES',
-					label: '<b><font>Nombres</font></b>',
-					visible: true,
-					stringFieldOption: 'text-box',
-				},
-				{
-					fieldName: 'DNI',
-					label: '<b><font>Nro de DNI</font></b>',
-					visible: true,
-					stringFieldOption: 'text-box',
-				},
-				{
-					fieldName: 'AREA_HA',
-					label: '<b><font>HECTAREAS</font></b>',
-					visible: true,
-					stringFieldOption: 'text-box',
-				},
-				{
-					fieldName: 'OZ',
-					label: '<b><font>Oficina Zonal</font></b>',
-					format: {
-						digitSeparator: true, // Uses a comma separator in numbers >999
-						places: 5, // Sets the number of decimal places to 0 and rounds up
-					},
-				},
+
 			],
 		},
 	],
@@ -73,7 +44,7 @@ const popCultivo = new PopupTemplate({
 	providedIn: 'root',
 })
 export class GeovisorSharedService {
-	public mapa = new Map({basemap: 'topo'});
+	public mapa = new Map({basemap: 'satellite'});
 	public view!: MapView;
 
 //*DATOS_GEOESPACIALES DE IDEP
@@ -231,7 +202,7 @@ export class GeovisorSharedService {
 		});
 
 		//CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
-		const sources = [
+		const sourcesAcuicola = [
 				{
 					layer: new FeatureLayer({
 						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`
@@ -251,7 +222,7 @@ export class GeovisorSharedService {
 
 		const buscar = new Search({
 			view: view,
-			sources:sources,
+			sources:sourcesAcuicola,
 			allPlaceholder: 'Buscar dirección o lugar',
 			label: 'Buscar',
 			locationEnabled: true,
@@ -260,30 +231,32 @@ export class GeovisorSharedService {
 			container: "searchDiv"
 		});
 
-		buscar.on("select-result", (event) => {
+		buscar.on("select-result", async (event) => {
 			const result = event.result;
 
 			if (result && result.feature && result.feature.geometry) {
 				const geometry = result.feature.geometry;
 
-				if (geometry.type === "point") {
-					view.goTo({
-						target: geometry,
-						zoom: 15, // Aplica zoom al punto
-					});
-				} else {
-					view.goTo({
-						target: geometry.extent.expand(1.5), // Aplica zoom al área de la entidad
-					});
+				try {
+					if (geometry.type === "point") {
+						await view.goTo({
+							target: geometry,
+							zoom: 17, // Aplica zoom al punto
+						});
+					} else if (geometry.extent) {
+						await view.goTo({
+							target: geometry.extent.expand(1.5), // Aplica zoom a entidades de área
+						});
+					} else {
+						console.warn("La geometría no tiene un 'extent' válido.");
+					}
+				} catch (error) {
+					console.error("Error al aplicar el zoom:", error);
 				}
 			} else {
 				console.error("No se encontró geometría en el resultado.");
 			}
 		});
-
-
-
-
 
 			//{position:'top-right', index:0})
 		view.ui.add(new Zoom({view}),{position:'top-right',index:1});
