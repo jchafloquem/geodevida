@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
-    imports: [],
+    imports: [RouterModule],
     templateUrl: './register.component.html',
     styles: ``
 })

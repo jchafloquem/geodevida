@@ -208,7 +208,7 @@ export class GeovisorSharedService {
 						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`
 					}),
 					searchFields: ["DNI"],
-					displayField: "DNI",
+					displayField: "APELLIDO_P",
 					exactMatch: false,
 					outFields: ["*"],
 					name: "Cultvo Acuicola",

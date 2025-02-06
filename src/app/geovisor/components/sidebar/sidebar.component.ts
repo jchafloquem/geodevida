@@ -8,11 +8,11 @@ import {GeovisorSharedService} from '../../services/geovisor.service';
 import {CapasComponent} from './components/capas/capas.component';
 import {LeyendaComponent} from './components/leyenda/leyenda.component';
 import { AcercaComponent } from './components/acerca/acerca.component';
-import { LogoutComponent } from '../../../auth/pages/logout/logout.component';
+
 
 @Component({
     selector: 'app-sidebar',
-    imports: [CommonModule, MatIconModule, NgClass, MatButtonModule, CapasComponent, LeyendaComponent, AcercaComponent, LogoutComponent],
+    imports: [CommonModule, MatIconModule, NgClass, MatButtonModule, CapasComponent, LeyendaComponent, AcercaComponent],
     templateUrl: './sidebar.component.html',
     styleUrl: './sidebar.component.scss'
 })
@@ -22,7 +22,7 @@ export class SidebarComponent {
 
 	public toogleMenu = false;
 
-	clickToogleMenu(filtro?: 'leyendas' | 'capas' | 'acerca' |'logout'): void {
+	clickToogleMenu(filtro?: 'leyendas' | 'capas' | 'acerca' ): void {
 		if (filtro == undefined) {
 			this.toogleMenu = !this.toogleMenu;
 		} else {
