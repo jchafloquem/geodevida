@@ -202,7 +202,7 @@ export class GeovisorSharedService {
 		});
 
 		//CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
-		const sourcesAcuicola = [
+		const sourceDEVIDA = [
 				{
 					layer: new FeatureLayer({
 						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`
@@ -211,7 +211,7 @@ export class GeovisorSharedService {
 					displayField: "DNI",
 					exactMatch: false,
 					outFields: ["*"],
-					name: "ACUICOLA",
+					name: "Cultvo Acuicola",
 					placeholder: "Ingrese DNI",
 					maxResults: 4,
 					maxSuggestions: 4,
@@ -222,7 +222,7 @@ export class GeovisorSharedService {
 
 		const buscar = new Search({
 			view: view,
-			sources:sourcesAcuicola,
+			sources:sourceDEVIDA,
 			allPlaceholder: 'Buscar dirección o lugar',
 			label: 'Buscar',
 			locationEnabled: true,

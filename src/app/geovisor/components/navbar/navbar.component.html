@@ -1,23 +1,35 @@
 <div
-	id="navbar"
-	class="fixed top-0 flex w-full flex-row bg-white px-1 justify-start h-16 gap-3 items-center z-10 shadow-lg"
+  id="navbar"
+  class="fixed top-0 flex w-full bg-white px-3 h-16 gap-3 items-center z-10 shadow-lg"
 >
-	<div class="hidden md:block">
-		<img class="h-16" src="assets/images/logodevida.png" alt="logo" />
-	</div>
-	<!-- Logo pequeño (visible solo en dispositivos móviles) -->
-	<div class="inline sm:hidden">
-		<!-- Logo pequeño se muestra en pantallas menores a 'sm' -->
-		<img
-			class="h-14"
-			src="assets/images/logoWelBNMini.png"
-			alt="logo pequeño"
-		/>
-	</div>
-	<!-- Busqueda de api de ArcGIS -->
-	<div class="searchDiv" id="searchDiv"></div>
-	<div class="hidden sm:block"></div>
+  <!-- Logo grande -->
+  <div class="hidden md:block">
+    <img class="h-16" src="assets/images/logodevida.png" alt="Logo grande" />
+  </div>
+
+  <!-- Logo pequeño -->
+  <div class="block md:hidden">
+    <img class="h-14" src="assets/images/logoWelBNMini.png" alt="Logo pequeño" />
+  </div>
+
+  <!-- Contenedor centrado para la búsqueda -->
+  <div class="flex-1 flex justify-center">
+    <div id="searchDiv">
+      <input type="text" placeholder="Buscar..." />
+    </div>
+  </div>
+
+  <!-- Botón de Logout -->
+  <button
+    id="logoutBtn"
+    class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all flex items-center gap-2"
+  >
+    🔓 Logout
+  </button>
 </div>
+
+
+
 <!-- Navbar end -->
 <script type="text/javascript">
 	document.addEventListener("DOMContentLoaded", () => {
