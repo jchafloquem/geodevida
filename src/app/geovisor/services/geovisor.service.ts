@@ -87,10 +87,10 @@ export class GeovisorSharedService {
 		}
 	}
 	//*Servicio de DEVIDA
-	public layerUrlDevida = {
-		baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/UbicacionAcuicola/FeatureServer',
-		capasdevida: {
-			acuicola: '0',
+		public layerUrlDevida = {
+			baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/UbicacionAcuicola/FeatureServer',
+			capasdevida: {
+				acuicola: '0',
 		}
 	};
 
@@ -231,15 +231,60 @@ export class GeovisorSharedService {
 		});
 
 		//CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
-		const buscarDatos = new Search({
+		const sources = [
+				{
+					layer: new FeatureLayer({
+						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`
+					}),
+					searchFields: ["DNI"],
+					displayField: "DNI",
+					exactMatch: false,
+					outFields: ["*"],
+					name: "ACUICOLA",
+					placeholder: "Ingrese DNI",
+					maxResults: 4,
+					maxSuggestions: 4,
+					suggestionsEnabled: true,
+					minSuggestCharacters: 0,
+				},
+			]
+
+		const buscar = new Search({
 			view: view,
-			//sources: [this.capas.layerUrlDevida1],
+			sources:sources,
 			allPlaceholder: 'Buscar dirección o lugar',
 			label: 'Buscar',
 			locationEnabled: true,
 			maxResults: 10,
+			popupEnabled: false,
 			container: "searchDiv"
 		});
+
+		buscar.on("select-result", (event) => {
+			const result = event.result;
+
+			if (result && result.feature && result.feature.geometry) {
+				const geometry = result.feature.geometry;
+
+				if (geometry.type === "point") {
+					view.goTo({
+						target: geometry,
+						zoom: 15, // Aplica zoom al punto
+					});
+				} else {
+					view.goTo({
+						target: geometry.extent.expand(1.5), // Aplica zoom al área de la entidad
+					});
+				}
+			} else {
+				console.error("No se encontró geometría en el resultado.");
+			}
+		});
+
+
+
+
+
 			//{position:'top-right', index:0})
 		view.ui.add(new Zoom({view}),{position:'top-right',index:1});
 		view.ui.add(new Home({view }), {position:'top-right',index:2});
