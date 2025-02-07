@@ -20,8 +20,9 @@ import Zoom from '@arcgis/core/widgets/Zoom.js';
 
 
 
+
 //* Popup y Clusters
-const popCultivo = new PopupTemplate({
+const popAcuicola = new PopupTemplate({
 	title: 'CULTIVO DE: {PRODUCCIÓ}',
 	outFields: ["*"],
 	content: [
@@ -39,13 +40,36 @@ const popCultivo = new PopupTemplate({
 		},
 	],
 });
+const popCultivo = new PopupTemplate({
+	title: 'CULTIVO DE: {CUTIVO}',
+	outFields: ["*"],
+	content: [
+		{
+			type: 'fields',
+			fieldInfos: [
+				{
+					fieldName: 'APELLIDO P',
+					label: '<b><font>Nombre Completo</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+
+			],
+		},
+	],
+});
 
 @Injectable({
 	providedIn: 'root',
 })
+
 export class GeovisorSharedService {
 	public mapa = new Map({basemap: 'satellite'});
 	public view!: MapView;
+
+	public googleMap!: google.maps.Map;
+
+
 
 //*DATOS_GEOESPACIALES DE IDEP
 	public layerUrls = {
@@ -62,6 +86,7 @@ export class GeovisorSharedService {
 			baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/UbicacionAcuicola/FeatureServer',
 			capasdevida: {
 				acuicola: '0',
+				segundoEnvio:'1'
 		}
 	};
 
@@ -101,14 +126,24 @@ export class GeovisorSharedService {
 		},
 		//*Capas de DEVIDA
 		{
-			title: 'PRODUCCION DE PACOS Y TRUCHAS',
+			title: 'ACUICOLA - PRODUCCION DE PACOS Y TRUCHAS',
 			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`,
+			labelingInfo: undefined,
+			popupTemplate: popAcuicola,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: true,
+			group: 'DEVIDA',
+		},
+		{
+			title: 'CULTIVOS - CAFE & CACAO',
+			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.segundoEnvio}`,
 			labelingInfo: undefined,
 			popupTemplate: popCultivo,
 			renderer: undefined,
 			visible: true,
-			labelsVisible: false,
-			group: 'ACUICOLA',
+			labelsVisible: true,
+			group: 'DEVIDA',
 		},
 
 
@@ -188,7 +223,7 @@ export class GeovisorSharedService {
 			rotation: 0,
 			constraints: {
 				maxZoom: 25,
-				minZoom: 1,
+				minZoom: 6,
 				snapToZoom: false,
 			},
 			padding: {top: 0},
@@ -205,18 +240,35 @@ export class GeovisorSharedService {
 		const sourceDEVIDA = [
 				{
 					layer: new FeatureLayer({
+						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.segundoEnvio}`,
+						labelsVisible: true
+					}),
+					searchFields: ["DNI"],
+					displayField: "APELLIDO P",
+					exactMatch: false,
+					outFields: ["*"],
+					name: "Cafe & Cacao",
+					placeholder: "Ingrese DNI",
+					maxResults: 4,
+					maxSuggestions: 4,
+					suggestionsEnabled: true,
+					minSuggestCharacters: 1,
+				},
+
+				{
+					layer: new FeatureLayer({
 						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`
 					}),
 					searchFields: ["DNI"],
 					displayField: "APELLIDO_P",
 					exactMatch: false,
 					outFields: ["*"],
-					name: "Cultvo Acuicola",
+					name: "Acuicola",
 					placeholder: "Ingrese DNI",
 					maxResults: 4,
 					maxSuggestions: 4,
 					suggestionsEnabled: true,
-					minSuggestCharacters: 0,
+					minSuggestCharacters: 1,
 				},
 			]
 
@@ -266,12 +318,21 @@ export class GeovisorSharedService {
 
 		this.legend = new Legend({view, container: document.createElement('div')});
 		new CoordinateConversion({view });
-		view.on('pointer-move', (event: {x: number; y: number}) => {
-			const point = this.view.toMap({x: event.x, y: event.y});
-			this.updateCoordinates(point.latitude, point.longitude);
-		}); this.view = view;
+		view.when( () => {
+			view.on('pointer-move', (event) => {
+				const point = view.toMap({ x: event.x, y: event.y });
+				if (point) this.updateCoordinates(point.latitude, point.longitude);
+			});
+		});	this.view = view;
 		 return this.view.when();
 	} //*Fin <initializeMap>
+
+
+
+
+
+
+
 
 	//*Inicio del Toogle
 	toggleLayerVisibility(layerTitle: string, visibility: boolean): void {

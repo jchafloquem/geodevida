@@ -49,9 +49,19 @@
 			>
 				<mat-icon class="material-icons-round">info</mat-icon>
 			</button>
+			<button
+				mat-icon-button
+				class=""
+				color="accent"
+				[ngClass]="{
+					'text-white bg-primary rounded-none ': subMenu === 'streetview'
+				}"
+				(click)="clickToogleMenu('streetview')"
+			>
+				<mat-icon class="material-icons-round">streetview</mat-icon>
+			</button>
 		</div>
 		<div>
-
 			<button
 				mat-icon-button
 				class="bg-primary text-white rounded-none"
@@ -82,7 +92,9 @@
 			<app-leyenda class="h-full"></app-leyenda>
 			} @if (subMenu==='acerca') {
 			<app-acerca class="h-full"></app-acerca>
-			} 
+			} @if (subMenu==='streetview') {
+			<app-stretview class="h-full"></app-stretview>
+			}
 		</div>
 	</div>
 </div>

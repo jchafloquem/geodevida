@@ -96,6 +96,7 @@
 						"lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
 					}
 				}
+				
 			}
 		}
 	},
@@ -103,4 +104,5 @@
 		"analytics": "0800ac42-5cc8-41ac-b2e4-f659e1798b67",
 		"schematicCollections": ["@angular-eslint/schematics"]
 	}
+
 }
