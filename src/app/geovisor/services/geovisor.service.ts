@@ -20,7 +20,6 @@ import Zoom from '@arcgis/core/widgets/Zoom.js';
 
 
 
-
 //* Popup y Clusters
 const popAcuicola = new PopupTemplate({
 	title: 'CULTIVO DE: {PRODUCCIÓ}',
@@ -64,6 +63,7 @@ const popCultivo = new PopupTemplate({
 })
 
 export class GeovisorSharedService {
+
 	public mapa = new Map({basemap: 'satellite'});
 	public view!: MapView;
 
