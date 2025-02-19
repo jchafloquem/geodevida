@@ -215,7 +215,9 @@ export class GeovisorSharedService {
 	constructor() {}
 
 	initializeMap(mapViewEl: ElementRef): Promise<void> {
+
 		const container = mapViewEl.nativeElement;
+
 		this.layers.forEach((layerConfig) => {
 			let featureLayer;
 			if (layerConfig.popupTemplate == undefined) {
