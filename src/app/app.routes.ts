@@ -23,7 +23,7 @@ export const routes: Routes = [
 			},
 			{
 				path: '',
-				redirectTo: 'welcome',
+				redirectTo: 'login',
 				pathMatch: 'full',
 			},
 
