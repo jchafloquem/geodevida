@@ -39,19 +39,58 @@ const popAcuicola = new PopupTemplate({
 		},
 	],
 });
-const popCultivo = new PopupTemplate({
-	title: 'CULTIVO DE: {CUTIVO}',
+const popObservaciones = new PopupTemplate({
+	title: 'DISTRITO:{DISTRITO}',
 	outFields: ["*"],
 	content: [
 		{
 			type: 'fields',
 			fieldInfos: [
 				{
-					fieldName: 'APELLIDO P',
+					fieldName: 'NOMBRES',
 					label: '<b><font>Nombre Completo</font></b>',
 					visible: true,
 					stringFieldOption: 'text-box',
 				},
+				{
+					fieldName: 'DNI',
+					label: '<b><font>DNI</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+				{
+					fieldName: 'CELULAR ',
+					label: '<b><font>Celular</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+				{
+					fieldName: 'OBS',
+					label: '<b><font>Observaciones</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+				},
+				{
+					fieldName: 'Shape__Area',
+					label: '<b><font>Area (m2)</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+					format: {
+						places: 2, // Solo dos decimales
+						digitSeparator: true // Activa separadores de miles
+					}
+				},
+				{
+					fieldName: 'Shape_Leng',
+					label: '<b><font>Perimetro (ml.)</font></b>',
+					visible: true,
+					stringFieldOption: 'text-box',
+					format: {
+						places: 2, // Solo dos decimales
+						digitSeparator: true // Activa separadores de miles
+					}
+				},
+
 
 			],
 		},
@@ -83,10 +122,12 @@ export class GeovisorSharedService {
 	}
 	//*Servicio de DEVIDA
 		public layerUrlDevida = {
-			baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/UbicacionAcuicola/FeatureServer',
+			baseServicio: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services/Mapa_Muestra/FeatureServer',
 			capasdevida: {
-				acuicola: '0',
-				segundoEnvio:'1'
+				observaciones:'0',
+				acuicola: '1',
+				segundoEnvio:'2',
+
 		}
 	};
 
@@ -126,6 +167,16 @@ export class GeovisorSharedService {
 		},
 		//*Capas de DEVIDA
 		{
+			title: 'OBSERVACIONES - 1er ENVIO',
+			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.observaciones}`,
+			labelingInfo: undefined,
+			popupTemplate: popObservaciones,
+			renderer: undefined,
+			visible: true,
+			labelsVisible: true,
+			group: 'DEVIDA',
+		},
+		{
 			title: 'ACUICOLA - PRODUCCION DE PACOS Y TRUCHAS',
 			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`,
 			labelingInfo: undefined,
@@ -139,9 +190,9 @@ export class GeovisorSharedService {
 			title: 'CULTIVOS - CAFE & CACAO',
 			url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.segundoEnvio}`,
 			labelingInfo: undefined,
-			popupTemplate: popCultivo,
+			//popupTemplate: popCultivo,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: true,
 			group: 'DEVIDA',
 		},
@@ -240,21 +291,20 @@ export class GeovisorSharedService {
 		const sourceDEVIDA = [
 				{
 					layer: new FeatureLayer({
-						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.segundoEnvio}`,
+						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.observaciones}`,
 						labelsVisible: true
 					}),
 					searchFields: ["DNI"],
-					displayField: "APELLIDO P",
+					displayField: "DNI",
 					exactMatch: false,
 					outFields: ["*"],
-					name: "Cafe & Cacao",
+					name: "Observaciones",
 					placeholder: "Ingrese DNI",
-					maxResults: 4,
-					maxSuggestions: 4,
+					maxResults: 5,
+					maxSuggestions: 5,
 					suggestionsEnabled: true,
 					minSuggestCharacters: 1,
 				},
-
 				{
 					layer: new FeatureLayer({
 						url: `${this.layerUrlDevida.baseServicio}/${this.layerUrlDevida.capasdevida.acuicola}`

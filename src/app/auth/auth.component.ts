@@ -19,7 +19,7 @@ export default class AuthComponent implements OnInit {
     // Oculta el spinner después de 3 segundos
     setTimeout(() => {
       this.spinner.hide();
-    }, 5000);
+    }, 2000);
   }
 
 }
