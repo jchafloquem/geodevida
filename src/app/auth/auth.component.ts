@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+
+import { NgxSpinnerModule, NgxSpinnerService} from 'ngx-spinner';
 
 @Component({
     imports: [RouterModule, NgxSpinnerModule],

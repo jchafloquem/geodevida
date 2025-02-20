@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 export default class WelcomeComponent {
 
 	  public botones = [
-    { link: '/geovisor',
+    { link: '/auth/login',
 			icono: 'assets/images/welcome/geoico1.png',
 			alt: 'Ícono de acceso al visor GIS',
 			label: 'Ingresar al Geovisor',
