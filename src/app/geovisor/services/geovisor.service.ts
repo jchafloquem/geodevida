@@ -182,7 +182,7 @@ export class GeovisorSharedService {
 			labelingInfo: undefined,
 			popupTemplate: popAcuicola,
 			renderer: undefined,
-			visible: true,
+			visible: false,
 			labelsVisible: true,
 			group: 'DEVIDA',
 		},
