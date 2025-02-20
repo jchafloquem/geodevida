@@ -5,13 +5,14 @@ export const routes: Routes = [
 		path: 'auth',
 		loadComponent: () => import('./auth/auth.component'),
 		children: [
-			{
-				path: 'welcome',
-				loadComponent: () => import('./auth/pages/welcome/welcome.component'),
-			},
+
 			{
 				path: 'login',
 				loadComponent: () => import('./auth/pages/login/login.component'),
+			},
+			{
+				path: 'welcome',
+				loadComponent: () => import('./auth/pages/welcome/welcome.component'),
 			},
 			{
 				path: 'register',
@@ -23,7 +24,7 @@ export const routes: Routes = [
 			},
 			{
 				path: '',
-				redirectTo: 'login',
+				redirectTo: 'welcome',
 				pathMatch: 'full',
 			},
 
