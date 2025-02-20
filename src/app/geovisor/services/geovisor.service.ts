@@ -59,14 +59,14 @@ const popObservaciones = new PopupTemplate({
 					stringFieldOption: 'text-box',
 				},
 				{
-					fieldName: 'CELULAR ',
-					label: '<b><font>Celular</font></b>',
+					fieldName: 'OBS',
+					label: '<b><font>Observaciones</font></b>',
 					visible: true,
 					stringFieldOption: 'text-box',
 				},
 				{
-					fieldName: 'OBS',
-					label: '<b><font>Observaciones</font></b>',
+					fieldName: 'ORG',
+					label: '<b><font>Oficina Zonal / Cultivo</font></b>',
 					visible: true,
 					stringFieldOption: 'text-box',
 				},
