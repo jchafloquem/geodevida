@@ -7,15 +7,15 @@
   transform: translateX(0);
 }
 #sidebar ul li a.active {
-  background-color: #1f2937;
+  background-color: #f8f9f9;
 }
 
 /* Estilos para el searchDiv */
 #searchDiv {
-  background-color: #125230; /* Color de fondo verde oscuro */
+  background-color: #0DA642; /* Color de fondo verde oscuro */
   padding: 2px 2px; /* Padding más cómodo */
   border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(50, 50, 50, 0);
   z-index: 20;
   display: flex;
   align-items: center;
@@ -26,7 +26,7 @@
 
 /* Estilos del input dentro de searchDiv */
 #searchDiv input {
-  border: 1px solid #ccc;
+  border: 1px solid #f8f9f9;
   padding: 6px 12px;
   border-radius: 6px;
   outline: none;
@@ -35,6 +35,6 @@
 
 /* Efecto de foco en el input */
 #searchDiv input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  border-color: #0D9DB7;
+  box-shadow: 0 0 5px rgba(13, 155, 215, 1);
 }

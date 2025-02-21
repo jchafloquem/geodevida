@@ -1,8 +1,8 @@
 <div
-	class="absolute top-[65px] z-50 h-[calc(100%-65px)] w-[48px] bg-primary flex flex-row border"
+	class="absolute top-[65px] z-50 h-[calc(100%-65px)] w-[48px] bg-secondary flex flex-row border"
 >
 	<div
-		class="z-50 bg-[#fff] w-[48px] flex flex-col items-start justify-between"
+		class="z-50 bg-[#ffff] w-[48px] flex flex-col items-start justify-between"
 	>
 		<div>
 			<button
@@ -10,7 +10,7 @@
 				class=""
 				color="accent"
 				[ngClass]="{
-					'text-white bg-primary rounded-none ': subMenu === 'capas'
+					'text-white bg-secondary rounded-none ': subMenu === 'capas'
 				}"
 				(click)="clickToogleMenu('capas')"
 			>
@@ -21,29 +21,18 @@
 				class=""
 				color="accent"
 				[ngClass]="{
-					'text-white bg-primary rounded-none ': subMenu === 'leyendas'
+					'text-white bg-secondary rounded-none ': subMenu === 'leyendas'
 				}"
 				(click)="clickToogleMenu('leyendas')"
 			>
 				<mat-icon class="material-icons-round">view_list</mat-icon>
 			</button>
-			<!-- <button
-				mat-icon-button
-				class=""
-				color="accent"
-				[ngClass]="{
-					'text-black bg-slate-400 rounded-none ': subMenu === 'filtros'
-				}"
-				(click)="clickToogleMenu('filtros')"
-			>
-				<mat-icon class="material-icons-round">search</mat-icon>
-			</button> -->
 			<button
 				mat-icon-button
 				class=""
 				color="accent"
 				[ngClass]="{
-					'text-white bg-primary rounded-none ': subMenu === 'acerca'
+					'text-white bg-secondary rounded-none ': subMenu === 'acerca'
 				}"
 				(click)="clickToogleMenu('acerca')"
 			>
@@ -54,7 +43,7 @@
 				class=""
 				color="accent"
 				[ngClass]="{
-					'text-white bg-primary rounded-none ': subMenu === 'streetview'
+					'text-white bg-secondary rounded-none ': subMenu === 'streetview'
 				}"
 				(click)="clickToogleMenu('streetview')"
 			>
@@ -64,7 +53,7 @@
 		<div>
 			<button
 				mat-icon-button
-				class="bg-primary text-white rounded-none"
+				class="bg-secondary text-white rounded-none"
 				color="primary"
 				(click)="clickToogleMenu()"
 			>
@@ -75,11 +64,11 @@
 		</div>
 	</div>
 	<div
-		class="z-40 h-[calc(100%-64px)] min-h-full bg-white w-[272px] menu__container top-0 absolute left-[48px] shadow-lg"
+		class="z-40 h-[calc(100%-64px)] min-h-full bg-[#ffff] w-[272px] menu__container top-0 absolute left-[48px] shadow-lg"
 		[ngClass]="{ 'menu__container--open': toogleMenu }"
 	>
 		<div
-			class="bg-primary h-[48px] w-full text-left text-base text-white font-medium flex flex-row justify-start items-end border-0 border-b-4 border-solid pl-2"
+			class="bg-secondary h-[48px] w-full text-left text-base text-white font-medium flex flex-row justify-start items-end border-0 border-b-4 border-solid pl-2"
 		>
 			<span>
 				{{ subMenu | uppercase }}
