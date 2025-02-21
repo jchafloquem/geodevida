@@ -6,7 +6,7 @@
 		class="absolute inset-0 bg-cover bg-center bg-no-repeat animate-zoom animate-background"
 	></div>
 	<!-- Overlay oscuro para mejorar contraste -->
-	<div class="absolute inset-0 bg-green-900 bg-opacity-60"></div>
+	<div class="absolute inset-0 bg-secondary bg-opacity-60"></div>
 	<!-- Imagen en la esquina superior izquierda -->
 	<div class="absolute top-0 left-0 p-4">
 		<!-- Imagen para pantallas grandes -->
@@ -25,7 +25,7 @@
 	<div class="relative z-10 text-white text-center">
 		<!-- Titulo -->
 		<h1
-			class="mt-2 text-4xl md:text-6xl font-bold p-2 text-center text-white hover:text-[#2091c7] transition-colors duration-300 flex items-center justify-center gap-2 flex-wrap"
+			class="mt-2 text-4xl md:text-6xl font-bold p-2 text-center text-white hover:text-[#0D9BD7] transition-colors duration-300 flex items-center justify-center gap-2 flex-wrap"
 		>
 			<img
 				src="assets/images/geoico.png"
@@ -36,7 +36,7 @@
 		</h1>
 		<!--Sub Titulo -->
 		<h1
-			class="mt-2 text-2xl md:text-4xl font-bold p-2 text-center text-white hover:text-[#2091c7] transition-colors duration-300 flex items-center justify-center gap-2 flex-wrap"
+			class="mt-2 text-2xl md:text-4xl font-bold p-2 text-center text-white hover:text-[#0D9BD7] transition-colors duration-300 flex items-center justify-center gap-2 flex-wrap"
 		>
 			DIRECCION DE MONITOREO
 		</h1>
@@ -54,7 +54,7 @@
 			<div *ngFor="let boton of botones" class="flex flex-col items-center">
 				<a
 					routerLink="{{ boton.link }}"
-					class="relative flex w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 justify-center items-center bg-[#2091c7] text-white text-sm font-normal rounded-full border-2 border-white shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 overflow-hidden"
+					class="relative flex w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 justify-center items-center bg-[#0D9BD7] text-white text-sm font-normal rounded-full border-2 border-white shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 overflow-hidden"
 				>
 					<img
 						[src]="boton.icono"

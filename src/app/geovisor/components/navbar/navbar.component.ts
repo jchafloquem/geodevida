@@ -44,7 +44,6 @@ export class NavbarComponent {
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 	async logout() {
 		await this._authState.logout();
-		this._router.navigateByUrl('auth/login')
-
+		this._router.navigateByUrl('auth/welcome')
 	}
 }
