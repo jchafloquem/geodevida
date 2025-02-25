@@ -11,6 +11,7 @@ export const routes: Routes = [
 	{
 		canActivateChild:[privateGuard()],
 		path: 'geovisor',
+		loadComponent: () => import('./geovisor/geovisor.component'),
 		loadChildren: () => import('./geovisor/geovisor.routes')
 	},
 	{

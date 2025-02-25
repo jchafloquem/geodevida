@@ -24,7 +24,11 @@ export default class GeovisorComponent implements OnInit {
     setTimeout(() => {
       this.spinner.hide();
     }, 3000);
+
+
+		console.log('Holi')
   }
+
 }
 
 

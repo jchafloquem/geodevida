@@ -1,15 +1,16 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../data-access/auth.service';
 import { hasEmailError, isRequired } from '../../utils/validators';
 import { toast } from 'ngx-sonner';
 import { GoogleButtomComponent } from '../../ui/google-buttom/google-buttom.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
-    imports: [RouterModule, ReactiveFormsModule, RouterLink, GoogleButtomComponent],
+    imports: [CommonModule, RouterModule, ReactiveFormsModule, GoogleButtomComponent],
     templateUrl: './login.component.html',
-    styles: ``
+    styleUrls: ['./login.component.scss']
 })
 export default class LoginComponent {
 	private _formBuilder = inject(FormBuilder);
@@ -30,29 +31,29 @@ export default class LoginComponent {
 		password: this._formBuilder.nonNullable.control('', [Validators.required])
 	});
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	async submit() {
-		if (this.form.invalid) return;
-		try {
-			const { email, password } = this.form.value;
-			if (!email || !password) return;
-			//console.log({ email, password });
-			await this._authService.signIn({ email, password });
-			toast.success('Usuario ingresado');
-			this._router.navigateByUrl('/geovisor/map')
-		} catch (error) {
-			toast.error('Ocurrio un error');
-		}
-	}
+	 async submit() {
+	 	if (this.form.invalid) return;
+	 	try {
+	 		const { email, password } = this.form.value;
+	 		if (!email || !password) return;
+	 		//console.log({ email, password });
+	 		await this._authService.signIn({ email, password });
+	 		toast.success('Usuario ingresado');
+	 		this._router.navigateByUrl('/geovisor/map')
+	 	} catch (error) {
+	 		toast.error('Ocurrio un error');
+	 	}
+	 }
 
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	async submitWithGoogle() {
-		try {
-			await this._authService.signInWithGoogle();
-			toast.success('Ingreso con Google');
-			this._router.navigateByUrl('/geovisor/map')
-		} catch (error) {
-			toast.error('Ocurrio un error');
-		}
-	}
+	 async submitWithGoogle() {
+	 	try {
+	 		await this._authService.signInWithGoogle();
+	 		toast.success('Ingreso con Google');
+	 		this._router.navigateByUrl('/geovisor/map')
+	 	} catch (error) {
+	 		toast.error('Ocurrio un error');
+	 	}
+	 }
 
 }

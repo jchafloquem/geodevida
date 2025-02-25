@@ -1,6 +1,6 @@
 # GeoVisor
 
-Desarrollado con [Angular CLI](https://github.com/angular/angular-cli) version 18.0.6.
+Desarrollado con [Angular CLI](https://github.com/angular/angular-cli) version 19
 
 ## Developers
 
