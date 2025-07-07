@@ -8,6 +8,6 @@ Jorge Chafloque Millones (jchafloque.gis@gmail.com - 998429784)
 
 ## Proyecto
 
-Proyecto de Geo DEVIDA (Noviembre 2024)
+Proyecto de Geo DEVIDA (Noviembre 2024 - Julio 2025)
 
 
