@@ -1,0 +1,29 @@
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 z-50 w-max">
+	<div class="bg-white rounded-t-lg w-full grid grid-cols-2 m:grid-cols-3 lg:grid-cols-6 justify-center place-items-center text-[12px]">
+		<div
+			class="bg-[#0D9BD7] border-0 border-t border-l border-b border-solid border-[#0D9BD7] text-white w-full text-center rounded-tl-lg px-1">
+			DATUM WGS84
+		</div>
+		<div class="border-0 border-t border-l border-b border-solid border-[#0D9BD7] w-full text-center px-1">
+			GCS Longitud: {{ _geovisorSharedService.gcsLongitude }}
+		</div>
+
+		<div class="border-0 border-t border-l border-b border-solid border-[#0D9BD7] w-full text-center px-1">
+			Latitud: {{ _geovisorSharedService.gcsLatitude }}
+		</div>
+		<div class="border-0 border-t border-l border-b border-solid border-[#0D9BD7] w-full text-center px-1">
+			UTM Zona: {{ _geovisorSharedService.utmZone }}
+		</div>
+		<div class="border-0 border-t border-l border-b border-solid border-[#0D9BD7] w-full text-center px-1">
+			Este: {{ _geovisorSharedService.utmEast }}
+		</div>
+		<div class="border-0 border-t border-l border-r border-b border-solid border-[#0D9BD7] w-full text-center px-1">
+			Norte: {{ _geovisorSharedService.utmNorth }}
+		</div>
+	</div>
+</div>
+<div class="absolute bottom-0 right-1 z-50 w-fit">
+	<div class="w-full text-[11px] text-center px-1 text-white" style="text-shadow: 1px 1px 2px black, 0 0 1em black, 0 0 0.2em black">
+		Escala: 1: {{ _geovisorSharedService.scale }}
+	</div>
+</div>

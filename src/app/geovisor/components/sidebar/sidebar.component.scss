@@ -1,0 +1,29 @@
+/* === Sidebar izquierdo principal === */
+#left-panel {
+  position: relative;
+  left: 5px;
+  z-index: 50;
+  overflow: visible;
+}
+
+/* === Iconos Material dentro del panel === */
+#left-panel .material-icons-round {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+/* === Panel oculto (cerrado) === */
+.menu__container {
+  left: -224px !important;
+  transition: left 0.5s ease;
+  border-radius: 0 8px 8px 0;
+}
+
+/* === Panel visible (abierto) === */
+.menu__container--open {
+  left: 48px !important;
+  transition: left 0.5s ease;
+}

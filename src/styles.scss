@@ -1,0 +1,128 @@
+/* === Tailwind Setup === */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Reset Básico === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+  border: none;
+  outline: none;
+}
+
+/* === Altura y Fuente === */
+html,
+body {
+  height: 100%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* === Mat Icon Buttons === */
+.mat-mdc-icon-button .mat-mdc-button-persistent-ripple {
+  border-radius: 0% !important;
+}
+
+/* === ArcGIS UI Ajustes === */
+.esri-ui-top-right.esri-ui-corner {
+  top: 80px;
+}
+
+.esri-widget {
+  box-sizing: border-box;
+  --esri-widget-padding-x: 15px;
+  --esri-widget-padding-y: 12px;
+  --esri-widget-padding: var(--esri-widget-padding-y) var(--esri-widget-padding-x);
+  background-color: #e5e7e9;
+  font-family: Avenir Next, Helvetica Neue, helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.3em;
+}
+
+.esri-component {
+  background-size: auto;
+  cursor: pointer;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  border-radius: 20px;
+  padding: 6px;
+  color: black;
+}
+
+.esri-component.esri-widget {
+  background-color: #fff;
+}
+
+.esri-component.esri-expand {
+  --esri-widget-panel-max-height: 5vh;
+  --calcite-sheet-max-height: var(--esri-widget-panel-max-height);
+  --calcite-sheet-height: auto;
+  min-width: 32px;
+  min-height: 32px;
+  color: black;
+}
+
+.esri-widget--button,
+.esri-widget--button.hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.esri-collapse__icon {
+  opacity: 0.5;
+  color: #000;
+}
+
+/* === Material Inputs y Campos === */
+:root {
+  --mdc-shape-small: 12px;
+  --matformRadius: 8px;
+}
+
+.mdc-text-field--outlined {
+  border-radius: var(--matformRadius) !important;
+  background-color: white;
+  --mdc-outlined-text-field-outline-width: 1px;
+  --mdc-outlined-text-field-focus-outline-width: 2px;
+  --mdc-outlined-text-field-container-shape: var(--matformRadius) !important;
+}
+
+div.mat-mdc-select-panel {
+  border-radius: var(--matformRadius) !important;
+}
+
+.mat-mdc-form-field-infix {
+  min-height: 40px !important;
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-floating-label:not(.mdc-floating-label--float-above) {
+  top: 50% !important;
+}
+
+.mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mdc-floating-label--float-above {
+  top: 28px !important;
+}
+
+.mdc-checkbox__background {
+  border-radius: 4px !important;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex,
+.mat-form-field-appearance-outline .mat-form-field-flex {
+  min-height: 38px !important;
+}
+
+/* === Botón Personalizado === */
+.buttonCustom {
+  height: 44px;
+  width: 44px;
+}
