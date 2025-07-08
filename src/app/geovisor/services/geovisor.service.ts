@@ -1,7 +1,7 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { LayerConfig } from '../interface/layerConfig';
 
-//*Libreria de ArcGIS 4.30
+//*LIBRERIA DEL API DE ARCGIS 4.33
 import * as projection from '@arcgis/core/geometry/projection';
 import BasemapGallery from '@arcgis/core/widgets/BasemapGallery.js';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion.js';
@@ -21,6 +21,8 @@ import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
 import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import PictureMarkerSymbol from "@arcgis/core/symbols/PictureMarkerSymbol";
 import Graphic from "@arcgis/core/Graphic";
+
+
 
 
 //* Popup y Clusters
@@ -138,6 +140,8 @@ const caribZA = new PopupTemplate({
     }
   ]
 });
+
+
 const restCaribSurveyPercepcionCafe = new PopupTemplate({
   // ✔️ Quitar el título evita el encabezado automático de Esri
   title: '',
@@ -211,9 +215,15 @@ const restCaribSurveyPercepcionCafe = new PopupTemplate({
     {
       type: 'text',
       text: `<div><b><font>Fecha de Envío:</font></b> {expression/fechaHoraFormateadaEnvio}</div>`
+    },
+    {
+      type: 'attachments' // ✔️ Galería automática de imágenes
     }
   ]
-});
+})
+
+
+
 const cafeRenderer = new SimpleRenderer({
   symbol: new SimpleMarkerSymbol({
     color: [255, 0, 0, 0.8],      // rojo
@@ -221,7 +231,7 @@ const cafeRenderer = new SimpleRenderer({
     size: 10,
     style: "circle"
   })
-}); 
+});
 @Injectable({
   providedIn: 'root',
 })
@@ -467,7 +477,7 @@ export class GeovisorSharedService {
             },
             haloColor: "black",
             haloSize: 1,
-            horizontalAlignment: "center", 
+            horizontalAlignment: "center",
             verticalAlignment: "middle"
           },
           labelPlacement: "always-horizontal"
@@ -497,7 +507,7 @@ export class GeovisorSharedService {
             },
             haloColor: "black",
             haloSize: 1,
-            horizontalAlignment: "center", 
+            horizontalAlignment: "center",
             verticalAlignment: "middle"
           },
           labelPlacement: "always-horizontal",
@@ -612,12 +622,13 @@ export class GeovisorSharedService {
         components: [],
       },
     });
-    //*Escala del Mapa
+
+    //*ESCALA DEL MAPA
     this.view.watch('scale', (scale) => {
       this.scale = this.formatScale(scale);
     });
 
-    //CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
+    //*CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
     const sourceDEVIDA = [
       {
         layer: new FeatureLayer({
@@ -724,7 +735,7 @@ export class GeovisorSharedService {
       });
     }); this.view;
     return this.view.when();
-  } //*Fin <initializeMap>
+  } //*FIN <InitializeMap>
 
   //*Inicio del Toogle
   toggleLayerVisibility(layerTitle: string, visibility: boolean): void {
