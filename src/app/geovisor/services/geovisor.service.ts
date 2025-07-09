@@ -668,7 +668,7 @@ export class GeovisorSharedService {
   initializeMap(mapViewEl: ElementRef): Promise<void> {
     const container = mapViewEl.nativeElement;
     this.layers.forEach((layerConfig) => {
-      // Validar que el URL tenga un layerId (por ejemplo, .../MapServer/0)
+
       const hasValidLayerId = /\/\d+$/.test(layerConfig.url);
       if (!hasValidLayerId) {
         console.warn(`⚠️ Se ignoró la capa "${layerConfig.title}" porque no tiene un layerId válido: ${layerConfig.url}`);
@@ -835,15 +835,32 @@ export class GeovisorSharedService {
     this.view.ui.add(new Zoom({ view: this.view }), { position: 'top-right', index: 1 });
     this.view.ui.add(new Home({ view: this.view }), { position: 'top-right', index: 2 });
     this.view.ui.add(new Locate({ view: this.view, icon: 'gps-on-f' }), { position: 'top-right', index: 3 });
-    this.view.ui.add(new Expand({
+
+    const galleryEl = document.createElement('arcgis-basemap-gallery') as any;
+    galleryEl.view = this.view;
+
+    const expand = new Expand({
+      view: this.view,
+      content: galleryEl,
+      expandTooltip: 'Galería de Mapas Base',
+      expandIcon: 'basemap' // ✅ propiedad correcta en 4.32+
+    });
+
+    this.view.ui.add(expand, { position: 'top-right', index: 4 });
+
+
+
+
+   /*  this.view.ui.add(new Expand({
       view: this.view,
       expandTooltip: 'Galeria de Mapas Base',
       content: new BasemapGallery({
         view: this.view,
         icon: 'move-to-basemap'})
-      }),{ position: 'top-right', index: 4 });
+      }),{ position: 'top-right', index: 4 }); */
 
-    this.legend = new Legend({ view: this.view, container: document.createElement('div') });
+
+      this.legend = new Legend({ view: this.view, container: document.createElement('div') });
     new CoordinateConversion({ view: this.view });
     this.view.when(() => {
       this.view.on('pointer-move', (event) => {
