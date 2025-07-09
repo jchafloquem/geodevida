@@ -13,19 +13,14 @@ import Locate from "@arcgis/core/widgets/Locate.js";
 import Map from '@arcgis/core/Map.js';
 import MapView from '@arcgis/core/views/MapView.js';
 import Point from '@arcgis/core/geometry/Point';
-import Search from "@arcgis/core/widgets/Search.js";
-import SpatialReference from '@arcgis/core/geometry/SpatialReference';
 import PopupTemplate from "@arcgis/core/PopupTemplate.js";
-import Zoom from '@arcgis/core/widgets/Zoom.js';
-import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
+import Search from "@arcgis/core/widgets/Search.js";
 import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
-import PictureMarkerSymbol from "@arcgis/core/symbols/PictureMarkerSymbol";
-import Graphic from "@arcgis/core/Graphic";
+import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
+import SpatialReference from '@arcgis/core/geometry/SpatialReference';
+import Zoom from '@arcgis/core/widgets/Zoom.js';
 
-
-
-
-//* Popup y Clusters
+//* POPUP & CLUSTERS
 const popupLimitesOficinaZonal = new PopupTemplate({
   title: '',
   outFields: ['*'],
@@ -140,9 +135,7 @@ const caribZA = new PopupTemplate({
     }
   ]
 });
-
-
-const restCaribSurveyPercepcionCafe = new PopupTemplate({
+const restCaribSurveyPercepcionCacao = new PopupTemplate({
   // ✔️ Quitar el título evita el encabezado automático de Esri
   title: '',
   // ✔️ Este popup sobreescribe totalmente el predeterminado
@@ -221,8 +214,85 @@ const restCaribSurveyPercepcionCafe = new PopupTemplate({
     }
   ]
 })
-
-
+const restCaribSurveyPercepcionCafe = new PopupTemplate({
+  // ✔️ Quitar el título evita el encabezado automático de Esri
+  title: '',
+  // ✔️ Este popup sobreescribe totalmente el predeterminado
+  outFields: ['*'],
+  expressionInfos: [
+    {
+      name: 'nombreTecnico',
+      title: 'Técnico interpretado',
+      expression: `
+        var cod = $feature.tecnico;
+        if (cod == "08") {
+          return "Castolo Jose Ramos Cristobal";
+        } else if (cod == "01") {
+          return "Susana Lucia Velarde Rosales";
+        } else if (cod == "03") {
+          return "Felix Quispe Bendezu";
+        } else if (cod == "06") {
+          return "Dina Ayala Rodriguez";
+        } else {
+          return "Código desconocido: " + cod;
+        }
+      `
+    },
+    {
+      name: 'fechaHoraFormateada',
+      title: 'Fecha y hora formateada',
+      expression: `
+        var f = $feature.fecha;
+        if (IsEmpty(f)) {
+          return "Sin fecha";
+        }
+        var dia = Text(f, 'DD');
+        var mes = Text(f, 'MM');
+        var anio = Text(f, 'YYYY');
+        var hora = Text(f, 'HH');
+        var minuto = Text(f, 'mm');
+        return dia + "/" + mes + "/" + anio + " " + hora + ":" + minuto;
+      `
+    },
+    {
+      name: 'fechaHoraFormateadaEnvio',
+      title: 'Fecha y hora formateada',
+      expression: `
+        var f = $feature.EditDate;
+        if (IsEmpty(f)) {
+          return "Sin fecha";
+        }
+        var dia = Text(f, 'DD');
+        var mes = Text(f, 'MM');
+        var anio = Text(f, 'YYYY');
+        var hora = Text(f, 'HH');
+        var minuto = Text(f, 'mm');
+        return dia + "/" + mes + "/" + anio + " " + hora + ":" + minuto;
+      `
+    }
+  ],
+  content: [
+    {
+      type: 'text',
+      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Nro PTA: {nro_pta}</div>`
+    },
+    {
+      type: 'text',
+      text: `<div style="margin-top: 8px;"><b><font>Técnico:</font></b> {expression/nombreTecnico}</div>`
+    },
+    {
+      type: 'text',
+      text: `<div><b><font>Fecha de monitoreo:</font></b> {expression/fechaHoraFormateada}</div>`
+    },
+    {
+      type: 'text',
+      text: `<div><b><font>Fecha de Envío:</font></b> {expression/fechaHoraFormateadaEnvio}</div>`
+    },
+    {
+      type: 'attachments' // ✔️ Galería automática de imágenes
+    }
+  ]
+});
 
 const cafeRenderer = new SimpleRenderer({
   symbol: new SimpleMarkerSymbol({
@@ -232,10 +302,16 @@ const cafeRenderer = new SimpleRenderer({
     style: "circle"
   })
 });
+
 @Injectable({
   providedIn: 'root',
 })
 export class GeovisorSharedService {
+
+
+
+
+
   public mapa = new Map({ basemap: 'satellite' });
   public view!: MapView;
 
@@ -256,7 +332,11 @@ export class GeovisorSharedService {
   public restCaribSurveyPercepcionCafe = {
     serviceBase: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services',
     capas: {
+      infraestructura:'FICHA_DE_MONITOREO_TIPOLOGÍA_INFRAESTRUCTURA_vista/FeatureServer/0',
+      cacao:'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_–_PTA_DEVIDA_vista/FeatureServer/0',
       cafe: 'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_%E2%80%93_CAFE_vista/FeatureServer/0',
+      registroForestal:'REGISTRO_FORESTAL_vista/FeatureServer/0',
+      medidasAmbientales:'MEDIDAS_AMBIENTALES_vista/FeatureServer/0'
     }
   }
   //*SERVICIOS GLOBALES
@@ -277,10 +357,49 @@ export class GeovisorSharedService {
     }
   }
   public layers: LayerConfig[] = [
-
-    //*Servicios de capas GEODEVIDA-CARIB
+    //*SERVICIOS REST DE GEODEVIDA-CARIB
     {
-      title: 'CUESTIONARIO PERCEPCION-CAFE',
+      title: 'CUESTIONARIO MEDIDAS AMBIENTALES',
+      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.medidasAmbientales}`,
+      popupTemplate: undefined,
+      outFields: ['*'],
+      visible: true,
+      labelsVisible: true,
+      opacity: 1,
+      group: 'MONITOREO CAFE',
+    },
+    {
+      title: 'CUESTIONARIO REGISTRO FORESTAL',
+      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.registroForestal}`,
+      popupTemplate: undefined,
+      outFields: ['*'],
+      visible: true,
+      labelsVisible: true,
+      opacity: 1,
+      group: 'MONITOREO CAFE',
+    },
+    {
+      title: 'CUESTIONARIO INFRAESTRUCTURA',
+      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.infraestructura}`,
+      popupTemplate: undefined,
+      outFields: ['*'],
+      visible: true,
+      labelsVisible: true,
+      opacity: 1,
+      group: 'MONITOREO CAFE',
+    },
+    {
+      title: 'CUESTIONARIO PERCEPCION CACAO',
+      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.cacao}`,
+      popupTemplate: undefined,
+      outFields: ['*'],
+      visible: true,
+      labelsVisible: true,
+      opacity: 1,
+      group: 'MONITOREO CAFE',
+    },
+    {
+      title: 'CUESTIONARIO PERCEPCION CAFE',
       url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.cafe}`,
       labelingInfo: [
         {
@@ -530,18 +649,18 @@ export class GeovisorSharedService {
       labelsVisible: false,
       group: 'LIMITES POLITICOS',
     },
-
   ];
+
   public lis: [] = [];
   public searchTerm = '';
   public filteredArray: [] = [];
   //* Footer coordenadas
-  public gcsLongitude = '--';
-  public gcsLatitude = '--';
-  public utmZone = '--';
-  public utmEast = '--';
-  public utmNorth = '--';
-  public scale = '--';
+  public gcsLongitude = '00.00';
+  public gcsLatitude = '00.00';
+  public utmZone = '00.00';
+  public utmEast = '00.00';
+  public utmNorth = '00.00';
+  public scale = '00.00';
   public legend!: Legend;
 
   constructor() { }
@@ -549,62 +668,60 @@ export class GeovisorSharedService {
   initializeMap(mapViewEl: ElementRef): Promise<void> {
     const container = mapViewEl.nativeElement;
     this.layers.forEach((layerConfig) => {
-      let featureLayer;
-      if (layerConfig.popupTemplate == undefined) {
-        featureLayer = new FeatureLayer({
-          url: layerConfig.url,
-          title: layerConfig.title,
-          visible: layerConfig.visible,
-          outFields: layerConfig.outFields,
-          featureReduction: layerConfig.featureReduction,
-          opacity: layerConfig.opacity,
-          labelingInfo: layerConfig.labelingInfo,
-        });
+      // Validar que el URL tenga un layerId (por ejemplo, .../MapServer/0)
+      const hasValidLayerId = /\/\d+$/.test(layerConfig.url);
+      if (!hasValidLayerId) {
+        console.warn(`⚠️ Se ignoró la capa "${layerConfig.title}" porque no tiene un layerId válido: ${layerConfig.url}`);
+        return;
       }
-      else if (layerConfig.popupTemplate && layerConfig.renderer == undefined) {
-        featureLayer = new FeatureLayer({
-          url: layerConfig.url,
-          title: layerConfig.title,
-          popupTemplate: layerConfig.popupTemplate,
-          labelsVisible: layerConfig.labelsVisible,
-          visible: layerConfig.visible,
-          featureReduction: layerConfig.featureReduction,
-          opacity: layerConfig.opacity,
-          labelingInfo: layerConfig.labelingInfo,
-        });
-      }
-      else if (layerConfig.popupTemplate && layerConfig.renderer && layerConfig.labelingInfo == undefined) {
-        featureLayer = new FeatureLayer({
-          url: layerConfig.url,
-          title: layerConfig.title,
-          popupTemplate: layerConfig.popupTemplate,
-          renderer: layerConfig.renderer,
-          visible: layerConfig.visible,
-          labelsVisible: layerConfig.labelsVisible,
-          featureReduction: layerConfig.featureReduction,
-          opacity: layerConfig.opacity,
-          labelingInfo: layerConfig.labelingInfo,
-        });
-      }
-      else {
-        featureLayer = new FeatureLayer({
-          url: layerConfig.url,
-          title: layerConfig.title,
-          popupTemplate: layerConfig.popupTemplate,
-          labelingInfo: layerConfig.labelingInfo,
-          outFields: layerConfig.outFields,
-          visible: layerConfig.visible,
-          renderer: layerConfig.renderer,
-          maxScale: layerConfig.maxScale,
-          minScale: layerConfig.minScale,
-          labelsVisible: layerConfig.labelsVisible,
-          featureReduction: layerConfig.featureReduction,
-          opacity: layerConfig.opacity,
 
-        });
+      const layerOptions: any = {
+        url: layerConfig.url,
+        title: layerConfig.title,
+        visible: layerConfig.visible,
+      };
+
+      if (layerConfig.popupTemplate) {
+        layerOptions.popupTemplate = layerConfig.popupTemplate;
       }
+
+      if (layerConfig.renderer) {
+        layerOptions.renderer = layerConfig.renderer;
+      }
+
+      if (layerConfig.labelingInfo) {
+        layerOptions.labelingInfo = layerConfig.labelingInfo;
+      }
+
+      if (layerConfig.labelsVisible !== undefined) {
+        layerOptions.labelsVisible = layerConfig.labelsVisible;
+      }
+
+      if (layerConfig.outFields) {
+        layerOptions.outFields = layerConfig.outFields;
+      }
+
+      if (layerConfig.maxScale !== undefined) {
+        layerOptions.maxScale = layerConfig.maxScale;
+      }
+
+      if (layerConfig.minScale !== undefined) {
+        layerOptions.minScale = layerConfig.minScale;
+      }
+
+      if (layerConfig.featureReduction) {
+        layerOptions.featureReduction = layerConfig.featureReduction;
+      }
+
+      if (layerConfig.opacity !== undefined) {
+        layerOptions.opacity = layerConfig.opacity;
+      }
+
+      const featureLayer = new FeatureLayer(layerOptions);
       this.mapa.add(featureLayer);
     });
+
+
     //*Creacion de la Vista del Mapa
     this.view = new MapView({
       container: container,

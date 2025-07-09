@@ -5,19 +5,19 @@ import LabelClass from '@arcgis/core/layers/support/LabelClass.js';
 
 
 export interface LayerConfig {
-	featureReduction?: any;
-	geometryType?: string;
-	group: string; //* Agrupación de capas
-	labelingInfo: any,
-
-	labelsVisible?:boolean
-	maxScale?: number;
-	minScale?: number;
-	outFields?: string[];
-	popupTemplate?: PopupTemplate;
-	renderer?: any;
-	title: string;
-	url: string;
-	visible: boolean;
-  opacity?:number;
+  featureReduction?: any;
+  geometryType?: string;
+  group: string;
+  labelingInfo?: any;
+  labelsVisible?: boolean;
+  maxScale?: number;
+  minScale?: number;
+  outFields?: string[];
+  popupTemplate?: any;
+  renderer?: any;
+  title: string;
+  url: string;
+  visible: boolean;
+  opacity?: number;
 }
+
