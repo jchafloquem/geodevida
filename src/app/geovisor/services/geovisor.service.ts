@@ -3,13 +3,10 @@ import { LayerConfig } from '../interface/layerConfig';
 
 //*LIBRERIA DEL API DE ARCGIS 4.33
 import * as projection from '@arcgis/core/geometry/projection';
-import BasemapGallery from '@arcgis/core/widgets/BasemapGallery.js';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion.js';
 import Expand from '@arcgis/core/widgets/Expand.js';
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer.js';
-import Home from '@arcgis/core/widgets/Home.js';
 import Legend from '@arcgis/core/widgets/Legend.js';
-import Locate from "@arcgis/core/widgets/Locate.js";
 import Map from '@arcgis/core/Map.js';
 import MapView from '@arcgis/core/views/MapView.js';
 import Point from '@arcgis/core/geometry/Point';
@@ -19,6 +16,11 @@ import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
 import SpatialReference from '@arcgis/core/geometry/SpatialReference';
 import Zoom from '@arcgis/core/widgets/Zoom.js';
+
+import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
+
+
+
 
 //* POPUP & CLUSTERS
 const popupLimitesOficinaZonal = new PopupTemplate({
@@ -741,9 +743,13 @@ export class GeovisorSharedService {
     });
 
     //*ESCALA DEL MAPA
-    this.view.watch('scale', (scale) => {
-      this.scale = this.formatScale(scale);
-    });
+    reactiveUtils.watch(
+      () => this.view.scale,
+      (scale) => {
+        this.scale = this.formatScale(scale);
+      }
+    );
+
 
     //*CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
     const sourceDEVIDA = [
@@ -798,7 +804,7 @@ export class GeovisorSharedService {
       view: this.view,
       sources: sourceDEVIDA,
       includeDefaultSources: false, // desactiva el World Geocoding Service
-      allPlaceholder: 'Buscar dirección o lugar',
+      allPlaceholder: 'Buscar',
       label: 'Buscar',
       locationEnabled: true,
       maxResults: 10,
@@ -831,44 +837,39 @@ export class GeovisorSharedService {
       }
     });
 
-    //{position:'top-right', index:0})
+
     this.view.ui.add(new Zoom({ view: this.view }), { position: 'top-right', index: 1 });
-    this.view.ui.add(new Home({ view: this.view }), { position: 'top-right', index: 2 });
-    this.view.ui.add(new Locate({ view: this.view, icon: 'gps-on-f' }), { position: 'top-right', index: 3 });
 
+    const homeEl = document.createElement('arcgis-home') as any;
+          homeEl.view = this.view;
+    this.view.ui.add(homeEl, {position: 'top-right',index: 2});
+
+    const locateEl = document.createElement('arcgis-locate') as any;
+          locateEl.view = this.view;
+    this.view.ui.add(locateEl, {position: 'top-right',index: 3});
+
+    //Nueva version del boton de Galeria de mapas
     const galleryEl = document.createElement('arcgis-basemap-gallery') as any;
-    galleryEl.view = this.view;
-
+          galleryEl.view = this.view;
     const expand = new Expand({
       view: this.view,
       content: galleryEl,
       expandTooltip: 'Galería de Mapas Base',
-      expandIcon: 'basemap' // ✅ propiedad correcta en 4.32+
+      expandIcon: 'basemap'
     });
 
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
-
-
-
-
-   /*  this.view.ui.add(new Expand({
-      view: this.view,
-      expandTooltip: 'Galeria de Mapas Base',
-      content: new BasemapGallery({
-        view: this.view,
-        icon: 'move-to-basemap'})
-      }),{ position: 'top-right', index: 4 }); */
-
-
-      this.legend = new Legend({ view: this.view, container: document.createElement('div') });
+    this.legend = new Legend({ view: this.view, container: document.createElement('div') });
     new CoordinateConversion({ view: this.view });
     this.view.when(() => {
       this.view.on('pointer-move', (event) => {
         const point: any = this.view.toMap({ x: event.x, y: event.y });
         if (point) this.updateCoordinates(point.latitude, point.longitude);
       });
-    }); this.view;
+    });
+
     return this.view.when();
+
   } //*FIN <InitializeMap>
 
   //*Inicio del Toogle

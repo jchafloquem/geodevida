@@ -120,9 +120,11 @@ div.mat-mdc-select-panel {
 .mat-form-field-appearance-outline .mat-form-field-flex {
   min-height: 38px !important;
 }
-
-/* === Botón Personalizado === */
-.buttonCustom {
-  height: 44px;
-  width: 44px;
+arcgis-home,
+arcgis-locate {
+  display: block;
+  margin: 0 !important;
+  padding: 0 !important;
 }
+
+
