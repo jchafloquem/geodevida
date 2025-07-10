@@ -32,29 +32,36 @@ export default class LoginComponent {
 		password: this._formBuilder.nonNullable.control('', [Validators.required])
 	});
 	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	 async submit():Promise<void> {
-	 	if (this.form.invalid) return;
-	 	try {
-	 		const { email, password } = this.form.value;
-	 		if (!email || !password) return;
-	 		//console.log({ email, password });
-	 		await this._authService.signIn({ email, password });
-	 		toast.success('Usuario ingresado');
-	 		this._router.navigateByUrl('/geovisor/map')
-	 	} catch (error) {
-	 		toast.error('Ocurrio un error');
-	 	}
-	 }
+  async submit(): Promise<void> {
+    if (this.form.invalid) return;
+    try {
+      const { email, password } = this.form.value;
+      if (!email || !password) return;
 
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-	 async submitWithGoogle():Promise<void> {
-	 	try {
-	 		await this._authService.signInWithGoogle();
-	 		toast.success('Ingreso con cuenta de Google');
-	 		this._router.navigateByUrl('/geovisor/map')
-	 	} catch (error) {
-	 		toast.error('Ocurrio un error');
-	 	}
-	 }
+      await this._authService.signIn({ email, password });
+      toast.success('Usuario ingresado');
+
+      const redirectUrl = localStorage.getItem('redirectUrl') || '/geovisor/map';
+      localStorage.removeItem('redirectUrl');
+      this._router.navigateByUrl(redirectUrl);
+
+    } catch (error) {
+      toast.error('Ocurrió un error');
+    }
+  }
+
+  async submitWithGoogle(): Promise<void> {
+    try {
+      await this._authService.signInWithGoogle();
+      toast.success('Ingreso con cuenta de Google');
+
+      const redirectUrl = localStorage.getItem('redirectUrl') || '/geovisor/map';
+      localStorage.removeItem('redirectUrl');
+      this._router.navigateByUrl(redirectUrl);
+
+    } catch (error) {
+      toast.error('Ocurrió un error');
+    }
+  }
 
 }
