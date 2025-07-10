@@ -1,19 +1,6 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página en Construcción</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="text-center">
-        <h1 class="text-4xl font-bold text-gray-800">🚧 Página en Construcción 🚧</h1>
-        <p class="text-lg text-gray-600 mt-4">Estamos trabajando para brindarte una mejor experiencia.</p>
-        <p class="text-gray-500 mt-2">¡Vuelve pronto!</p>
-        <div class="mt-6">
-            <a href="/" class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700">Volver al inicio</a>
-        </div>
-    </div>
-</body>
-</html>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+  <div id="mapView" class="h-[400px] w-full border rounded"></div>
+  <div class="p-2">
+    <canvas id="graficoDistritos" width="400" height="400"></canvas>
+  </div>
+</div>

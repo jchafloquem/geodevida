@@ -15,7 +15,7 @@ export default [
 			{
 				path: 'dashboard',
         canActivate: [publicGuard()],
-				loadComponent: () => import('./pages/dashboard/dashboard.component'),
+				loadComponent: () => import('./pages/dashboard/dashboard.component').then ( m => m.DashboardComponent),
 			},
 			{
 				path: 'metadata',

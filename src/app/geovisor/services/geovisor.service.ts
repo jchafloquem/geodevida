@@ -475,13 +475,13 @@ export class GeovisorSharedService {
           },
           symbol: {
             type: "text",
-            color: "#00274D",
+            color: 'white',
             font: {
-              size: 8,
+              size: 10,
               family: "Arial",
               weight: "bold"
             },
-            haloColor: "white",
+            haloColor: "#0084A8",
             haloSize: 1
           },
           labelPlacement: "always-horizontal"
