@@ -482,7 +482,7 @@ export class GeovisorSharedService {
               weight: "bold"
             },
             haloColor: "white",
-            haloSize: 2
+            haloSize: 1
           },
           labelPlacement: "always-horizontal"
         }
@@ -491,7 +491,6 @@ export class GeovisorSharedService {
       renderer: undefined,
       visible: true,
       labelsVisible: true,
-      opacity: 1,
       group: 'CARTOGRAFIA DEVIDA',
     },
     //*CARGA DE CAPAS DE HIDROGRAFIA
