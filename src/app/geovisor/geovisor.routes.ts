@@ -5,7 +5,7 @@ export default [
 			{
 				path: 'map',
         canActivate: [privateGuard()],
-				loadComponent: () => import('./pages/map/map.component'),
+				loadComponent: () => import('./pages/map/map.component').then(m => m.MapComponent),
 			},
 			{
 				path: 'repositorio',
