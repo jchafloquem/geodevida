@@ -9,7 +9,7 @@ export default [
 			},
 			{
 				path: 'repositorio',
-        canActivate: [privateGuard()],
+        canActivate: [publicGuard()],
 				loadComponent: () => import('./pages/repositorio/repositorio.component'),
 			},
 			{
