@@ -4,6 +4,8 @@ import { privateGuard, publicGuard } from './core/auth.guard';
 export const routes: Routes = [
 	{
 		path: 'auth',
+    canActivate: [publicGuard()],
+    loadComponent: () => import('./auth/auth.component'),
 		loadChildren: () => import('./auth/auth.routes')
 	},
 	{
@@ -13,7 +15,7 @@ export const routes: Routes = [
 	},
 	{
 		path: '',
-		redirectTo: 'auth',
+		redirectTo: '/auth',
 		pathMatch: 'full',
 	},
 	{
