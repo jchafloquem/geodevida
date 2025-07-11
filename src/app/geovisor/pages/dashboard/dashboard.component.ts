@@ -40,7 +40,8 @@ export class DashboardComponent implements AfterViewInit {
 
     dashboardCultivos.load().then(() => {
       this.generarGraficoCultivosPorTipo(dashboardCultivos);
-
+      this.generarGraficoCultivosPorDepartamento(dashboardCultivos); // ✅ activado
+      this.generarGraficoPorFecha(dashboardCultivos); // o cualquier otra capa
 
     }).catch(err => {
       console.error('Error cargando la capa:', err);
@@ -306,10 +307,177 @@ export class DashboardComponent implements AfterViewInit {
   });
   }
 
+  public totalRegistrosPorDepartamento = 0;
+  generarGraficoCultivosPorDepartamento(layer: FeatureLayer) {
+    const pageSize = 2000;
+    const conteo: Record<string, number> = {};
 
+    const getAllDepartamentos = async () => {
+      const total = await layer.queryFeatureCount({ where: '1=1' });
+      let fetched = 0;
 
+      while (fetched < total) {
+        const result = await layer.queryFeatures({
+          where: '1=1',
+          outFields: ['depart'],
+          returnGeometry: false,
+          start: fetched,
+          num: pageSize
+        });
 
+        result.features.forEach(f => {
+          const depRaw = f.attributes?.depart;
+          const dep = depRaw?.toString().trim();
 
+          if (dep && dep.length > 0 && dep.toLowerCase() !== 'null') {
+            conteo[dep] = (conteo[dep] || 0) + 1;
+          }
+        });
+
+        fetched += result.features.length;
+      }
+
+      // Ordenar y mostrar solo los 20 más frecuentes
+      const sorted = Object.entries(conteo)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 20); // 👈 muestra top 20
+
+      const labels = sorted.map(([dep]) => dep);
+      const values = sorted.map(([_, count]) => count);
+      this.totalRegistrosPorDepartamento = values.reduce((acc, val) => acc + val, 0);
+
+      new Chart('graficoCultivoDepartamento', {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Cantidad de registros por departamento',
+            data: values,
+            backgroundColor: labels.map((_, i) => `hsl(${i * 30 % 360}, 70%, 60%)`),
+            borderRadius: 6,
+            barPercentage: 0.7
+          }]
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'y', // 📊 barras horizontales
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Departamentos por registros de cultivos',
+              font: { size: 18 }
+            },
+            datalabels: {
+              anchor: 'end',
+              align: 'right',
+              formatter: value => value.toString(),
+              color: '#000',
+              font: { weight: 'bold' }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0 // sin decimales
+              }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    };
+
+    getAllDepartamentos().catch(err => {
+      console.error('❌ Error al consultar departamentos:', err);
+    });
+  }
+
+  generarGraficoPorFecha(layer: FeatureLayer) {
+    const pageSize = 2000;
+    const conteo: Record<string, number> = {};
+
+    const getAllFechas = async () => {
+      const total = await layer.queryFeatureCount({ where: '1=1' });
+      let fetched = 0;
+
+      while (fetched < total) {
+        const result = await layer.queryFeatures({
+          where: '1=1',
+          outFields: ['fecha'],
+          returnGeometry: false,
+          start: fetched,
+          num: pageSize
+        });
+
+        result.features.forEach(f => {
+          const rawFecha = f.attributes?.fecha;
+          if (typeof rawFecha === 'string' && rawFecha.includes('-')) {
+            const [year, month] = rawFecha.split('-');
+            const clave = `${year}-${month}`;
+            conteo[clave] = (conteo[clave] || 0) + 1;
+          }
+        });
+
+        fetched += result.features.length;
+      }
+
+      const sorted = Object.entries(conteo)
+        .sort(([a], [b]) => a.localeCompare(b)); // orden cronológico
+
+      const labels = sorted.map(([clave]) => clave);
+      const values = sorted.map(([_, count]) => count);
+
+      new Chart('graficoPorFecha', {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Registros por mes y año',
+            data: values,
+            backgroundColor: '#69b3a2',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            title: {
+              display: true,
+              text: 'Distribución por año y mes',
+              font: { size: 18 }
+            },
+            datalabels: {
+              anchor: 'end',
+              align: 'top',
+              formatter: value => value.toString(),
+              color: '#000',
+              font: { weight: 'bold' }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                autoSkip: true,
+                maxRotation: 45,
+                minRotation: 45
+              }
+            },
+            y: {
+              beginAtZero: true
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    };
+
+    getAllFechas().catch(err => {
+      console.error('❌ Error al consultar fechas:', err);
+    });
+  }
 
 }
 

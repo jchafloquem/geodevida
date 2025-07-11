@@ -38,6 +38,18 @@
         <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Distribución por tipo de cultivo</h2>
         <canvas id="graficoCultivoTipo" class="w-full max-h-[400px] mx-auto"></canvas>
       </div>
+      <div class="bg-white rounded-2xl shadow-md border p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+          Registros por Departamento
+        </h2>
+        <p class="text-sm text-center mb-4 text-gray-600">
+          Total: {{ totalRegistrosPorDepartamento }}
+        </p>
+        <canvas id="graficoCultivoDepartamento" class="w-full max-h-[600px]"></canvas>
+        <canvas id="graficoPorFecha" class="max-w-4xl mx-auto my-4"></canvas>
+
+      </div>
+
     </div>
 
   </div>
