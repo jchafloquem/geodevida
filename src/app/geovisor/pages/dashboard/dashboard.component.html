@@ -1,6 +1,25 @@
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-  <div id="mapView" class="h-[400px] w-full border rounded"></div>
-  <div class="p-2">
-    <canvas id="graficoDistritos" width="400" height="400"></canvas>
+<div class="p-4 space-y-6">
+    <!-- 📦 Card del total de registros -->
+    <div class="bg-white rounded-2xl shadow-md border p-4 w-fit mx-auto text-center">
+      <h2 class="text-lg font-semibold text-gray-800 mb-2">
+        Total de registros
+      </h2>
+      <p class="text-4xl font-bold text-green-600">
+        {{ totalRegistros }}
+      </p>
+    </div>
+
+  <!-- 📊 Card del gráfico -->
+  <div class="bg-white rounded-2xl shadow-md border p-4 w-fit mx-auto">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+      Encuestas por distrito
+    </h2>
+    <canvas id="graficoDistritos"></canvas>
+  </div>
+  <div class="bg-white rounded-2xl shadow-md border p-4 w-fit mx-auto">
+    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+      Encuestas por tecnico
+    </h2>
+    <canvas id="graficoTecnicos"></canvas>
   </div>
 </div>
