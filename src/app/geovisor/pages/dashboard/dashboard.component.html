@@ -1,25 +1,32 @@
-<div class="p-4 space-y-6">
-    <!-- 📦 Card del total de registros -->
-    <div class="bg-white rounded-2xl shadow-md border p-4 w-fit mx-auto text-center">
-      <h2 class="text-lg font-semibold text-gray-800 mb-2">
-        Total de registros
-      </h2>
-      <p class="text-4xl font-bold text-green-600">
-        {{ totalRegistros }}
-      </p>
-    </div>
+<div class="flex bg-slate-100 text-black w-screen h-screen antialiased selection:bg-blue-600 selection:text-white overflow-hidden">
+  <!-- 🧱 Wrapper flex-col en móvil, flex-row en escritorio -->
+  <div class="flex flex-col md:flex-row w-full h-full overflow-hidden">
 
-  <!-- 📊 Card del gráfico -->
-  <div class="bg-white rounded-2xl shadow-md border p-4 w-fit mx-auto">
-    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
-      Encuestas por distrito
-    </h2>
-    <canvas id="graficoDistritos"></canvas>
-  </div>
-  <div class="bg-white rounded-2xl shadow-md border p-4 w-fit mx-auto">
-    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
-      Encuestas por tecnico
-    </h2>
-    <canvas id="graficoTecnicos"></canvas>
+    <!-- 📚 Menú lateral -->
+    <app-sidemenu class="w-full md:w-64 h-fit md:h-full bg-[#323232]"></app-sidemenu>
+
+    <!-- 📊 Contenido principal -->
+    <div class="flex-1 overflow-y-auto px-2 mt-2">
+      <div class="p-4 space-y-6">
+        <!-- 📦 Total de registros -->
+        <div class="bg-white rounded-2xl shadow-md border p-4 w-fit mx-auto text-center">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4">
+            Total de registros
+          </h2>
+          <p class="text-4xl font-bold text-green-600">
+            {{ totalRegistros }}
+          </p>
+        </div>
+        <!-- 📈 Gráficos -->
+        <div class="bg-white rounded-2xl shadow-md border p-4 w-fit mx-auto">
+          <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+            Encuestas por límite político
+          </h2>
+          <canvas id="graficoDepartamento"></canvas>
+          <canvas id="graficoProvincia"></canvas>
+          <canvas id="graficoDistritos"></canvas>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
