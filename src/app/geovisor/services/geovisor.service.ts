@@ -329,6 +329,7 @@ export class GeovisorSharedService {
       limiteProvincia: 'services/DPM_LIMITES_PIRDAIS/MapServer/7',
       limiteDistrito: 'services/DPM_LIMITES_PIRDAIS/MapServer/8',
       limitePeru: 'services/DPM_LIMITES_PIRDAIS/MapServer/9',
+      limiteCultivo: 'services/DPM_LIMITES_PIRDAIS/MapServer/10',
     }
   }
   public restCaribSurveyPercepcionCafe = {
@@ -360,6 +361,16 @@ export class GeovisorSharedService {
   }
   public layers: LayerConfig[] = [
     //*SERVICIOS REST DE GEODEVIDA-CARIB
+    {
+      title: 'CULTIVO',
+      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteCultivo}`,
+      popupTemplate: undefined,
+      outFields: ['*'],
+      visible: true,
+      labelsVisible: true,
+      opacity: 1,
+      group: 'MONITOREO CAFE',
+    },
     {
       title: 'CUESTIONARIO MEDIDAS AMBIENTALES',
       url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.medidasAmbientales}`,
