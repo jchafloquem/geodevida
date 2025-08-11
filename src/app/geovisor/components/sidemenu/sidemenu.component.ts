@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { Router, Route, RouterModule } from '@angular/router';
-
 @Component({
   selector: 'app-sidemenu',
   standalone: true,
@@ -13,7 +12,6 @@ export class SidemenuComponent {
     const router = inject(Router);
     const allRoutes = router.config;
     const excluded = ['error', 'login', '404'];
-
     const childRoutes = allRoutes
       .map(route => {
         const children = route.children ?? [];
@@ -26,9 +24,7 @@ export class SidemenuComponent {
         !excluded.includes(route.path) &&
         route.loadComponent
       );
-
     this.menuRoutes = childRoutes;
-
     console.log('📦 Rutas hijas visibles (excluyendo error):', this.menuRoutes);
   }
 }

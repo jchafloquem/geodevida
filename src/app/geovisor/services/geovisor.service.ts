@@ -16,11 +16,7 @@ import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
 import SpatialReference from '@arcgis/core/geometry/SpatialReference';
 import Zoom from '@arcgis/core/widgets/Zoom.js';
-
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
-
-
-
 
 //* POPUP & CLUSTERS
 const popupLimitesOficinaZonal = new PopupTemplate({
@@ -295,7 +291,6 @@ const restCaribSurveyPercepcionCafe = new PopupTemplate({
     }
   ]
 });
-
 const cafeRenderer = new SimpleRenderer({
   symbol: new SimpleMarkerSymbol({
     color: [255, 0, 0, 0.8],      // rojo
@@ -304,19 +299,12 @@ const cafeRenderer = new SimpleRenderer({
     style: "circle"
   })
 });
-
 @Injectable({
   providedIn: 'root',
 })
 export class GeovisorSharedService {
-
-
-
-
-
   public mapa = new Map({ basemap: 'satellite' });
   public view!: MapView;
-
   //*SERVICIO SISCOD-DEVIDA
   public restGeoDevida = {
     serviceBase: 'https://siscod.devida.gob.pe/server/rest',
@@ -367,7 +355,7 @@ export class GeovisorSharedService {
       popupTemplate: undefined,
       outFields: ['*'],
       visible: true,
-      labelsVisible: true,
+      labelsVisible: false,
       opacity: 1,
       group: 'MONITOREO CAFE',
     },
@@ -377,7 +365,7 @@ export class GeovisorSharedService {
       popupTemplate: undefined,
       outFields: ['*'],
       visible: true,
-      labelsVisible: true,
+      labelsVisible: false,
       opacity: 1,
       group: 'MONITOREO CAFE',
     },
@@ -414,7 +402,8 @@ export class GeovisorSharedService {
     {
       title: 'CUESTIONARIO PERCEPCION CAFE',
       url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.cafe}`,
-      labelingInfo: [
+      labelingInfo: [],
+     /*  [
         {
           labelExpressionInfo: {
             expression: `"Participante con DNI: "+TextFormatting.NewLine+$feature.dni_participante`  // Campo con el nombre del departamento
@@ -435,7 +424,7 @@ export class GeovisorSharedService {
           labelPlacement: "above-center",
           minScale: 20000,
         }
-      ],
+      ], */
       popupTemplate: restCaribSurveyPercepcionCafe,
       renderer: cafeRenderer,
       visible: true,
@@ -479,7 +468,8 @@ export class GeovisorSharedService {
     {
       title: 'OFICINA ZONAL',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.oficinaZonal}`,
-      labelingInfo: [
+      labelingInfo: [],
+      /* [
         {
           labelExpressionInfo: {
             expression: `"OFICINA ZONAL: "+TextFormatting.NewLine+$feature.nombre`  // Campo con el nombre del departamento
@@ -497,22 +487,22 @@ export class GeovisorSharedService {
           },
           labelPlacement: "always-horizontal"
         }
-      ],
+      ], */
       popupTemplate: popupLimitesOficinaZonal,
       renderer: undefined,
       visible: true,
-      labelsVisible: true,
+      labelsVisible: false,
       group: 'CARTOGRAFIA DEVIDA',
     },
     //*CARGA DE CAPAS DE HIDROGRAFIA
     {
       title: 'COMUNIDADES NATIVAS',
       url: `${this.restMidagri.serviceBase}/${this.restMidagri.capas.comunidadNativa}`,
-      labelingInfo: undefined,
+      labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
       visible: false,
-      labelsVisible: true,
+      labelsVisible: false,
       opacity: 0.5,
       group: 'MIDAGRI',
     },
@@ -530,18 +520,18 @@ export class GeovisorSharedService {
     {
       title: 'PREDIO RURAL',
       url: `${this.restMidagri.serviceBase}/${this.restMidagri.capas.predioRural}`,
-      labelingInfo: undefined,
+      labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
-      labelsVisible: true,
+      labelsVisible: false,
       opacity: 0.5,
       group: 'MIDAGRI',
     },
     {
       title: 'RIOS & QUEBRADAS',
       url: `${this.restAna.serviceBase}/${this.restAna.capas.riosQuebradas}`,
-      labelingInfo: undefined,
+      labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
       visible: false,
@@ -552,10 +542,10 @@ export class GeovisorSharedService {
     {
       title: 'LAGUNAS',
       url: `${this.restAna.serviceBase}/${this.restAna.capas.lagunas}`,
-      labelingInfo: undefined,
+      labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
-      visible: false,
+      visible: true,
       labelsVisible: true,
       opacity: 0.85,
       group: 'HIDROGRAFIA',
@@ -564,7 +554,8 @@ export class GeovisorSharedService {
     {
       title: 'DISTRITOS',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteDistrito}`,
-      labelingInfo: [
+      labelingInfo:[],
+      /* [
         {
           labelExpressionInfo: {
             expression: `"DISTRITO: "+TextFormatting.NewLine+$feature.NOMBDIST`
@@ -584,7 +575,7 @@ export class GeovisorSharedService {
           },
           labelPlacement: "always-horizontal"
         }
-      ],
+      ], */
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -593,7 +584,8 @@ export class GeovisorSharedService {
     {
       title: 'PROVINCIAS',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteProvincia}`,
-      labelingInfo: [
+      labelingInfo: [],
+      /* [
         {
           labelExpressionInfo: {
             expression: `"PROVINCIA: "+TextFormatting.NewLine+$feature.NOMBPROV`
@@ -613,7 +605,7 @@ export class GeovisorSharedService {
           },
           labelPlacement: "always-horizontal"
         }
-      ],
+      ], */
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -623,7 +615,8 @@ export class GeovisorSharedService {
     {
       title: 'DEPARTAMENTOS',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteDepartamento}`,
-      labelingInfo: [
+      labelingInfo:[],
+    /*   [
         {
           labelExpressionInfo: {
             expression: `"DEPARTAMENTO: "+TextFormatting.NewLine+$feature.NOMBDEP`
@@ -644,7 +637,7 @@ export class GeovisorSharedService {
           labelPlacement: "always-horizontal",
           minScale: 9000000
         }
-      ],
+      ], */
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -654,7 +647,7 @@ export class GeovisorSharedService {
     {
       title: 'PERU',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limitePeru}`,
-      labelingInfo: undefined,
+      labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -680,55 +673,43 @@ export class GeovisorSharedService {
   initializeMap(mapViewEl: ElementRef): Promise<void> {
     const container = mapViewEl.nativeElement;
     this.layers.forEach((layerConfig) => {
-
       const hasValidLayerId = /\/\d+$/.test(layerConfig.url);
       if (!hasValidLayerId) {
         console.warn(`⚠️ Se ignoró la capa "${layerConfig.title}" porque no tiene un layerId válido: ${layerConfig.url}`);
         return;
       }
-
       const layerOptions: any = {
         url: layerConfig.url,
         title: layerConfig.title,
         visible: layerConfig.visible,
       };
-
       if (layerConfig.popupTemplate) {
         layerOptions.popupTemplate = layerConfig.popupTemplate;
       }
-
       if (layerConfig.renderer) {
         layerOptions.renderer = layerConfig.renderer;
       }
-
       if (layerConfig.labelingInfo) {
         layerOptions.labelingInfo = layerConfig.labelingInfo;
       }
-
       if (layerConfig.labelsVisible !== undefined) {
         layerOptions.labelsVisible = layerConfig.labelsVisible;
       }
-
       if (layerConfig.outFields) {
         layerOptions.outFields = layerConfig.outFields;
       }
-
       if (layerConfig.maxScale !== undefined) {
         layerOptions.maxScale = layerConfig.maxScale;
       }
-
       if (layerConfig.minScale !== undefined) {
         layerOptions.minScale = layerConfig.minScale;
       }
-
       if (layerConfig.featureReduction) {
         layerOptions.featureReduction = layerConfig.featureReduction;
       }
-
       if (layerConfig.opacity !== undefined) {
         layerOptions.opacity = layerConfig.opacity;
       }
-
       const featureLayer = new FeatureLayer(layerOptions);
       this.mapa.add(featureLayer);
     });
@@ -759,8 +740,6 @@ export class GeovisorSharedService {
         this.scale = this.formatScale(scale);
       }
     );
-
-
     //*CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
     const sourceDEVIDA = [
       {
@@ -919,13 +898,9 @@ export class GeovisorSharedService {
 
       // Cargar proyección
   await projection.load();
-
-  const utmWkid = lat >= 0 ? 32600 + zoneNumber : 32700 + zoneNumber;
-
+    const utmWkid = lat >= 0 ? 32600 + zoneNumber : 32700 + zoneNumber;
     const srUTM = new SpatialReference({ wkid: utmWkid });
-
     const projected = projection.project(pointUTM, srUTM) as Point;
-
     this.utmEast = `${projected.x.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,

@@ -31,7 +31,7 @@ export default class LoginComponent {
 		email: this._formBuilder.nonNullable.control('', [Validators.required, Validators.email]),
 		password: this._formBuilder.nonNullable.control('', [Validators.required])
 	});
-	// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+	//eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async submit(): Promise<void> {
     if (this.form.invalid) return;
     try {
