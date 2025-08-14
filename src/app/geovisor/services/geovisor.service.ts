@@ -357,9 +357,9 @@ export class GeovisorSharedService {
       visible: true,
       labelsVisible: false,
       opacity: 1,
-      group: 'MONITOREO CAFE',
+      group: 'POLIGONOS DE CULTIVO',
     },
-    {
+    /* {
       title: 'CUESTIONARIO MEDIDAS AMBIENTALES',
       url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.medidasAmbientales}`,
       popupTemplate: undefined,
@@ -403,35 +403,13 @@ export class GeovisorSharedService {
       title: 'CUESTIONARIO PERCEPCION CAFE',
       url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.cafe}`,
       labelingInfo: [],
-     /*  [
-        {
-          labelExpressionInfo: {
-            expression: `"Participante con DNI: "+TextFormatting.NewLine+$feature.dni_participante`  // Campo con el nombre del departamento
-          },
-          symbol: {
-            type: "text",
-            color: "#00274D",
-            font: {
-              size: 12,
-              family: "Arial",
-              weight: "bold"
-            },
-            haloColor: "white",
-            haloSize: 2,
-            horizontalAlignment: "center",  // Centrado horizontal
-            verticalAlignment: "middle"
-          },
-          labelPlacement: "above-center",
-          minScale: 20000,
-        }
-      ], */
       popupTemplate: restCaribSurveyPercepcionCafe,
       renderer: cafeRenderer,
       visible: true,
       labelsVisible: true,
       opacity: 1,
       group: 'MONITOREO CAFE',
-    },
+    }, */
     {
       title: 'ZA - ZONA DE AMORTIGUAMIENTO',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.zonaAmortiguamiento}`,
@@ -469,25 +447,6 @@ export class GeovisorSharedService {
       title: 'OFICINA ZONAL',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.oficinaZonal}`,
       labelingInfo: [],
-      /* [
-        {
-          labelExpressionInfo: {
-            expression: `"OFICINA ZONAL: "+TextFormatting.NewLine+$feature.nombre`  // Campo con el nombre del departamento
-          },
-          symbol: {
-            type: "text",
-            color: 'white',
-            font: {
-              size: 10,
-              family: "Arial",
-              weight: "bold"
-            },
-            haloColor: "#0084A8",
-            haloSize: 1
-          },
-          labelPlacement: "always-horizontal"
-        }
-      ], */
       popupTemplate: popupLimitesOficinaZonal,
       renderer: undefined,
       visible: true,
@@ -555,27 +514,6 @@ export class GeovisorSharedService {
       title: 'DISTRITOS',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteDistrito}`,
       labelingInfo:[],
-      /* [
-        {
-          labelExpressionInfo: {
-            expression: `"DISTRITO: "+TextFormatting.NewLine+$feature.NOMBDIST`
-          },
-          symbol: {
-            type: "text",
-            color: "#FF0000",
-            font: {
-              size: 12,
-              family: "Arial",
-              weight: "bold"
-            },
-            haloColor: "white",
-            haloSize: 1,
-            //horizontalAlignment: "center",  // Centrado horizontal
-            verticalAlignment: "middle"
-          },
-          labelPlacement: "always-horizontal"
-        }
-      ], */
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -585,27 +523,6 @@ export class GeovisorSharedService {
       title: 'PROVINCIAS',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteProvincia}`,
       labelingInfo: [],
-      /* [
-        {
-          labelExpressionInfo: {
-            expression: `"PROVINCIA: "+TextFormatting.NewLine+$feature.NOMBPROV`
-          },
-          symbol: {
-            type: "text",
-            color: "#FFFF00",
-            font: {
-              size: 12,
-              family: "Arial",
-              weight: "bold"
-            },
-            haloColor: "black",
-            haloSize: 1,
-            horizontalAlignment: "center",
-            verticalAlignment: "middle"
-          },
-          labelPlacement: "always-horizontal"
-        }
-      ], */
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -616,28 +533,6 @@ export class GeovisorSharedService {
       title: 'DEPARTAMENTOS',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteDepartamento}`,
       labelingInfo:[],
-    /*   [
-        {
-          labelExpressionInfo: {
-            expression: `"DEPARTAMENTO: "+TextFormatting.NewLine+$feature.NOMBDEP`
-          },
-          symbol: {
-            type: "text",
-            color: "white",
-            font: {
-              size: 10,
-              family: "Arial",
-              weight: "bold"
-            },
-            haloColor: "black",
-            haloSize: 1,
-            horizontalAlignment: "center",
-            verticalAlignment: "middle"
-          },
-          labelPlacement: "always-horizontal",
-          minScale: 9000000
-        }
-      ], */
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -714,7 +609,6 @@ export class GeovisorSharedService {
       this.mapa.add(featureLayer);
     });
 
-
     //*Creacion de la Vista del Mapa
     this.view = new MapView({
       container: container,
@@ -741,7 +635,22 @@ export class GeovisorSharedService {
       }
     );
     //*CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
-    const sourceDEVIDA = [
+    const buscaCapasDEVIDA = [
+      {
+        layer: new FeatureLayer({
+          url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteCultivo}`
+        }),
+        searchFields: ["dni"],
+        displayField: "nombres",
+        exactMatch: false,
+        outFields: ["*"],
+        name: "CULTIVOS",
+        placeholder: "Digite el DNI",
+        maxResults: 5,
+        maxSuggestions: 5,
+        suggestionsEnabled: true,
+        minSuggestCharacters: 1,
+      },
       {
         layer: new FeatureLayer({
           url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.oficinaZonal}`
@@ -750,38 +659,8 @@ export class GeovisorSharedService {
         displayField: "nombre",
         exactMatch: false,
         outFields: ["*"],
-        name: "Oicina Zonal",
+        name: "OFICINA ZONAL",
         placeholder: "Nombre OZ",
-        maxResults: 5,
-        maxSuggestions: 5,
-        suggestionsEnabled: true,
-        minSuggestCharacters: 1,
-      },
-      {
-        layer: new FeatureLayer({
-          url: `${this.restAna.serviceBase}/${this.restAna.capas.lagunas}`
-        }),
-        searchFields: ["NOMBREOFICIAL"],
-        displayField: "NOMBREOFICIAL",
-        exactMatch: false,
-        outFields: ["*"],
-        name: "Lagunas",
-        placeholder: "Ingrese nombre",
-        maxResults: 5,
-        maxSuggestions: 5,
-        suggestionsEnabled: true,
-        minSuggestCharacters: 1,
-      },
-      {
-        layer: new FeatureLayer({
-          url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.cafe}`
-        }),
-        searchFields: ["dni_participante", "tecnico"],
-        displayField: "dni_participante",
-        exactMatch: false,
-        outFields: ["*"],
-        name: "Percepcion de Cafe",
-        placeholder: "Ingrese DNI o Cod. Monitor",
         maxResults: 5,
         maxSuggestions: 5,
         suggestionsEnabled: true,
@@ -791,7 +670,7 @@ export class GeovisorSharedService {
 
     const buscar = new Search({
       view: this.view,
-      sources: sourceDEVIDA,
+      sources: buscaCapasDEVIDA,
       includeDefaultSources: false, // desactiva el World Geocoding Service
       allPlaceholder: 'Buscar',
       label: 'Buscar',

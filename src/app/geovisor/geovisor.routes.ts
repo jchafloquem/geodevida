@@ -4,7 +4,7 @@ import { privateGuard, publicGuard } from '../core/auth.guard';
 export default [
 			{
 				path: 'map',
-        title:'Mapa',
+        title:'Visor de Cultivos (CAFE-CACAO)',
         canActivate: [privateGuard()],
 				loadComponent: () => import('./pages/map/map.component').then(m => m.MapComponent),
 			},
