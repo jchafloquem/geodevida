@@ -10,40 +10,51 @@
   background-color: #f8f9f9;
 }
 /* Contenedor externo del widget */
-#searchDiv {
-  padding: 2px;
-  border-radius: 4px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 250px;
+/* Forzar ancho del contenedor Search principal */
+#searchDiv .esri-search {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+/* Forzar el contenedor interno */
+#searchDiv .esri-search__container,
+#searchDiv .esri-search__input-container,
+#searchDiv .esri-input,
+#searchDiv .esri-search__input {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 
-/* Elimina bordes y sombras del input del widget ArcGIS */
-#searchDiv .esri-search input {
+/* El input en sí */
+#searchDiv input.esri-input {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
   border: none !important;
   box-shadow: none !important;
 }
-
-
 .logout-wrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: #fef2f2; /* fondo rojo claro */
+  width: 56px;          /* más grande */
+  height: 56px;
+  border-radius: 50%;   /* círculo perfecto */
+  background-color: #fef2f2;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* un poco más "suave" */
 }
 .logout-wrapper:hover {
-  background-color: #fee2e2; /* más oscuro al hacer hover */
+  background-color: #fee2e2;
+  transform: scale(1.05); /* efecto de "burbuja" */
 }
 .logout-icon {
-  width: 22px;
-  height: 22px;
+  width: 20px; /* un poco más pequeño para resaltar la forma */
+  height: 20px;
   stroke: #dc2626;
   transition: transform 0.3s ease;
 }

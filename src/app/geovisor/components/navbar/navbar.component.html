@@ -25,9 +25,10 @@
   <!-- Contenedor derecho (search + logout) -->
   <div class="flex items-center gap-1">
     <!-- Contenedor del widget con estilo, sin interferir en su DOM interno -->
-    <div class="bg-[#0D9DB7] px-2 py-1 rounded-md shadow-md z-20 max-w-[320px] border-none">
-      <div id="searchDiv" class="w-full h-full"></div>
+    <div class="px-2 py-1 rounded-md shadow-md max-w-[500px] w-full border-none">
+      <div id="searchDiv" class="w-full"></div>
     </div>
+
 
     <!-- Botón de logout usando clases personalizadas -->
     <button (click)="logout()" class="logout-wrapper" aria-label="Cerrar sesión" title="Cerrar sesión">
