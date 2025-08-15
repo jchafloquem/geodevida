@@ -36,33 +36,20 @@
   border: none !important;
   box-shadow: none !important;
 }
+
 .logout-wrapper {
-  width: 56px;          /* más grande */
-  height: 56px;
-  border-radius: 50%;   /* círculo perfecto */
-  background-color: #fef2f2;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* un poco más "suave" */
+  background-color: #e5e7eb; /* gris claro */
+  transition: background 0.2s ease;
 }
+
 .logout-wrapper:hover {
-  background-color: #fee2e2;
-  transform: scale(1.05); /* efecto de "burbuja" */
-}
-.logout-icon {
-  width: 20px; /* un poco más pequeño para resaltar la forma */
-  height: 20px;
-  stroke: #dc2626;
-  transition: transform 0.3s ease;
-}
-.logout-wrapper:hover .logout-icon-arrow {
-  transform: translateX(5px);
-}
-.logout-icon-arrow {
-  transition: transform 0.3s ease;
+  background-color: #d1d5db; /* gris más oscuro */
 }
 
 
