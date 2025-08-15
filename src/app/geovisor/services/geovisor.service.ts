@@ -740,14 +740,14 @@ export class GeovisorSharedService {
         layer: new FeatureLayer({
           url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteCultivo}`
         }),
-        searchFields: ["dni"],
+        searchFields: ["dni","nombres"],
         displayField: "nombres",
         exactMatch: false,
         outFields: ["*"],
         name: "CULTIVOS",
         placeholder: "Digite el DNI",
-        maxResults: 5,
-        maxSuggestions: 5,
+        maxResults: 10,
+        maxSuggestions: 10,
         suggestionsEnabled: true,
         minSuggestCharacters: 1,
       },
