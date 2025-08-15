@@ -19,6 +19,106 @@ import Zoom from '@arcgis/core/widgets/Zoom.js';
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 
 //* POPUP & CLUSTERS
+const popupPoligonoCultivo = new PopupTemplate({
+  title: 'Tipo de Cultivo: {cultivo}',
+  outFields: ['*'],
+  content: [
+    {
+      type: 'text',
+      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Datos del poligono de Cultivo: {nombre}</div>`
+    },
+    {
+      type: 'fields',
+      fieldInfos: [
+        {
+          fieldName: 'cod_dni',
+          label: '<b><font>Codigo Unico del poligono:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'dni',
+          label: '<b><font>DNI del productor:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'nombres',
+          label: '<b><font>Nombre completo del productor:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'celular',
+          label: '<b><font>Telefono del productor:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'region',
+          label: '<b><font>Region del Cultivo:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'provincia',
+          label: '<b><font>Provincia del Cultivo:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'distrito',
+          label: '<b><font>Distrito del Cultivo:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'n_parcela',
+          label: '<b><font>Numero del Cultivo:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'variedad',
+          label: '<b><font>Variedad del Cultivo:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'org',
+          label: '<b><font>Oficina Zonal:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'organizacion',
+          label: '<b><font>Organizacion:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+        },
+        {
+          fieldName: 'fecha_regitro',
+          label: '<b><font>Fecha de registro:</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+          format: {
+            dateFormat: "short-date" // opciones: short-date, long-date
+          }
+        },
+        {
+          fieldName: 'area_cultivo',
+          label: '<b><font>Area del Cultivo: (has)</font></b>',
+          visible: true,
+          stringFieldOption: 'text-box',
+          format: {
+            places: 3,
+            digitSeparator: true
+          }
+        },
+      ]
+    },
+  ]
+});
 const popupLimitesOficinaZonal = new PopupTemplate({
   title: '',
   outFields: ['*'],
@@ -352,7 +452,7 @@ export class GeovisorSharedService {
     {
       title: 'CULTIVO',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteCultivo}`,
-      popupTemplate: undefined,
+      popupTemplate: popupPoligonoCultivo,
       outFields: ['*'],
       visible: true,
       labelsVisible: false,
@@ -482,7 +582,7 @@ export class GeovisorSharedService {
       labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
-      visible: true,
+      visible: false,
       labelsVisible: false,
       opacity: 0.5,
       group: 'MIDAGRI',

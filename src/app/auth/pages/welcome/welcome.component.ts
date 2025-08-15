@@ -26,6 +26,12 @@ export default class WelcomeComponent {
 			label: 'Ingresar al Geovisor',
 			texto: 'DASHBOARD'
 		},
+    { link: '/geovisor/reportes',
+			icono: 'assets/images/welcome/geoico5.png',
+			alt: 'Ícono de acceso al visor GIS',
+			label: 'Ingresar al Geovisor',
+			texto: 'REPORTES'
+		},
     { link: '/geovisor/repositorio',
 			icono: 'assets/images/welcome/geoico2.png',
 			alt: 'Ícono de acceso al visor GIS',

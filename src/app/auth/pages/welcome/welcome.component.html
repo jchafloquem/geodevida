@@ -55,24 +55,25 @@
 
     <!-- Contenedor de botones -->
     <div
-      class="mt-8 bg-opacity-60 rounded-lg mx-auto p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6"
-    >
-      <div *ngFor="let boton of botones" class="flex flex-col items-center">
-        <a
-          [routerLink]="boton.link"
-          class="flex w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 justify-center items-center bg-[#0D9BD7] text-white rounded-full border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300 focus:ring-4 focus:ring-blue-500"
-        >
-          <img
-            [src]="boton.icono"
-            [alt]="boton.alt"
-            class="w-3/4 h-3/4 object-contain"
-          />
-        </a>
-        <span class="mt-2 text-sm md:text-base font-semibold">{{
-          boton.texto
-        }}</span>
-      </div>
+    class="mt-8 bg-opacity-60 rounded-lg mx-auto p-6 flex flex-wrap justify-center gap-6"
+  >
+    <div *ngFor="let boton of botones" class="flex flex-col items-center">
+      <a
+        [routerLink]="boton.link"
+        class="flex w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 justify-center items-center bg-[#0D9BD7] text-white rounded-full border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300 focus:ring-4 focus:ring-blue-500"
+      >
+        <img
+          [src]="boton.icono"
+          [alt]="boton.alt"
+          class="w-3/4 h-3/4 object-contain"
+        />
+      </a>
+      <span class="mt-2 text-sm md:text-base font-semibold">
+        {{ boton.texto }}
+      </span>
     </div>
+  </div>
+
 
     <!-- Redes Sociales -->
     <div class="mt-8 flex justify-center gap-6 text-2xl">

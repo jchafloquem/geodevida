@@ -4,19 +4,18 @@ import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { SidemenuComponent } from '../../components/sidemenu/sidemenu.component';
-import { CommonModule } from '@angular/common';
-
+import { CommonModule} from '@angular/common';
 
 Chart.register(ChartDataLabels);
 
 @Component({
   standalone: true,
-  imports:[CommonModule ,RouterModule, SidemenuComponent],
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  imports: [CommonModule],
+  selector: 'app-report',
+  templateUrl: './report.component.html',
+  styleUrls: ['./report.component.scss']
 })
-export class DashboardComponent implements AfterViewInit {
+export class ReportComponent implements AfterViewInit {
 
   mostrarMenu = false;
   public totalRegistrosCultivos = 0;
@@ -134,5 +133,6 @@ export class DashboardComponent implements AfterViewInit {
     console.error('❌ Error al consultar todos los cultivos:', err);
   });
   }
-}
 
+
+}

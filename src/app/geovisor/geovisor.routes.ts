@@ -20,6 +20,12 @@ export default [
         canActivate: [publicGuard()],
 				loadComponent: () => import('./pages/dashboard/dashboard.component').then ( m => m.DashboardComponent),
 			},
+      {
+				path: 'reportes',
+        title:'Reportes',
+        canActivate: [publicGuard()],
+				loadComponent: () => import('./pages/report/report.component').then ( m => m.ReportComponent),
+			},
 			{
 				path: 'metadata',
         title:'Metadata',
