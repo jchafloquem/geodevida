@@ -450,14 +450,14 @@ export class GeovisorSharedService {
   public layers: LayerConfig[] = [
     //*SERVICIOS REST DE GEODEVIDA-CARIB
     {
-      title: 'CULTIVO',
+      title: 'POLIGONOS DE CULTIVO',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteCultivo}`,
       popupTemplate: popupPoligonoCultivo,
       outFields: ['*'],
       visible: true,
       labelsVisible: false,
       opacity: 1,
-      group: 'POLIGONOS DE CULTIVO',
+      group: 'PIRDAIS',
     },
     /* {
       title: 'CUESTIONARIO MEDIDAS AMBIENTALES',
