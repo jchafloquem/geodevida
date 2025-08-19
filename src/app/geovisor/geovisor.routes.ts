@@ -4,7 +4,7 @@ import { privateGuard, publicGuard } from '../core/auth.guard';
 export default [
 			{
 				path: 'map',
-        title:'Visor de Cultivos',
+        title:'Visor GIS',
         canActivate: [privateGuard()],
 				loadComponent: () => import('./pages/map/map.component').then(m => m.MapComponent),
 			},

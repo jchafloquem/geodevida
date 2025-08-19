@@ -457,6 +457,8 @@ export class GeovisorSharedService {
       visible: true,
       labelsVisible: false,
       opacity: 1,
+      minScale: 0,   // solo se ven al acercar a 1:50,000 o más
+      maxScale: 0,
       group: 'PIRDAIS',
     },
     /* {
@@ -687,7 +689,7 @@ export class GeovisorSharedService {
       if (layerConfig.labelingInfo) {
         layerOptions.labelingInfo = layerConfig.labelingInfo;
       }
-      if (layerConfig.labelsVisible !== undefined) {
+      if (layerConfig.labelsVisible !== false) {
         layerOptions.labelsVisible = layerConfig.labelsVisible;
       }
       if (layerConfig.outFields) {
@@ -742,7 +744,7 @@ export class GeovisorSharedService {
         }),
         searchFields: ["dni","nombres"],
         displayField: "nombres",
-        exactMatch: false,
+        exactMatch: true,
         outFields: ["*"],
         name: "CULTIVOS",
         placeholder: "Digite el DNI",
@@ -781,6 +783,7 @@ export class GeovisorSharedService {
     });
 
     buscar.on("select-result", async (event) => {
+
       const result = event.result;
       if (result && result.feature && result.feature.geometry) {
         const geometry = result.feature.geometry;
