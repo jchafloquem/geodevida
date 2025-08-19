@@ -1,6 +1,5 @@
 <div
-  class="flex flex-col md:flex-row w-screen h-screen bg-slate-100 text-black antialiased selection:bg-blue-600 selection:text-white overflow-hidden"
->
+  class="flex flex-col md:flex-row w-screen h-screen bg-slate-100 text-black antialiased selection:bg-blue-600 selection:text-white overflow-hidden">
   <!-- 📚 Menú lateral -->
   <app-sidemenu class="w-full md:w-64 bg-[#323232] md:h-full"></app-sidemenu>
 
@@ -10,11 +9,8 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- Area Total -->
       <div
-        class="bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl"
-      >
-        <p
-          class="text-5xl md:text-6xl font-extrabold text-green-600 tracking-tight"
-        >
+        class="bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl">
+        <p class="text-5xl md:text-6xl font-extrabold text-green-600 tracking-tight">
           {{ totalAreaCultivo | number : "1.0-0" }}
         </p>
         <h2 class="text-base md:text-lg font-semibold text-gray-700 mt-3">
@@ -28,16 +24,13 @@
           background-image: url('assets/img/cafe.webp');
           background-size: cover;
           background-position: center;
-        "
-      >
+        ">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
 
         <!-- Contenido encima del fondo -->
         <div class="relative z-10 flex flex-col items-center">
-          <p
-            class="text-5xl md:text-6xl font-extrabold text-white tracking-tight"
-          >
+          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
             {{ totalAreaCafe | number : "1.0-0" }}
           </p>
           <h2 class="text-base md:text-lg font-semibold text-white mt-3">
@@ -52,29 +45,23 @@
           background-image: url('assets/img/cacao.jpg');
           background-size: cover;
           background-position: center;
-        "
-      >
+        ">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
         <!-- Contenido encima del fondo -->
-          <div class="relative z-10 flex flex-col items-center">
-            <p
-              class="text-5xl md:text-6xl font-extrabold text-white tracking-tight"
-            >
-              {{ totalAreaCacao | number : "1.0-0" }}
-            </p>
-            <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-              HECTAREAS TOTAL EN CULTIVOS DE CACAO
-            </h2>
-          </div>
+        <div class="relative z-10 flex flex-col items-center">
+          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
+            {{ totalAreaCacao | number : "1.0-0" }}
+          </p>
+          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
+            HECTAREAS TOTAL EN CULTIVOS DE CACAO
+          </h2>
+        </div>
       </div>
 
       <div
-        class="bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl"
-      >
-        <p
-          class="text-5xl md:text-6xl font-extrabold text-green-600 tracking-tight"
-        >
+        class="bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl">
+        <p class="text-5xl md:text-6xl font-extrabold text-green-600 tracking-tight">
           {{ totalRegistrosCultivos | number : "1.0-0" }}
         </p>
         <h2 class="text-base md:text-lg font-semibold text-gray-700 mt-3">
@@ -89,16 +76,13 @@
           background-image: url('assets/img/cafe.webp');
           background-size: cover;
           background-position: center;
-        "
-      >
+        ">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
 
         <!-- Contenido encima del fondo -->
         <div class="relative z-10 flex flex-col items-center">
-          <p
-            class="text-5xl md:text-6xl font-extrabold text-white tracking-tight"
-          >
+          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
             {{ totalCafe | number : "1.0-0" }}
           </p>
           <h2 class="text-base md:text-lg font-semibold text-white mt-3">
@@ -114,16 +98,13 @@
           background-image: url('assets/img/cacao.jpg');
           background-size: cover;
           background-position: center;
-        "
-      >
+        ">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
 
         <!-- Contenido encima del fondo -->
         <div class="relative z-10 flex flex-col items-center">
-          <p
-            class="text-5xl md:text-6xl font-extrabold text-white tracking-tight"
-          >
+          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
             {{ totalCacao | number : "1.0-0" }}
           </p>
           <h2 class="text-base md:text-lg font-semibold text-white mt-3">
@@ -131,19 +112,111 @@
           </h2>
         </div>
       </div>
+
+      <div
+        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
+        style="
+          background-image: url('assets/img/participante.webp');
+          background-size: cover;
+          background-position: center;
+        ">
+        <!-- Fondo semitransparente para mejorar contraste -->
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <!-- Contenido encima del fondo -->
+        <div class="relative z-10 flex flex-col items-center">
+          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
+            {{ totalRegistrosUnicosDNI['total'] | number : "1.0-0" }}
+          </p>
+          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
+            TOTAL DE PARTICIPANTES
+          </h2>
+        </div>
+      </div>
+      <div
+        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
+        style="
+          background-image: url('assets/img/cafe.webp');
+          background-size: cover;
+          background-position: center;
+        ">
+        <!-- Fondo semitransparente para mejorar contraste -->
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <!-- Contenido encima del fondo -->
+        <div class="relative z-10 flex flex-col items-center">
+          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
+            {{ totalRegistrosUnicosDNI['cafe'] | number : "1.0-0" }}
+          </p>
+          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
+            TOTAL DE PARTICIPANTES CAFE
+          </h2>
+        </div>
+      </div>
+      <div
+      class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
+      style="
+        background-image: url('assets/img/cacao.jpg');
+        background-size: cover;
+        background-position: center;
+      ">
+      <!-- Fondo semitransparente para mejorar contraste -->
+      <div class="absolute inset-0 bg-black/40"></div>
+
+      <!-- Contenido encima del fondo -->
+      <div class="relative z-10 flex flex-col items-center">
+        <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
+          {{ totalRegistrosUnicosDNI['cacao'] | number : "1.0-0" }}
+        </p>
+        <h2 class="text-base md:text-lg font-semibold text-white mt-3">
+          TOTAL DE PARTICIPANTES CACAO
+        </h2>
+      </div>
     </div>
+
+
+
+
+
+
+    </div>
+    <p class="text-sm md:text-base text-black tracking-tight">
+      Total de participantes únicos. Los parciales de café y cacao pueden sumar más si un participante aparece en ambos cultivos.
+    </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- 📊 Gráfico distribución -->
     <div class="bg-white rounded-2xl shadow-lg border p-6">
-      <h2
-        class="text-lg md:text-xl font-semibold text-gray-800 mb-4 text-center"
-      >
+      <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4 text-center">
         Distribución por tipo de cultivo
       </h2>
-      <canvas
-        id="graficoCultivoTipo"
-        class="w-full max-h-[400px] mx-auto"
-      ></canvas>
+      <canvas id="graficoAreaCultivo" class="w-full max-h-[400px] mx-auto"></canvas>
+      <canvas id="graficoCultivoTipo" class="w-full max-h-[400px] mx-auto"></canvas>
     </div>
   </div>
 </div>

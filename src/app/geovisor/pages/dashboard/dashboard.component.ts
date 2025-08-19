@@ -5,7 +5,6 @@ import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { SidemenuComponent } from '../../components/sidemenu/sidemenu.component';
 import { CommonModule } from '@angular/common';
-
 import StatisticDefinition from '@arcgis/core/rest/support/StatisticDefinition.js';
 
 Chart.register(ChartDataLabels);
@@ -26,6 +25,10 @@ export class DashboardComponent implements AfterViewInit {
   public totalAreaCultivo = 0; // en m²
   public areaPorCultivo: { cultivo: string; total_area: number }[] = [];
 
+  // áreas por cultivo específicas
+  public totalAreaCafe = 0;
+  public totalAreaCacao = 0;
+
   ngAfterViewInit(): void {
     const dashboardCultivos = new FeatureLayer({
       url: 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10',
@@ -35,20 +38,24 @@ export class DashboardComponent implements AfterViewInit {
       .load()
       .then(() => {
         this.generarGraficoCultivosPorTipo(dashboardCultivos);
+
         this.contarCafeCacao(dashboardCultivos).then((res) => {
           this.totalCafe = res.cafe;
           this.totalCacao = res.cacao;
           console.log('📊 Conteo final:', res);
         });
+
         this.sumarAreaCultivoTotal(dashboardCultivos).then((total) => {
           this.totalAreaCultivo = total;
           console.log('🌱 Área total de cultivo (m²):', total);
         });
+
         this.sumarAreaPorCultivo(dashboardCultivos).then((data) => {
           this.areaPorCultivo = data;
           console.log('🌱 Área por cultivo (m²):', data);
           this.generarGraficoAreaPorCultivo(data);
         });
+
         this.contarRegistrosUnicosPorDNI(dashboardCultivos).then((totalDNI) => {
           console.log('🧾 Total de registros únicos por DNI:', totalDNI);
         });
@@ -58,7 +65,7 @@ export class DashboardComponent implements AfterViewInit {
       });
   }
 
-  // 👉 Funcion para calculo de Area total
+  // 👉 Función: área total de cultivo
   async sumarAreaCultivoTotal(layer: FeatureLayer): Promise<number> {
     const statDef = new StatisticDefinition({
       onStatisticField: 'area_cultivo',
@@ -83,9 +90,8 @@ export class DashboardComponent implements AfterViewInit {
       return 0;
     }
   }
-  // 👉 Funcion para calculo de Area por Cultivo (Cafe y Cacao)
-  public totalAreaCafe = 0;  // área de café en m²
-  public totalAreaCacao = 0; // área de cacao en m²
+
+  // 👉 Función: área por cultivo (Cafe y Cacao)
   async sumarAreaPorCultivo(layer: FeatureLayer): Promise<any[]> {
     const statDef = new StatisticDefinition({
       onStatisticField: 'area_cultivo',
@@ -102,7 +108,6 @@ export class DashboardComponent implements AfterViewInit {
     try {
       const result = await layer.queryFeatures(query);
 
-      // Mapear resultados
       const data = result.features.map((f) => ({
         cultivo: f.attributes['cultivo'],
         total_area: f.attributes['total_area'],
@@ -124,18 +129,21 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-
+  // 👉 Gráfico de áreas por cultivo
   generarGraficoAreaPorCultivo(data: { cultivo: string; total_area: number }[]) {
     const labels = data.map((d) => d.cultivo);
     const values = data.map((d) => d.total_area);
 
-    new Chart('graficoAreaCultivo', {
+    const ctx = document.getElementById('graficoAreaCultivo') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx.getContext('2d')!, {
       type: 'bar',
       data: {
         labels,
         datasets: [
           {
-            label: 'Área cultivada (m²)',
+            label: 'Área cultivada (ha)',
             data: values,
             backgroundColor: '#4CAF50',
             borderColor: '#2E7D32',
@@ -158,9 +166,7 @@ export class DashboardComponent implements AfterViewInit {
             align: 'right',
             color: '#333',
             font: { weight: 'bold' },
-            formatter: (value: number) => {
-              return (value / 10000).toFixed(1) + ' ha'; // 👉 convierte a hectáreas
-            },
+            formatter: (value: number) => Math.round(value).toLocaleString('en-US'), // enteros con coma como miles
           },
         },
       },
@@ -168,6 +174,11 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
 
+
+
+
+
+  // 👉 Gráfico de registros por tipo de cultivo
   generarGraficoCultivosPorTipo(layer: FeatureLayer) {
     const pageSize = 2000;
     const conteo: Record<string, number> = {};
@@ -187,21 +198,21 @@ export class DashboardComponent implements AfterViewInit {
 
         result.features.forEach((f) => {
           const cultivo = f.attributes['cultivo'];
-          if (cultivo) {
-            conteo[cultivo] = (conteo[cultivo] || 0) + 1;
-          }
+          if (cultivo) conteo[cultivo] = (conteo[cultivo] || 0) + 1;
         });
 
         fetched += result.features.length;
       }
 
       this.conteoPorCultivo = conteo;
-
       const labels = Object.keys(conteo);
       const values = Object.values(conteo);
       this.totalRegistrosCultivos = values.reduce((acc, val) => acc + val, 0);
 
-      new Chart('graficoCultivoTipo', {
+      const ctx = document.getElementById('graficoCultivoTipo') as HTMLCanvasElement;
+      if (!ctx) return;
+
+      new Chart(ctx.getContext('2d')!, {
         type: 'pie',
         data: {
           labels,
@@ -210,10 +221,7 @@ export class DashboardComponent implements AfterViewInit {
               label: 'Registros por tipo de cultivo',
               data: values,
               backgroundColor: labels.map((cultivo) => {
-                const c = cultivo
-                  .toLowerCase()
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '');
+                const c = cultivo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
                 if (c.includes('cafe')) return '#a18262';
                 if (c.includes('cacao')) return '#645650';
                 return '#D3D3D3';
@@ -233,23 +241,14 @@ export class DashboardComponent implements AfterViewInit {
           plugins: {
             legend: {
               position: 'right',
-              labels: {
-                color: '#333',
-                font: { size: 13, weight: 'bold' },
-              },
+              labels: { color: '#333', font: { size: 13, weight: 'bold' } },
             },
-            title: {
-              display: true,
-              text: 'Cantidad de registros por tipo de cultivo',
-              font: { size: 18 },
-            },
+            title: { display: true, text: 'Cantidad de registros por tipo de cultivo', font: { size: 18 } },
             datalabels: {
               color: '#fff',
               font: { weight: 'bold' },
               formatter: (value: number, context) => {
-                const total = (
-                  context.chart.data.datasets[0].data as number[]
-                ).reduce((acc, val) => acc + val, 0);
+                const total = (context.chart.data.datasets[0].data as number[]).reduce((acc, val) => acc + val, 0);
                 return ((value / total) * 100).toFixed(1) + '%';
               },
             },
@@ -259,11 +258,10 @@ export class DashboardComponent implements AfterViewInit {
       });
     };
 
-    getAllCultivoData().catch((err) => {
-      console.error('❌ Error al consultar todos los cultivos:', err);
-    });
+    getAllCultivoData().catch((err) => console.error('❌ Error al consultar todos los cultivos:', err));
   }
 
+  // 👉 Contar cantidad de registros por cultivo (Cafe y Cacao)
   contarCafeCacao(layer: FeatureLayer) {
     const pageSize = 2000;
     let conteoCafe = 0;
@@ -283,11 +281,7 @@ export class DashboardComponent implements AfterViewInit {
         });
 
         result.features.forEach((f) => {
-          const cultivo = (f.attributes['cultivo'] || '')
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '');
-
+          const cultivo = (f.attributes['cultivo'] || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
           if (cultivo.includes('cafe')) conteoCafe++;
           if (cultivo.includes('cacao')) conteoCacao++;
         });
@@ -304,28 +298,66 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
 
-  // 👉 NUEVA FUNCIÓN: contar registros únicos por DNI
-async contarRegistrosUnicosPorDNI(layer: FeatureLayer): Promise<number> {
-  const pageSize = 2000;
-  const dnisUnicos = new Set<string>();
-  const total = await layer.queryFeatureCount({ where: '1=1' });
-  let fetched = 0;
-  while (fetched < total) {
-    const result = await layer.queryFeatures({
-      where: '1=1',
-      outFields: ['dni'], // campo a revisar
-      returnGeometry: false,
-      start: fetched,
-      num: pageSize,
-    });
-    result.features.forEach((f) => {
-      const dni = f.attributes['dni'];
-      if (dni) dnisUnicos.add(dni); // agrega solo si no existe
-    });
-    fetched += result.features.length;
+  // 👉 Contar registros únicos por DNI
+  public totalRegistrosUnicosDNI: Record<string, number> = {}; // DNIs únicos por cultivo + total
+
+async contarRegistrosUnicosPorDNI(layer: FeatureLayer): Promise<Record<string, number>> {
+  try {
+    const pageSize = 2000;
+    const dnisPorCultivo: Record<string, Set<string>> = {
+      cafe: new Set<string>(),
+      cacao: new Set<string>()
+    };
+    const dnisTotales = new Set<string>();
+    const total = await layer.queryFeatureCount({ where: '1=1' });
+    let fetched = 0;
+
+    while (fetched < total) {
+      const result = await layer.queryFeatures({
+        where: '1=1',
+        outFields: ['dni', 'cultivo'], // traemos cultivo
+        returnGeometry: false,
+        start: fetched,
+        num: pageSize,
+      });
+
+      result.features.forEach((f) => {
+        const dni = f.attributes['dni'];
+        if (!dni) return;
+
+        const cultivoRaw = (f.attributes['cultivo'] || '')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .trim();
+
+        // DNIs únicos por cultivo
+        if (cultivoRaw.includes('cafe')) dnisPorCultivo['cafe'].add(dni);
+        else if (cultivoRaw.includes('cacao')) dnisPorCultivo['cacao'].add(dni);
+
+        // DNIs totales
+        dnisTotales.add(dni);
+      });
+
+      fetched += result.features.length;
+    }
+
+    const conteoFinal: Record<string, number> = {
+      cafe: dnisPorCultivo['cafe'].size,
+      cacao: dnisPorCultivo['cacao'].size,
+      total: dnisTotales.size
+    };
+
+    this.totalRegistrosUnicosDNI = conteoFinal; // guardamos en variable del componente
+    return conteoFinal;
+  } catch (err) {
+    console.error('❌ Error al contar registros únicos por DNI por cultivo:', err);
+    this.totalRegistrosUnicosDNI = { cafe: 0, cacao: 0, total: 0 };
+    return { cafe: 0, cacao: 0, total: 0 };
   }
-  return dnisUnicos.size;
 }
+
+
 
 
 
