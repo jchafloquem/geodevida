@@ -16,7 +16,7 @@ export default [
 			},
 			{
 				path: 'dashboard',
-        title:'Dashboard',
+        title:'Dashboard : GeoDeVida: PIRDAS',
         canActivate: [publicGuard()],
 				loadComponent: () => import('./pages/dashboard/dashboard.component').then ( m => m.DashboardComponent),
 			},

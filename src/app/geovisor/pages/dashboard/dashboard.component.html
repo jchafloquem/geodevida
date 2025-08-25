@@ -5,7 +5,7 @@
 
   <!-- 📊 Contenido principal -->
   <div class="flex-1 min-w-0 pt-4 pr-6 pb-6 pl-6 overflow-y-auto space-y-4">
-    <!-- 🌱 Tarjetas resumen -->
+    <!-- 📊 Tarjetas de Hectareas de cultivo -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- Area Total -->
       <div
@@ -58,25 +58,27 @@
           </h2>
         </div>
       </div>
+    </div>
+    <!-- 📊 Fin de Tarjetas de Hectareas de cultivo -->
 
+    <!-- 📊 Tarjetas de Poligonos procesados -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         class="bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl">
         <p class="text-5xl md:text-6xl font-extrabold text-green-600 tracking-tight">
           {{ totalRegistrosCultivos | number : "1.0-0" }}
         </p>
         <h2 class="text-base md:text-lg font-semibold text-gray-700 mt-3">
-          Cantidad poligonos procesados
+          TOTAL DE POLIGONOS
         </h2>
       </div>
-
-      <!-- ☕ Total Cacao -->
       <div
         class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
         style="
-          background-image: url('assets/img/cafe.webp');
-          background-size: cover;
-          background-position: center;
-        ">
+                  background-image: url('assets/img/cafe.webp');
+                  background-size: cover;
+                  background-position: center;
+                ">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
 
@@ -86,18 +88,16 @@
             {{ totalCafe | number : "1.0-0" }}
           </p>
           <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            Polígonos de Café
+            POLIGONOS DE CAFE
           </h2>
         </div>
       </div>
-
-      <!-- ☕ Total Café -->
       <div
         class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
         style="
-          background-image: url('assets/img/cacao.jpg');
-          background-size: cover;
-          background-position: center;">
+                  background-image: url('assets/img/cacao.jpg');
+                  background-size: cover;
+                  background-position: center;">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
         <!-- Contenido encima del fondo -->
@@ -106,20 +106,21 @@
             {{ totalCacao | number : "1.0-0" }}
           </p>
           <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            Polígonos de Cacao
+            POLIGONOS DE CACAO
           </h2>
         </div>
       </div>
     </div>
+    <!-- 📊 Fin de Tarjetas de Poligonos procesados -->
 
     <!-- 📊 Tarjetas de participantes-->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div
         class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
         style="
-        background-image: url('assets/img/participante.webp');
-        background-size: cover;
-        background-position: center;">
+                  background-image: url('assets/img/participante.webp');
+                  background-size: cover;
+                  background-position: center;">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
 
@@ -137,9 +138,9 @@
       <div
         class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
         style="
-        background-image: url('assets/img/participante.webp');
-        background-size: cover;
-        background-position: center;">
+                  background-image: url('assets/img/participante.webp');
+                  background-size: cover;
+                  background-position: center;">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
         <!-- Contenido encima del fondo -->
@@ -155,9 +156,9 @@
       <div
         class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
         style="
-        background-image: url('assets/img/participante.webp');
-        background-size: cover;
-        background-position: center;">
+                  background-image: url('assets/img/participante.webp');
+                  background-size: cover;
+                  background-position: center;">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
         <!-- Contenido encima del fondo -->
@@ -173,9 +174,9 @@
       <div
         class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
         style="
-        background-image: url('assets/img/participante.webp');
-        background-size: cover;
-        background-position: center;">
+                  background-image: url('assets/img/participante.webp');
+                  background-size: cover;
+                  background-position: center;">
         <!-- Fondo semitransparente para mejorar contraste -->
         <div class="absolute inset-0 bg-black/40"></div>
         <!-- Contenido encima del fondo -->
@@ -189,12 +190,7 @@
         </div>
       </div>
     </div>
-
-
-
-
-
-
+    <!-- 📊 Fin de Tarjetas de Participantes -->
 
     <!-- 📊 Gráfico distribución -->
     <div class="bg-white rounded-2xl shadow-lg border p-6">
@@ -205,7 +201,5 @@
       <canvas id="graficoCultivoTipo" class="w-full max-h-[400px] mx-auto"></canvas>
     </div>
     <!-- 📊 Fin de Gráfico distribución -->
-
-
-  </div>
+    </div>
 </div>
