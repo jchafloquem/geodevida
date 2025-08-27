@@ -55,22 +55,10 @@ export class DashboardComponent implements AfterViewInit {
         });
         this.sumarAreaPorCultivo(dashboardCultivos).then((data) => {
           this.areaPorCultivo = data;
-          this.generarGraficoAreaPorCultivo(data);
         });
         this.contarRegistrosUnicosPorDNI(dashboardCultivos).then((totalDNI) => {
           console.log('🧾 Total de registros únicos por DNI:', totalDNI);
         });
-        this.contarRegistrosPorFecha(dashboardCultivos)
-          .then((data) => {
-            if (data && data.length > 0) {
-              this.generarGraficoAreaPorFecha(data);
-            } else {
-              console.warn("No se encontraron registros agrupados por fecha");
-            }
-          })
-          .catch((error) => {
-            console.error("Error al contar registros por fecha:", error);
-          });
       })
       .catch((err) => {
         console.error('Error cargando la capa:', err);
@@ -100,6 +88,42 @@ export class DashboardComponent implements AfterViewInit {
     } catch (err) {
       console.error('❌ Error al calcular suma de área:', err);
       return 0;
+    }
+  }
+  async sumarAreaPorCultivo(layer: FeatureLayer): Promise<any[]> {
+    const statDef = new StatisticDefinition({
+      onStatisticField: 'area_cultivo',
+      outStatisticFieldName: 'total_area',
+      statisticType: 'sum',
+    });
+
+    const query = layer.createQuery();
+    query.where = '1=1';
+    query.outStatistics = [statDef];
+    query.groupByFieldsForStatistics = ['cultivo'];
+    query.returnGeometry = false;
+
+    try {
+      const result = await layer.queryFeatures(query);
+
+      const data = result.features.map((f) => ({
+        cultivo: f.attributes['cultivo'],
+        total_area: f.attributes['total_area'],
+      }));
+
+      // Guardar áreas de café y cacao
+      data.forEach((c) => {
+        const nombre = c.cultivo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (nombre.includes('cafe')) this.totalAreaCafe = c.total_area;
+        if (nombre.includes('cacao')) this.totalAreaCacao = c.total_area;
+      });
+
+      return data;
+    } catch (err) {
+      console.error('❌ Error al calcular área por cultivo:', err);
+      this.totalAreaCafe = 0;
+      this.totalAreaCacao = 0;
+      return [];
     }
   }
   //*Grafico sobre la Meta & Avance
@@ -174,7 +198,6 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
   //*Fin Grafico sobre la Meta & Avance
-
   //*Grafico sobre la Meta por Oficina Zonal
   async crearGraficoProgresoporHectareasOZ() {
     const baseUrl =
@@ -445,7 +468,6 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
   //*FIN Grafico sobre la Meta por Oficina Zonal - CAFE
-
   //*Grafico sobre la Meta por Oficina Zonal - CACAO
   async crearGraficoProgresoporHectareasOZCACAO() {
     const baseUrl =
@@ -582,129 +604,103 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
   //*FIN Grafico sobre la Meta por Oficina Zonal - CACAO
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  async sumarAreaPorCultivo(layer: FeatureLayer): Promise<any[]> {
-    const statDef = new StatisticDefinition({
-      onStatisticField: 'area_cultivo',
-      outStatisticFieldName: 'total_area',
-      statisticType: 'sum',
-    });
-
-    const query = layer.createQuery();
-    query.where = '1=1';
-    query.outStatistics = [statDef];
-    query.groupByFieldsForStatistics = ['cultivo'];
-    query.returnGeometry = false;
-
+  //*Grafico sobre total participantes
+  public totalRegistrosUnicosDNI: Record<string, number> = {};
+  async contarRegistrosUnicosPorDNI(layer: FeatureLayer): Promise<Record<string, number>> {
     try {
-      const result = await layer.queryFeatures(query);
+      const pageSize = 2000;
+      const dnisPorCultivo: Record<string, Set<string>> = {
+        cafe: new Set<string>(),
+        cacao: new Set<string>()
+      };
+      const dnisTotales = new Set<string>();
+      const total = await layer.queryFeatureCount({ where: '1=1' });
+      let fetched = 0;
 
-      const data = result.features.map((f) => ({
-        cultivo: f.attributes['cultivo'],
-        total_area: f.attributes['total_area'],
-      }));
+      while (fetched < total) {
+        const result = await layer.queryFeatures({
+          where: '1=1',
+          outFields: ['dni', 'cultivo'],
+          returnGeometry: false,
+          start: fetched,
+          num: pageSize,
+        });
 
-      // Guardar áreas de café y cacao
-      data.forEach((c) => {
-        const nombre = c.cultivo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        if (nombre.includes('cafe')) this.totalAreaCafe = c.total_area;
-        if (nombre.includes('cacao')) this.totalAreaCacao = c.total_area;
-      });
+        result.features.forEach((f) => {
+          const dni = f.attributes['dni'];
+          if (!dni) return;
 
-      return data;
+          const cultivoRaw = (f.attributes['cultivo'] || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+
+          if (cultivoRaw.includes('cafe')) dnisPorCultivo['cafe'].add(dni);
+          if (cultivoRaw.includes('cacao')) dnisPorCultivo['cacao'].add(dni);
+
+          dnisTotales.add(dni);
+        });
+
+        fetched += result.features.length;
+      }
+
+      // calcular intersección (café y cacao)
+      const cafe_y_cacao = [...dnisPorCultivo['cafe']].filter((dni) =>
+        dnisPorCultivo['cacao'].has(dni)
+      );
+
+      const conteoFinal: Record<string, number> = {
+        cafe: dnisPorCultivo['cafe'].size - cafe_y_cacao.length,
+        cacao: dnisPorCultivo['cacao'].size - cafe_y_cacao.length,
+        'cafe_y_cacao': cafe_y_cacao.length,
+        total: dnisTotales.size
+      };
+
+      this.totalRegistrosUnicosDNI = conteoFinal;
+      return conteoFinal;
     } catch (err) {
-      console.error('❌ Error al calcular área por cultivo:', err);
-      this.totalAreaCafe = 0;
-      this.totalAreaCacao = 0;
-      return [];
+      console.error('❌ Error al contar registros únicos por DNI por cultivo:', err);
+      this.totalRegistrosUnicosDNI = { cafe: 0, cacao: 0, cafe_y_cacao: 0, total: 0 };
+      return { cafe: 0, cacao: 0, cafe_y_cacao: 0, total: 0 };
     }
   }
+  //*Grafico sobre total poligonos
+  contarCafeCacao(layer: FeatureLayer) {
+    const pageSize = 2000;
+    let conteoCafe = 0;
+    let conteoCacao = 0;
 
-  generarGraficoAreaPorCultivo(data: { cultivo: string; total_area: number }[]) {
-    const labels = data.map((d) => d.cultivo);
-    const values = data.map((d) => d.total_area);
+    const getAllData = async () => {
+      const total = await layer.queryFeatureCount({ where: '1=1' });
+      let fetched = 0;
 
-    const ctx = document.getElementById('graficoAreaCultivo') as HTMLCanvasElement;
-    if (!ctx) return;
+      while (fetched < total) {
+        const result = await layer.queryFeatures({
+          where: '1=1',
+          outFields: ['cultivo'],
+          returnGeometry: false,
+          start: fetched,
+          num: pageSize,
+        });
 
-    new Chart(ctx.getContext('2d')!, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Área cultivada (ha)',
-            data: values,
-            backgroundColor: '#4CAF50',
-            borderColor: '#2E7D32',
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        indexAxis: 'y',
-        plugins: {
-          legend: { display: false },
-          title: {
-            display: true,
-            text: 'Área total por tipo de cultivo',
-            font: { size: 18 },
-          },
-          datalabels: {
-            anchor: 'end',
-            align: 'right',
-            color: '#333',
-            font: { weight: 'bold' },
-            formatter: (value: number) => Math.round(value).toLocaleString('en-US'), // enteros con coma como miles
-          },
-        },
-      },
-      plugins: [ChartDataLabels],
+        result.features.forEach((f) => {
+          const cultivo = (f.attributes['cultivo'] || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          if (cultivo.includes('cafe')) conteoCafe++;
+          if (cultivo.includes('cacao')) conteoCacao++;
+        });
+
+        fetched += result.features.length;
+      }
+
+      return { cafe: conteoCafe, cacao: conteoCacao };
+    };
+
+    return getAllData().catch((err) => {
+      console.error('❌ Error al consultar CAFE y CACAO:', err);
+      return { cafe: 0, cacao: 0 };
     });
   }
-
   generarGraficoCultivosPorTipo(layer: FeatureLayer) {
     const pageSize = 2000;
     const conteo: Record<string, number> = {};
@@ -786,244 +782,4 @@ export class DashboardComponent implements AfterViewInit {
 
     getAllCultivoData().catch((err) => console.error('❌ Error al consultar todos los cultivos:', err));
   }
-
-  contarCafeCacao(layer: FeatureLayer) {
-    const pageSize = 2000;
-    let conteoCafe = 0;
-    let conteoCacao = 0;
-
-    const getAllData = async () => {
-      const total = await layer.queryFeatureCount({ where: '1=1' });
-      let fetched = 0;
-
-      while (fetched < total) {
-        const result = await layer.queryFeatures({
-          where: '1=1',
-          outFields: ['cultivo'],
-          returnGeometry: false,
-          start: fetched,
-          num: pageSize,
-        });
-
-        result.features.forEach((f) => {
-          const cultivo = (f.attributes['cultivo'] || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-          if (cultivo.includes('cafe')) conteoCafe++;
-          if (cultivo.includes('cacao')) conteoCacao++;
-        });
-
-        fetched += result.features.length;
-      }
-
-      return { cafe: conteoCafe, cacao: conteoCacao };
-    };
-
-    return getAllData().catch((err) => {
-      console.error('❌ Error al consultar CAFE y CACAO:', err);
-      return { cafe: 0, cacao: 0 };
-    });
-  }
-
-  public totalRegistrosUnicosDNI: Record<string, number> = {};
-
-  async contarRegistrosUnicosPorDNI(layer: FeatureLayer): Promise<Record<string, number>> {
-    try {
-      const pageSize = 2000;
-      const dnisPorCultivo: Record<string, Set<string>> = {
-        cafe: new Set<string>(),
-        cacao: new Set<string>()
-      };
-      const dnisTotales = new Set<string>();
-      const total = await layer.queryFeatureCount({ where: '1=1' });
-      let fetched = 0;
-
-      while (fetched < total) {
-        const result = await layer.queryFeatures({
-          where: '1=1',
-          outFields: ['dni', 'cultivo'],
-          returnGeometry: false,
-          start: fetched,
-          num: pageSize,
-        });
-
-        result.features.forEach((f) => {
-          const dni = f.attributes['dni'];
-          if (!dni) return;
-
-          const cultivoRaw = (f.attributes['cultivo'] || '')
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .trim();
-
-          if (cultivoRaw.includes('cafe')) dnisPorCultivo['cafe'].add(dni);
-          if (cultivoRaw.includes('cacao')) dnisPorCultivo['cacao'].add(dni);
-
-          dnisTotales.add(dni);
-        });
-
-        fetched += result.features.length;
-      }
-
-      // calcular intersección (café y cacao)
-      const cafe_y_cacao = [...dnisPorCultivo['cafe']].filter((dni) =>
-        dnisPorCultivo['cacao'].has(dni)
-      );
-
-      const conteoFinal: Record<string, number> = {
-        cafe: dnisPorCultivo['cafe'].size - cafe_y_cacao.length,
-        cacao: dnisPorCultivo['cacao'].size - cafe_y_cacao.length,
-        'cafe_y_cacao': cafe_y_cacao.length,
-        total: dnisTotales.size
-      };
-
-      this.totalRegistrosUnicosDNI = conteoFinal;
-      return conteoFinal;
-    } catch (err) {
-      console.error('❌ Error al contar registros únicos por DNI por cultivo:', err);
-      this.totalRegistrosUnicosDNI = { cafe: 0, cacao: 0, cafe_y_cacao: 0, total: 0 };
-      return { cafe: 0, cacao: 0, cafe_y_cacao: 0, total: 0 };
-    }
-  }
-
-  async contarRegistrosPorFecha(layer: FeatureLayer): Promise<{ fecha: string; total: number }[]> {
-    try {
-      const query = layer.createQuery();
-      query.outStatistics = [
-        {
-          statisticType: "count",
-          onStatisticField: "fecha_regitro",
-          outStatisticFieldName: "total"
-        }
-      ];
-      query.groupByFieldsForStatistics = ["fecha_regitro"]; // Agrupar por fecha
-      query.orderByFields = ["fecha_regitro ASC"];
-
-      const response = await layer.queryFeatures(query);
-
-      // Procesamos resultados
-      return response.features.map((f) => {
-        const attrs = f.attributes;
-        // fecha_regitro viene como timestamp -> convertir a YYYY-MM-DD
-        const fecha = new Date(attrs["fecha_regitro"]).toISOString().split("T")[0];
-        return {
-          fecha,
-          total: attrs["total"]
-        };
-      });
-    } catch (err) {
-      console.error("Error al contar registros por fecha:", err);
-      return [];
-    }
-  }
-
-  generarGraficoAreaPorFecha(data: { fecha: string; total: number }[]) {
-    const labels = data.map((d) => d.fecha);
-    const values = data.map((d) => d.total);
-
-    const ctx = document.getElementById('graficoAreaFecha') as HTMLCanvasElement;
-    if (!ctx) return;
-
-    new Chart(ctx.getContext('2d')!, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Cantidad de registros',
-            data: values,
-            borderColor: '#1565C0',
-            backgroundColor: 'rgba(33, 150, 243, 0.2)',
-            fill: true,
-            tension: 0.3,
-            borderWidth: 2,
-            pointBackgroundColor: '#2196F3',
-            pointBorderColor: '#0D47A1',
-            pointRadius: 5,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true },
-          title: {
-            display: true,
-            text: 'Registros por fecha',
-            font: { size: 18 },
-          },
-          datalabels: {
-            align: 'top',
-            anchor: 'end',
-            color: '#333',
-            font: { weight: 'bold' },
-            formatter: (value: number) => value.toLocaleString('en-US'),
-          },
-        },
-        scales: {
-          x: {
-            title: { display: true, text: 'Fecha' },
-          },
-          y: {
-            title: { display: true, text: 'Cantidad de registros' },
-            beginAtZero: true,
-          },
-        },
-      },
-      plugins: [ChartDataLabels],
-    });
-  }
-
-  async contarRegistrosPorMes(layer: __esri.FeatureLayer): Promise<{ mes: string; total: number }[]> {
-    try {
-      const query = layer.createQuery();
-      query.outStatistics = [
-        {
-          statisticType: "count",
-          onStatisticField: "OBJECTID",  // o el ID único de tu capa
-          outStatisticFieldName: "total"
-        }
-      ];
-
-      // agrupamos por año y mes
-      query.groupByFieldsForStatistics = [
-        "EXTRACT(YEAR FROM fecha_regitro)",
-        "EXTRACT(MONTH FROM fecha_regitro)"
-      ];
-
-      const response = await layer.queryFeatures(query);
-
-      return response.features.map((f) => {
-        const attrs = f.attributes as any;
-        const year = attrs["EXPR_1"];  // YEAR
-        const month = attrs["EXPR_2"]; // MONTH
-        const total = attrs["total"];
-
-        // convertir número de mes en nombre
-        const meses = [
-          "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-          "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-        ];
-        const mesNombre = `${meses[month - 1]} ${year}`;
-
-        return {
-          mes: mesNombre,
-          total: total
-        };
-      });
-    } catch (error) {
-      console.error("Error al contar registros por mes:", error);
-      return [];
-    }
-  }
-
-
-
-
-
-
-
-
-
-
-
 }
