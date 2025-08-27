@@ -31,8 +31,6 @@ export class DashboardComponent implements AfterViewInit {
   public totalAreaCafe = 0;
   public totalAreaCacao = 0;
 
-
-
   ngAfterViewInit(): void {
     const dashboardCultivos = new FeatureLayer({
       url: 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10',
@@ -50,41 +48,14 @@ export class DashboardComponent implements AfterViewInit {
           this.crearGraficoProgresoporHectareasOZCACAO();
         });
         //FUNCIONES TERMINADAS
-
-
-
         this.generarGraficoCultivosPorTipo(dashboardCultivos);
-
         this.contarCafeCacao(dashboardCultivos).then((res) => {
           this.totalCafe = res.cafe;
           this.totalCacao = res.cacao;
         });
-
-
-        this.sumarAreaPorCultivo(dashboardCultivos).then((data) => {
-          this.areaPorCultivo = data;
-          this.generarGraficoAreaPorCultivo(data);
-        });
-
         this.contarRegistrosUnicosPorDNI(dashboardCultivos).then((totalDNI) => {
           console.log('🧾 Total de registros únicos por DNI:', totalDNI);
         });
-
-        this.contarRegistrosPorMes(dashboardCultivos).then((data) => {
-          this.generarGraficoConteoPorMes(data);
-        });
-
-        this.contarRegistrosPorFecha(dashboardCultivos)
-          .then((data) => {
-            if (data && data.length > 0) {
-              this.generarGraficoAreaPorFecha(data);
-            } else {
-              console.warn("No se encontraron registros agrupados por fecha");
-            }
-          })
-          .catch((error) => {
-            console.error("Error al contar registros por fecha:", error);
-          });
       })
       .catch((err) => {
         console.error('Error cargando la capa:', err);
@@ -92,10 +63,35 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   //*Grafico sobre la Meta & Avance
+  async sumarAreaCultivoTotal(layer: FeatureLayer): Promise<number> {
+    const statDef = new StatisticDefinition({
+      onStatisticField: 'area_cultivo',
+      outStatisticFieldName: 'sum_area',
+      statisticType: 'sum',
+    });
+
+    const query = layer.createQuery();
+    query.where = '1=1';
+    query.outStatistics = [statDef];
+    query.returnGeometry = false;
+
+    try {
+      const result = await layer.queryFeatures(query);
+      if (result.features.length > 0) {
+        const value = result.features[0].attributes?.['sum_area'];
+        return value != null ? value : 0;
+      }
+      return 0;
+    } catch (err) {
+      console.error('❌ Error al calcular suma de área:', err);
+      return 0;
+    }
+  }
   crearGraficoProgresoporHectareas(total: number) {
     const meta = 62000;
     const restante = Math.max(meta - total, 0); // porción restante
     const ctx = document.getElementById('graficoMeta') as HTMLCanvasElement;
+
     new Chart(ctx, {
       type: 'doughnut', // tipo pastel
       data: {
@@ -120,6 +116,15 @@ export class DashboardComponent implements AfterViewInit {
         maintainAspectRatio: true,
         aspectRatio: 1,
         plugins: {
+          title: {
+            display: true,
+            text: 'PROGRESO POR HECTAREAS',  // <<< Aquí el título
+            font: {
+              size: 18,
+              weight: 'bold'
+            },
+            color: '#333'
+          },
           legend: {
             display: true,
             labels: {
@@ -158,14 +163,17 @@ export class DashboardComponent implements AfterViewInit {
   async crearGraficoProgresoporHectareasOZ() {
     const baseUrl =
       'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
+
     interface Cultivo {
       org: string;
       area_cultivo: number;
     }
+
     let allFeatures: any[] = [];
     let offset = 0;
     const pageSize = 2000;
     let hasMore = true;
+
     // 🔹 Paginación para traer TODOS los registros
     while (hasMore) {
       const url =
@@ -183,19 +191,23 @@ export class DashboardComponent implements AfterViewInit {
         hasMore = false;
       }
     }
+
     const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
       org: feat.attributes.org,
       area_cultivo: feat.attributes.area_cultivo,
     }));
+
     // Agrupamos por Oficina Zonal
     const agrupado: Record<string, number> = {};
     rawData.forEach((item: Cultivo) => {
       agrupado[item.org] = (agrupado[item.org] || 0) + item.area_cultivo;
     });
+
     // 🔹 Ordenar de mayor a menor
     const entries = Object.entries(agrupado).sort((a, b) => b[1] - a[1]);
     const labels = entries.map(e => e[0]);
     const values = entries.map(e => e[1]);
+
     // 🔹 Colores por ORG (mapa)
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
@@ -207,11 +219,14 @@ export class DashboardComponent implements AfterViewInit {
       'OZ QUILLABAMBA': '#FEFEB9',
       'OZ IQUITOS': '#CAFEDA',
     };
+
     // Asignar colores según el ORG, si no existe usar gris
     const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
     const borderColors = backgroundColors.map(c => c);
+
     const ctx = document.getElementById('graficoMetaOZ') as HTMLCanvasElement;
     if (!ctx) return;
+
     new Chart(ctx, {
       type: 'bar',
       data: {
@@ -223,8 +238,8 @@ export class DashboardComponent implements AfterViewInit {
             backgroundColor: backgroundColors,
             borderColor: borderColors,
             borderWidth: 1,
-            barThickness: 25,     // 🔹 grosor fijo de la barra
-            maxBarThickness: 50,  // 🔹 ancho máximo permitido
+            barThickness: 25,
+            maxBarThickness: 50,
           },
         ],
       },
@@ -247,6 +262,13 @@ export class DashboardComponent implements AfterViewInit {
           },
         },
         plugins: {
+          title: {
+            display: true,
+            text: 'TOTAL DE AREA CULTIVADA POR OFICINA ZONAL',
+            font: { size: 18, weight: 'bold' },
+            color: '#333',
+            padding: { top: 10, bottom: 20 }
+          },
           legend: { display: false },
           tooltip: {
             callbacks: {
@@ -377,6 +399,13 @@ export class DashboardComponent implements AfterViewInit {
           },
         },
         plugins: {
+          title: {
+            display: true,
+            text: 'AREA TOTAL CULTIVADA DE CAFE POR OFICINA ZONAL',
+            font: { size: 18, weight: 'bold' },
+            color: '#333',
+            padding: { top: 10, bottom: 20 }
+          },
           legend: { display: false },
           tooltip: {
             callbacks: {
@@ -401,6 +430,7 @@ export class DashboardComponent implements AfterViewInit {
   }
   //*FIN Grafico sobre la Meta por Oficina Zonal - CAFE
 
+  //*Grafico sobre la Meta por Oficina Zonal - CACAO
   async crearGraficoProgresoporHectareasOZCACAO() {
     const baseUrl =
       'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
@@ -506,6 +536,13 @@ export class DashboardComponent implements AfterViewInit {
           },
         },
         plugins: {
+          title: {
+            display: true,
+            text: 'AREA TOTAL CULTIVADA DE CACAO POR OFICINA ZONAL',
+            font: { size: 18, weight: 'bold' },
+            color: '#333',
+            padding: { top: 10, bottom: 20 }
+          },
           legend: { display: false },
           tooltip: {
             callbacks: {
@@ -528,6 +565,7 @@ export class DashboardComponent implements AfterViewInit {
       plugins: [ChartDataLabels],
     });
   }
+  //*FIN Grafico sobre la Meta por Oficina Zonal - CACAO
 
 
 
@@ -568,111 +606,11 @@ export class DashboardComponent implements AfterViewInit {
 
 
 
-  async sumarAreaCultivoTotal(layer: FeatureLayer): Promise<number> {
-    const statDef = new StatisticDefinition({
-      onStatisticField: 'area_cultivo',
-      outStatisticFieldName: 'sum_area',
-      statisticType: 'sum',
-    });
 
-    const query = layer.createQuery();
-    query.where = '1=1';
-    query.outStatistics = [statDef];
-    query.returnGeometry = false;
 
-    try {
-      const result = await layer.queryFeatures(query);
-      if (result.features.length > 0) {
-        const value = result.features[0].attributes?.['sum_area'];
-        return value != null ? value : 0;
-      }
-      return 0;
-    } catch (err) {
-      console.error('❌ Error al calcular suma de área:', err);
-      return 0;
-    }
-  }
 
-  async sumarAreaPorCultivo(layer: FeatureLayer): Promise<any[]> {
-    const statDef = new StatisticDefinition({
-      onStatisticField: 'area_cultivo',
-      outStatisticFieldName: 'total_area',
-      statisticType: 'sum',
-    });
 
-    const query = layer.createQuery();
-    query.where = '1=1';
-    query.outStatistics = [statDef];
-    query.groupByFieldsForStatistics = ['cultivo'];
-    query.returnGeometry = false;
 
-    try {
-      const result = await layer.queryFeatures(query);
-
-      const data = result.features.map((f) => ({
-        cultivo: f.attributes['cultivo'],
-        total_area: f.attributes['total_area'],
-      }));
-
-      // Guardar áreas de café y cacao
-      data.forEach((c) => {
-        const nombre = c.cultivo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        if (nombre.includes('cafe')) this.totalAreaCafe = c.total_area;
-        if (nombre.includes('cacao')) this.totalAreaCacao = c.total_area;
-      });
-
-      return data;
-    } catch (err) {
-      console.error('❌ Error al calcular área por cultivo:', err);
-      this.totalAreaCafe = 0;
-      this.totalAreaCacao = 0;
-      return [];
-    }
-  }
-
-  generarGraficoAreaPorCultivo(data: { cultivo: string; total_area: number }[]) {
-    const labels = data.map((d) => d.cultivo);
-    const values = data.map((d) => d.total_area);
-
-    const ctx = document.getElementById('graficoAreaCultivo') as HTMLCanvasElement;
-    if (!ctx) return;
-
-    new Chart(ctx.getContext('2d')!, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Área cultivada (ha)',
-            data: values,
-            backgroundColor: '#4CAF50',
-            borderColor: '#2E7D32',
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        indexAxis: 'y',
-        plugins: {
-          legend: { display: false },
-          title: {
-            display: true,
-            text: 'Área total por tipo de cultivo',
-            font: { size: 18 },
-          },
-          datalabels: {
-            anchor: 'end',
-            align: 'right',
-            color: '#333',
-            font: { weight: 'bold' },
-            formatter: (value: number) => Math.round(value).toLocaleString('en-US'), // enteros con coma como miles
-          },
-        },
-      },
-      plugins: [ChartDataLabels],
-    });
-  }
 
   generarGraficoCultivosPorTipo(layer: FeatureLayer) {
     const pageSize = 2000;
@@ -854,168 +792,7 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  async contarRegistrosPorFecha(layer: FeatureLayer): Promise<{ fecha: string; total: number }[]> {
-    try {
-      const query = layer.createQuery();
-      query.outStatistics = [
-        {
-          statisticType: "count",
-          onStatisticField: "fecha_regitro",
-          outStatisticFieldName: "total"
-        }
-      ];
-      query.groupByFieldsForStatistics = ["fecha_regitro"]; // Agrupar por fecha
-      query.orderByFields = ["fecha_regitro ASC"];
 
-      const response = await layer.queryFeatures(query);
-
-      // Procesamos resultados
-      return response.features.map((f) => {
-        const attrs = f.attributes;
-        // fecha_regitro viene como timestamp -> convertir a YYYY-MM-DD
-        const fecha = new Date(attrs["fecha_regitro"]).toISOString().split("T")[0];
-        return {
-          fecha,
-          total: attrs["total"]
-        };
-      });
-    } catch (err) {
-      console.error("Error al contar registros por fecha:", err);
-      return [];
-    }
-  }
-
-  generarGraficoAreaPorFecha(data: { fecha: string; total: number }[]) {
-    const labels = data.map((d) => d.fecha);
-    const values = data.map((d) => d.total);
-
-    const ctx = document.getElementById('graficoAreaFecha') as HTMLCanvasElement;
-    if (!ctx) return;
-
-    new Chart(ctx.getContext('2d')!, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Cantidad de registros',
-            data: values,
-            borderColor: '#1565C0',
-            backgroundColor: 'rgba(33, 150, 243, 0.2)',
-            fill: true,
-            tension: 0.3,
-            borderWidth: 2,
-            pointBackgroundColor: '#2196F3',
-            pointBorderColor: '#0D47A1',
-            pointRadius: 5,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true },
-          title: {
-            display: true,
-            text: 'Registros por fecha',
-            font: { size: 18 },
-          },
-          datalabels: {
-            align: 'top',
-            anchor: 'end',
-            color: '#333',
-            font: { weight: 'bold' },
-            formatter: (value: number) => value.toLocaleString('en-US'),
-          },
-        },
-        scales: {
-          x: {
-            title: { display: true, text: 'Fecha' },
-          },
-          y: {
-            title: { display: true, text: 'Cantidad de registros' },
-            beginAtZero: true,
-          },
-        },
-      },
-      plugins: [ChartDataLabels],
-    });
-  }
-
-  async contarRegistrosPorMes(layer: __esri.FeatureLayer): Promise<{ mes: string; total: number }[]> {
-    try {
-      const query = layer.createQuery();
-      query.outStatistics = [
-        {
-          statisticType: "count",
-          onStatisticField: "OBJECTID",  // o el ID único de tu capa
-          outStatisticFieldName: "total"
-        }
-      ];
-
-      // agrupamos por año y mes
-      query.groupByFieldsForStatistics = [
-        "EXTRACT(YEAR FROM fecha_regitro)",
-        "EXTRACT(MONTH FROM fecha_regitro)"
-      ];
-
-      const response = await layer.queryFeatures(query);
-
-      return response.features.map((f) => {
-        const attrs = f.attributes as any;
-        const year = attrs["EXPR_1"];  // YEAR
-        const month = attrs["EXPR_2"]; // MONTH
-        const total = attrs["total"];
-
-        // convertir número de mes en nombre
-        const meses = [
-          "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-          "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-        ];
-        const mesNombre = `${meses[month - 1]} ${year}`;
-
-        return {
-          mes: mesNombre,
-          total: total
-        };
-      });
-    } catch (error) {
-      console.error("Error al contar registros por mes:", error);
-      return [];
-    }
-  }
-
-  generarGraficoConteoPorMes(data: { mes: string; total: number }[]): void {
-    const labels = data.map((d) => d.mes);
-    const valores = data.map((d) => d.total);
-
-    const ctx = (document.getElementById("graficoPorMes") as HTMLCanvasElement).getContext("2d");
-
-    new Chart(ctx!, {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [
-          {
-            label: "Registros por mes",
-            data: valores,
-            backgroundColor: "rgba(75, 192, 192, 0.6)"
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: true },
-          datalabels: {
-            anchor: "end",
-            align: "top",
-            formatter: (value: number) => value
-          }
-        }
-      }
-    });
-  }
 
 
 
