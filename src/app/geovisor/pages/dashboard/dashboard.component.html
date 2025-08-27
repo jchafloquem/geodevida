@@ -2,204 +2,179 @@
   class="flex flex-col md:flex-row w-screen h-screen bg-slate-100 text-black antialiased selection:bg-blue-600 selection:text-white overflow-hidden">
   <!-- 📚 Menú lateral -->
   <app-sidemenu class="w-full md:w-64 bg-[#323232] md:h-full"></app-sidemenu>
-
   <!-- 📊 Contenido principal -->
   <div class="flex-1 min-w-0 pt-4 pr-6 pb-6 pl-6 overflow-y-auto space-y-4">
-    <!-- 📊 Tarjetas de Hectareas de cultivo -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <!-- Area Total -->
-      <div
-        class="bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl">
-        <p class="text-5xl md:text-6xl font-extrabold text-green-600 tracking-tight">
-          {{ totalAreaCultivo | number : "1.0-0" }}
-        </p>
-        <h2 class="text-base md:text-lg font-semibold text-gray-700 mt-3">
-          HECTAREAS TOTAL EN CULTIVOS
-        </h2>
-      </div>
-      <!-- Area Total en cultivos de Cafe-->
-      <div
-        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
-        style="
-          background-image: url('assets/img/cafe.webp');
-          background-size: cover;
-          background-position: center;
-        ">
-        <!-- Fondo semitransparente para mejorar contraste -->
-        <div class="absolute inset-0 bg-black/40"></div>
-
-        <!-- Contenido encima del fondo -->
-        <div class="relative z-10 flex flex-col items-center">
-          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-            {{ totalAreaCafe | number : "1.0-0" }}
+    <!-- ESTADISTICA SOBRE HECTAREAS -->
+    <div class="rounded-2xl bg-white p-6 shadow-md ring-1 ring-gray-200">
+      <!-- Título de la tarjeta principal -->
+      <h2 class="text-lg font-semibold text-gray-800 mb-6">
+        ESTADISTICA EN HECTAREAS
+      </h2>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- Meta Total -->
+        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10">
+          <p class="text-sm font-medium leading-6 text-white">META EN HECTAREAS</p>
+          <p class="mt-2 flex items-baseline gap-x-2">
+            <span class="text-4xl font-semibold tracking-tight text-green-400">62,000</span>
           </p>
-          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            HECTAREAS TOTAL EN CULTIVOS DE CAFE
-          </h2>
         </div>
-      </div>
-      <!-- ☕ Total Cacao -->
-      <div
-        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
-        style="
-          background-image: url('assets/img/cacao.jpg');
-          background-size: cover;
-          background-position: center;
-        ">
-        <!-- Fondo semitransparente para mejorar contraste -->
-        <div class="absolute inset-0 bg-black/40"></div>
-        <!-- Contenido encima del fondo -->
-        <div class="relative z-10 flex flex-col items-center">
-          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-            {{ totalAreaCacao | number : "1.0-0" }}
+        <!-- Hectáreas Total en Cultivos -->
+        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10">
+          <p class="text-sm font-medium leading-6 text-white">AVANCE TOTAL DE CULTIVOS (ha)</p>
+          <p class="mt-2 flex items-baseline gap-x-2">
+            <span class="text-4xl font-semibold tracking-tight text-green-400">
+              {{ totalAreaCultivo | number : "1.0-0" }}
+            </span>
           </p>
-          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            HECTAREAS TOTAL EN CULTIVOS DE CAFE & CACAO
-          </h2>
+        </div>
+        <!-- Hectáreas de Café -->
+        <div class="relative rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 overflow-hidden">
+          <img src="assets/img/cafe.webp" class="absolute inset-0 h-full w-full object-cover opacity-30" alt="Café">
+          <div class="relative">
+            <p class="text-sm font-medium leading-6 text-white">AVANCE TOTAL EN CULTIVO DE CAFE (ha)</p>
+            <p class="mt-2 flex items-baseline gap-x-2">
+              <span class="text-4xl font-semibold tracking-tight text-white">
+                {{ totalAreaCafe | number : "1.0-0" }}
+              </span>
+            </p>
+          </div>
+        </div>
+        <!-- Hectáreas de Cacao -->
+        <div class="relative rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 overflow-hidden">
+          <img src="assets/img/cacao.jpg" class="absolute inset-0 h-full w-full object-cover opacity-30" alt="Cacao">
+          <div class="relative">
+            <p class="text-sm font-medium leading-6 text-white">AVANCE TOTAL EN CULTIVO DE CACAO (ha)</p>
+            <p class="mt-2 flex items-baseline gap-x-2">
+              <span class="text-4xl font-semibold tracking-tight text-white">
+                {{ totalAreaCacao | number : "1.0-0" }}
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-    <!-- 📊 Fin de Tarjetas de Hectareas de cultivo -->
+    <!-- FIND ESTADISTICA SOBRE HECTAREAS -->
 
-    <!-- 📊 Tarjetas de Poligonos procesados -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div
-        class="bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl">
-        <p class="text-5xl md:text-6xl font-extrabold text-green-600 tracking-tight">
-          {{ totalRegistrosCultivos | number : "1.0-0" }}
-        </p>
-        <h2 class="text-base md:text-lg font-semibold text-gray-700 mt-3">
-          TOTAL DE POLIGONOS
-        </h2>
-      </div>
-      <div
-        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
-        style="
-                  background-image: url('assets/img/cafe.webp');
-                  background-size: cover;
-                  background-position: center;
-                ">
-        <!-- Fondo semitransparente para mejorar contraste -->
-        <div class="absolute inset-0 bg-black/40"></div>
-
-        <!-- Contenido encima del fondo -->
-        <div class="relative z-10 flex flex-col items-center">
-          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-            {{ totalCafe | number : "1.0-0" }}
+    <!-- ESTADISTICA SOBRE FAMILIAS -->
+    <div class="rounded-2xl bg-white p-6 shadow-md ring-1 ring-gray-200">
+      <h2 class="text-lg font-semibold text-gray-800 mb-6">
+        ESTADISTICA EN FAMILIAS
+      </h2>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10">
+          <p class="text-sm font-medium leading-6 text-white">TOTAL DE PARTICIPANTES</p>
+          <p class="mt-2 flex items-baseline gap-x-2">
+            <span class="text-4xl font-semibold tracking-tight text-green-400">
+              {{ totalRegistrosUnicosDNI["total"] | number : "1.0-0" }}
+            </span>
           </p>
-          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            POLIGONOS DE CAFE
-          </h2>
         </div>
-      </div>
-      <div
-        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
-        style="
-                  background-image: url('assets/img/cacao.jpg');
-                  background-size: cover;
-                  background-position: center;">
-        <!-- Fondo semitransparente para mejorar contraste -->
-        <div class="absolute inset-0 bg-black/40"></div>
-        <!-- Contenido encima del fondo -->
-        <div class="relative z-10 flex flex-col items-center">
-          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-            {{ totalCacao | number : "1.0-0" }}
+        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10">
+          <p class="text-sm font-medium leading-6 text-white">TOTAL DE PARTICIPANTES - CAFE & CACAO</p>
+          <p class="mt-2 flex items-baseline gap-x-2">
+            <span class="text-4xl font-semibold tracking-tight text-green-400">
+              {{ totalRegistrosUnicosDNI["cafe_y_cacao"] | number : "1.0-0" }}
+            </span>
           </p>
-          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            POLIGONOS DE CACAO
-          </h2>
+        </div>
+        <div class="relative rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 overflow-hidden">
+          <img src="assets/img/cafe.webp" class="absolute inset-0 h-full w-full object-cover opacity-30" alt="Café">
+          <div class="relative">
+            <p class="text-sm font-medium leading-6 text-white">TOTAL DE PARTICIPANTES - CAFE</p>
+            <p class="mt-2 flex items-baseline gap-x-2">
+              <span class="text-4xl font-semibold tracking-tight text-white">
+                {{ totalRegistrosUnicosDNI["cafe"] | number : "1.0-0" }}
+              </span>
+            </p>
+          </div>
+        </div>
+        <div class="relative rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 overflow-hidden">
+          <img src="assets/img/cacao.jpg" class="absolute inset-0 h-full w-full object-cover opacity-30" alt="Cacao">
+          <div class="relative">
+            <p class="text-sm font-medium leading-6 text-white">TOTAL DE PARTICIPANTES - CACAO</p>
+            <p class="mt-2 flex items-baseline gap-x-2">
+              <span class="text-4xl font-semibold tracking-tight text-white">
+                {{ totalRegistrosUnicosDNI["cacao"] | number : "1.0-0" }}
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-    <!-- 📊 Fin de Tarjetas de Poligonos procesados -->
+    <!-- FIN ESTADISTICA SOBRE FAMILIAS -->
 
-    <!-- 📊 Tarjetas de participantes-->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div
-        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
-        style="
-                  background-image: url('assets/img/participante.webp');
-                  background-size: cover;
-                  background-position: center;">
-        <!-- Fondo semitransparente para mejorar contraste -->
-        <div class="absolute inset-0 bg-black/40"></div>
-
-        <!-- Contenido encima del fondo -->
-        <div class="relative z-10 flex flex-col items-center">
-          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-            {{ totalRegistrosUnicosDNI["total"] | number : "1.0-0" }}
+    <!-- ESTADISTICA POLIGONOS -->
+    <div class="rounded-2xl bg-white p-6 shadow-md ring-1 ring-gray-200">
+      <h2 class="text-lg font-semibold text-gray-800 mb-6">
+        ESTADISTICA EN POLIGONOS
+      </h2>
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10">
+          <p class="text-sm font-medium leading-6 text-white">TOTAL DE POLIGONOS DE CULTIVOS</p>
+          <p class="mt-2 flex items-baseline gap-x-2">
+            <span class="text-4xl font-semibold tracking-tight text-green-400">
+              {{ totalRegistrosCultivos | number : "1.0-0" }}
+            </span>
           </p>
-          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            TOTAL DE PARTICIPANTES
-          </h2>
         </div>
-      </div>
-
-      <div
-        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
-        style="
-                  background-image: url('assets/img/participante.webp');
-                  background-size: cover;
-                  background-position: center;">
-        <!-- Fondo semitransparente para mejorar contraste -->
-        <div class="absolute inset-0 bg-black/40"></div>
-        <!-- Contenido encima del fondo -->
-        <div class="relative z-10 flex flex-col items-center">
-          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-            {{ totalRegistrosUnicosDNI["cafe"] | number : "1.0-0" }}
+        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10">
+          <p class="text-sm font-medium leading-6 text-white">TOTAL DE POLIGONOS EN PROCESO</p>
+          <p class="mt-2 flex items-baseline gap-x-2">
+            <span class="text-4xl font-semibold tracking-tight text-green-400">
+              {{ totalRegistrosUnicosDNI[""] | number : "1.0-0" }}
+            </span>
           </p>
-          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            TOTAL DE PARTICIPANTES CAFE
-          </h2>
         </div>
-      </div>
-      <div
-        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
-        style="
-                  background-image: url('assets/img/participante.webp');
-                  background-size: cover;
-                  background-position: center;">
-        <!-- Fondo semitransparente para mejorar contraste -->
-        <div class="absolute inset-0 bg-black/40"></div>
-        <!-- Contenido encima del fondo -->
-        <div class="relative z-10 flex flex-col items-center">
-          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-            {{ totalRegistrosUnicosDNI["cacao"] | number : "1.0-0" }}
-          </p>
-          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            TOTAL DE PARTICIPANTES CACAO
-          </h2>
+        <div class="relative rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 overflow-hidden">
+          <img src="assets/img/cafe.webp" class="absolute inset-0 h-full w-full object-cover opacity-30" alt="Café">
+          <div class="relative">
+            <p class="text-sm font-medium leading-6 text-white">TOTAL DE POLIGONOS - CAFE</p>
+            <p class="mt-2 flex items-baseline gap-x-2">
+              <span class="text-4xl font-semibold tracking-tight text-white">
+                {{ totalCafe | number : "1.0-0" }}
+              </span>
+            </p>
+          </div>
         </div>
-      </div>
-      <div
-        class="relative bg-white rounded-2xl shadow-lg border p-6 flex flex-col items-center justify-center text-center transition hover:shadow-2xl overflow-hidden"
-        style="
-                  background-image: url('assets/img/participante.webp');
-                  background-size: cover;
-                  background-position: center;">
-        <!-- Fondo semitransparente para mejorar contraste -->
-        <div class="absolute inset-0 bg-black/40"></div>
-        <!-- Contenido encima del fondo -->
-        <div class="relative z-10 flex flex-col items-center">
-          <p class="text-5xl md:text-6xl font-extrabold text-white tracking-tight">
-            {{ totalRegistrosUnicosDNI["cafe_y_cacao"] | number : "1.0-0" }}
-          </p>
-          <h2 class="text-base md:text-lg font-semibold text-white mt-3">
-            TOTAL DE PARTICIPANTES CAFE & CACAO
-          </h2>
+        <div class="relative rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 overflow-hidden">
+          <img src="assets/img/cacao.jpg" class="absolute inset-0 h-full w-full object-cover opacity-30" alt="Cacao">
+          <div class="relative">
+            <p class="text-sm font-medium leading-6 text-white">TOTAL DE POLIGONOS - CACAO</p>
+            <p class="mt-2 flex items-baseline gap-x-2">
+              <span class="text-4xl font-semibold tracking-tight text-white">
+                {{ totalCacao | number : "1.0-0" }}
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-    <!-- 📊 Fin de Tarjetas de Participantes -->
+    <!-- FIN ESTADISTICA POLIGONOS -->
 
-    <!-- 📊 Gráfico distribución -->
+    <!-- GRAFICOS -->
+    <div class="bg-white rounded-2xl shadow-lg border p-6">
+      <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4 text-left">
+        META / AVANCE
+      </h2>
+      <canvas id="graficoMeta" class="w-full max-h-[400px] mx-auto"></canvas>
+    </div>
     <div class="bg-white rounded-2xl shadow-lg border p-6">
       <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4 text-center">
         Distribución por tipo de cultivo
       </h2>
       <canvas id="graficoAreaCultivo" class="w-full max-h-[400px] mx-auto"></canvas>
       <canvas id="graficoCultivoTipo" class="w-full max-h-[400px] mx-auto"></canvas>
+      <!-- <canvas id="graficoAreaFecha" class="w-full max-h-[400px] mx-auto"></canvas> -->
+      <canvas id="graficoPorMes" class="w-full max-h-[400px] mx-auto"></canvas>
     </div>
-    <!-- 📊 Fin de Gráfico distribución -->
+    <div class="bg-white rounded-2xl shadow-lg border p-6">
+      <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4 text-center">
+        Distribución por tipo de cultivo
+      </h2>
+      <canvas id="graficoAreaCultivo" class="w-full max-h-[400px] mx-auto"></canvas>
+      <canvas id="graficoCultivoTipo" class="w-full max-h-[400px] mx-auto"></canvas>
+      <!-- <canvas id="graficoAreaFecha" class="w-full max-h-[400px] mx-auto"></canvas> -->
+      <canvas id="graficoPorMes" class="w-full max-h-[400px] mx-auto"></canvas>
     </div>
+  </div>
 </div>
