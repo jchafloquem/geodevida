@@ -31,6 +31,8 @@ export class DashboardComponent implements AfterViewInit {
   public totalAreaCafe = 0;
   public totalAreaCacao = 0;
 
+
+
   ngAfterViewInit(): void {
     const dashboardCultivos = new FeatureLayer({
       url: 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10',
@@ -39,6 +41,18 @@ export class DashboardComponent implements AfterViewInit {
     dashboardCultivos
       .load()
       .then(() => {
+
+        this.sumarAreaCultivoTotal(dashboardCultivos).then((total) => {
+          this.totalAreaCultivo = total;
+          this.crearGraficoProgresoporHectareas(total);
+          this.crearGraficoProgresoporHectareasOZ();
+          this.crearGraficoProgresoporHectareasOZCAFE();
+          this.crearGraficoProgresoporHectareasOZCACAO();
+        });
+        //FUNCIONES TERMINADAS
+
+
+
         this.generarGraficoCultivosPorTipo(dashboardCultivos);
 
         this.contarCafeCacao(dashboardCultivos).then((res) => {
@@ -46,10 +60,6 @@ export class DashboardComponent implements AfterViewInit {
           this.totalCacao = res.cacao;
         });
 
-        this.sumarAreaCultivoTotal(dashboardCultivos).then((total) => {
-          this.totalAreaCultivo = total;
-          this.crearGraficoProgreso(total);   // 👈 Aquí insertas el gráfico de la meta
-        });
 
         this.sumarAreaPorCultivo(dashboardCultivos).then((data) => {
           this.areaPorCultivo = data;
@@ -81,38 +91,34 @@ export class DashboardComponent implements AfterViewInit {
       });
   }
 
-  /* Grafico META/AVANCE */
-
-  crearGraficoProgreso(total: number) {
+  //*Grafico sobre la Meta & Avance
+  crearGraficoProgresoporHectareas(total: number) {
     const meta = 62000;
+    const restante = Math.max(meta - total, 0); // porción restante
     const ctx = document.getElementById('graficoMeta') as HTMLCanvasElement;
-
     new Chart(ctx, {
-      type: 'bar',
+      type: 'doughnut', // tipo pastel
       data: {
-        labels: [''],
+        labels: ['AVANCE', 'RESTANTE'],
         datasets: [
           {
-            label: 'META',
-            data: [meta],
-            backgroundColor: 'rgba(13, 166, 66, 0.7)',   // verde con transparencia
-            borderColor: '#085A25',
-            borderWidth: 2,
-            borderRadius: 0
-          },
-          {
-            label: 'AVANCE',
-            data: [total],
-            backgroundColor: 'rgba(13, 155, 215, 0.7)',   // azul con transparencia
-            borderColor: '#075A73',
-            borderWidth: 2,
-            borderRadius: 0
+            data: [total, restante],
+            backgroundColor: [
+              'rgba(13, 155, 215, 0.7)', // azul
+              'rgba(13, 166, 66, 0.3)'   // verde claro/transparente para la parte restante
+            ],
+            borderColor: [
+              '#075A73', // borde azul
+              '#085A25'  // borde verde
+            ],
+            borderWidth: 2
           }
         ]
       },
       options: {
-        indexAxis: 'y',
         responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1,
         plugins: {
           legend: {
             display: true,
@@ -126,36 +132,19 @@ export class DashboardComponent implements AfterViewInit {
             callbacks: {
               label: (context) => {
                 const value = context.raw as number;
-                // ✅ Coma miles, punto decimales
-                return `${context.dataset.label}: ${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+                return `${context.label}: ${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
               }
             }
           },
           datalabels: {
-            anchor: 'center',
-            align: 'center',
             color: 'white',
             font: {
               weight: 'bold',
-              size: 20
+              size: 16
             },
             formatter: (value) => {
-              const val = value as number;
-              const porcentaje = (val / meta) * 100;
-              // ✅ Siempre 2 decimales con punto
+              const porcentaje = (value as number / meta) * 100;
               return `${porcentaje.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
-            }
-          }
-        },
-        scales: {
-          x: {
-            max: meta,
-            ticks: {
-              callback: (val) =>
-                Number(val).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }),
-              font: {
-                weight: 'bold'
-              }
             }
           }
         }
@@ -163,6 +152,402 @@ export class DashboardComponent implements AfterViewInit {
       plugins: [ChartDataLabels]
     });
   }
+  //*Fin Grafico sobre la Meta & Avance
+
+  //*Grafico sobre la Meta por Oficina Zonal
+  async crearGraficoProgresoporHectareasOZ() {
+    const baseUrl =
+      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
+    interface Cultivo {
+      org: string;
+      area_cultivo: number;
+    }
+    let allFeatures: any[] = [];
+    let offset = 0;
+    const pageSize = 2000;
+    let hasMore = true;
+    // 🔹 Paginación para traer TODOS los registros
+    while (hasMore) {
+      const url =
+        `${baseUrl}?where=1%3D1&outFields=org,area_cultivo` +
+        `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.features?.length) {
+        allFeatures = allFeatures.concat(data.features);
+        offset += pageSize;
+        hasMore = data.features.length === pageSize;
+      } else {
+        hasMore = false;
+      }
+    }
+    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+      org: feat.attributes.org,
+      area_cultivo: feat.attributes.area_cultivo,
+    }));
+    // Agrupamos por Oficina Zonal
+    const agrupado: Record<string, number> = {};
+    rawData.forEach((item: Cultivo) => {
+      agrupado[item.org] = (agrupado[item.org] || 0) + item.area_cultivo;
+    });
+    // 🔹 Ordenar de mayor a menor
+    const entries = Object.entries(agrupado).sort((a, b) => b[1] - a[1]);
+    const labels = entries.map(e => e[0]);
+    const values = entries.map(e => e[1]);
+    // 🔹 Colores por ORG (mapa)
+    const colorMap: Record<string, string> = {
+      'OZ SAN FRANCISCO': '#FEEFD8',
+      'OZ PUCALPA': '#B7D9FE',
+      'OZ LA MERCED': '#FFC0B6',
+      'OZ TINGO MARIA': '#D6F9FD',
+      'OZ TARAPOTO': '#C2BBFE',
+      'OZ SAN JUAN DE ORO': '#FED2F3',
+      'OZ QUILLABAMBA': '#FEFEB9',
+      'OZ IQUITOS': '#CAFEDA',
+    };
+    // Asignar colores según el ORG, si no existe usar gris
+    const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
+    const borderColors = backgroundColors.map(c => c);
+    const ctx = document.getElementById('graficoMetaOZ') as HTMLCanvasElement;
+    if (!ctx) return;
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Área cultivada (ha)',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            barThickness: 25,     // 🔹 grosor fijo de la barra
+            maxBarThickness: 50,  // 🔹 ancho máximo permitido
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y', // barras horizontales
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) =>
+                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+            },
+          },
+          y: {
+            ticks: {
+              font: { size: 12, weight: 'bold' },
+            },
+          },
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const value = ctx.raw as number;
+                return `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
+              },
+            },
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#000',
+            font: { weight: 'bold', size: 12 },
+            formatter: (v: number) =>
+              `${Number(v).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  }
+  //*Fin Grafico sobre la Meta por Oficina Zonal
+
+  //*Grafico sobre la Meta por Oficina Zonal - CAFE
+  async crearGraficoProgresoporHectareasOZCAFE() {
+    const baseUrl =
+      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
+
+    interface Cultivo {
+      org: string;
+      area_cultivo: number;
+      cultivo: string;
+    }
+
+    let allFeatures: any[] = [];
+    let offset = 0;
+    const pageSize = 2000;
+    let hasMore = true;
+
+    // 🔹 Paginación para traer TODOS los registros SOLO de CAFÉ
+    while (hasMore) {
+      const url =
+        `${baseUrl}?where=cultivo='CAFE'&outFields=org,area_cultivo,cultivo` +
+        `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.features?.length) {
+        allFeatures = allFeatures.concat(data.features);
+        offset += pageSize;
+        hasMore = data.features.length === pageSize;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+      org: feat.attributes.org,
+      area_cultivo: feat.attributes.area_cultivo,
+      cultivo: feat.attributes.cultivo,
+    }));
+
+    // Agrupamos SOLO CAFÉ por Oficina Zonal
+    const agrupado: Record<string, number> = {};
+    rawData.forEach((item: Cultivo) => {
+      if (item.cultivo === 'CAFE') {
+        agrupado[item.org] = (agrupado[item.org] || 0) + item.area_cultivo;
+      }
+    });
+
+    // 🔹 Ordenar de mayor a menor
+    const entries = Object.entries(agrupado).sort((a, b) => b[1] - a[1]);
+    const labels = entries.map(e => e[0]);
+    const values = entries.map(e => e[1]);
+
+    // 🔹 Colores por ORG
+    const colorMap: Record<string, string> = {
+      'OZ SAN FRANCISCO': '#FEEFD8',
+      'OZ PUCALPA': '#B7D9FE',
+      'OZ LA MERCED': '#FFC0B6',
+      'OZ TINGO MARIA': '#D6F9FD',
+      'OZ TARAPOTO': '#C2BBFE',
+      'OZ SAN JUAN DE ORO': '#FED2F3',
+      'OZ QUILLABAMBA': '#FEFEB9',
+      'OZ IQUITOS': '#CAFEDA',
+    };
+
+    const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
+    const borderColors = backgroundColors.map(c => c);
+
+    const ctx = document.getElementById('graficoMetaOZCAFE') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Área cultivada de CAFÉ (ha)',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            barThickness: 25,
+            maxBarThickness: 50,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) =>
+                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+            },
+          },
+          y: {
+            ticks: {
+              font: { size: 12, weight: 'bold' },
+            },
+          },
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const value = ctx.raw as number;
+                return `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
+              },
+            },
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#000',
+            font: { weight: 'bold', size: 12 },
+            formatter: (v: number) =>
+              `${Number(v).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  }
+  //*FIN Grafico sobre la Meta por Oficina Zonal - CAFE
+
+  async crearGraficoProgresoporHectareasOZCACAO() {
+    const baseUrl =
+      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
+
+    interface Cultivo {
+      org: string;
+      area_cultivo: number;
+      cultivo: string;
+    }
+
+    let allFeatures: any[] = [];
+    let offset = 0;
+    const pageSize = 2000;
+    let hasMore = true;
+
+    // 🔹 Paginación para traer TODOS los registros SOLO de CACAO
+    while (hasMore) {
+      const url =
+        `${baseUrl}?where=cultivo='CACAO'&outFields=org,area_cultivo,cultivo` +
+        `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.features?.length) {
+        allFeatures = allFeatures.concat(data.features);
+        offset += pageSize;
+        hasMore = data.features.length === pageSize;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+      org: feat.attributes.org,
+      area_cultivo: feat.attributes.area_cultivo,
+      cultivo: feat.attributes.cultivo,
+    }));
+
+    // 🔹 Agrupamos SOLO CACAO por Oficina Zonal
+    const agrupado: Record<string, number> = {};
+    rawData.forEach((item: Cultivo) => {
+      if (item.cultivo === 'CACAO') {
+        agrupado[item.org] = (agrupado[item.org] || 0) + item.area_cultivo;
+      }
+    });
+
+    // 🔹 Ordenar de mayor a menor
+    const entries = Object.entries(agrupado).sort((a, b) => b[1] - a[1]);
+    const labels = entries.map(e => e[0]);
+    const values = entries.map(e => e[1]);
+
+    // 🔹 Colores por ORG
+    const colorMap: Record<string, string> = {
+      'OZ SAN FRANCISCO': '#FEEFD8',
+      'OZ PUCALPA': '#B7D9FE',
+      'OZ LA MERCED': '#FFC0B6',
+      'OZ TINGO MARIA': '#D6F9FD',
+      'OZ TARAPOTO': '#C2BBFE',
+      'OZ SAN JUAN DE ORO': '#FED2F3',
+      'OZ QUILLABAMBA': '#FEFEB9',
+      'OZ IQUITOS': '#CAFEDA',
+    };
+
+    const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
+    const borderColors = backgroundColors.map(c => c);
+
+    const ctx = document.getElementById('graficoMetaOZCACAO') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Área cultivada de CACAO (ha)',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            barThickness: 25,
+            maxBarThickness: 50,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) =>
+                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+            },
+          },
+          y: {
+            ticks: {
+              font: { size: 12, weight: 'bold' },
+            },
+          },
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const value = ctx.raw as number;
+                return `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
+              },
+            },
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#000',
+            font: { weight: 'bold', size: 12 },
+            formatter: (v: number) =>
+              `${Number(v).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
