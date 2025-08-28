@@ -1,18 +1,15 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
 import { SidemenuComponent } from '../../components/sidemenu/sidemenu.component';
-
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import StatisticDefinition from '@arcgis/core/rest/support/StatisticDefinition.js';
-
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { NavbarmenuComponent } from '../../components/navbarmenu/navbarmenu.component';
 
-
 Chart.register(ChartDataLabels);
+
 @Component({
   standalone: true,
   imports: [CommonModule, RouterModule, SidemenuComponent, NavbarmenuComponent],
@@ -25,23 +22,14 @@ export class DashboardComponent implements AfterViewInit {
   isMenuOpen = true;   // Estado inicial del menú
   isDesktop = false;   // Detecta si es pantalla grande
 
-
-
-
-
-
   public totalRegistrosCultivos = 0;
   public conteoPorCultivo: Record<string, number> = {};
   public totalCafe = 0;
   public totalCacao = 0;
   public totalAreaCultivo = 0; // en m²
   public areaPorCultivo: { cultivo: string; total_area: number }[] = [];
-
-  // áreas por cultivo específicas
   public totalAreaCafe = 0;
   public totalAreaCacao = 0;
-
-
 
   ngAfterViewInit(): void {
     const dashboardCultivos = new FeatureLayer({
@@ -67,7 +55,6 @@ export class DashboardComponent implements AfterViewInit {
           this.areaPorCultivo = data;
         });
         this.contarRegistrosUnicosPorDNI(dashboardCultivos).then((totalDNI) => {
-          console.log('🧾 Total de registros únicos por DNI:', totalDNI);
         });
       })
       .catch((err) => {

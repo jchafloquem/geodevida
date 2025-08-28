@@ -30,9 +30,7 @@ export class SidemenuComponent {
         !excluded.includes(route.path) &&
         route.loadComponent
       );
-
     this.menuRoutes = childRoutes;
-    console.log('📦 Rutas hijas visibles (excluyendo error):', this.menuRoutes);
   }
   toggleMenu() {
     this.menuVisible = !this.menuVisible;
