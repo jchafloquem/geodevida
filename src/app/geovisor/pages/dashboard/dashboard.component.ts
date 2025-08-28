@@ -9,12 +9,13 @@ import StatisticDefinition from '@arcgis/core/rest/support/StatisticDefinition.j
 
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { NavbarComponent } from '../../components/navbar/navbar.component';
+import { NavbarmenuComponent } from '../../components/navbarmenu/navbarmenu.component';
+
 
 Chart.register(ChartDataLabels);
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule, SidemenuComponent, NavbarComponent],
+  imports: [CommonModule, RouterModule, SidemenuComponent, NavbarmenuComponent],
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
@@ -28,7 +29,7 @@ export class DashboardComponent implements AfterViewInit {
 
 
 
-  
+
   public totalRegistrosCultivos = 0;
   public conteoPorCultivo: Record<string, number> = {};
   public totalCafe = 0;
