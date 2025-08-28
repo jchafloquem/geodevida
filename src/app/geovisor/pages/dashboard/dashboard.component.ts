@@ -9,17 +9,26 @@ import StatisticDefinition from '@arcgis/core/rest/support/StatisticDefinition.j
 
 import Chart from 'chart.js/auto';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
 
 Chart.register(ChartDataLabels);
 @Component({
   standalone: true,
-  imports: [CommonModule, RouterModule, SidemenuComponent],
+  imports: [CommonModule, RouterModule, SidemenuComponent, NavbarComponent],
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements AfterViewInit {
-  mostrarMenu = false;
+
+  isMenuOpen = true;   // Estado inicial del menú
+  isDesktop = false;   // Detecta si es pantalla grande
+
+
+
+
+
+  
   public totalRegistrosCultivos = 0;
   public conteoPorCultivo: Record<string, number> = {};
   public totalCafe = 0;

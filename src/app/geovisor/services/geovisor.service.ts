@@ -404,7 +404,8 @@ const cafeRenderer = new SimpleRenderer({
 })
 export class GeovisorSharedService {
   public mapa = new Map({ basemap: 'satellite' });
-  public view!: MapView;
+  public view: MapView | null = null;
+
   //*SERVICIO SISCOD-DEVIDA
   public restGeoDevida = {
     serviceBase: 'https://siscod.devida.gob.pe/server/rest',
@@ -668,7 +669,6 @@ export class GeovisorSharedService {
   constructor() { }
 
   initializeMap(mapViewEl: ElementRef): Promise<void> {
-    const container = mapViewEl.nativeElement;
     this.layers.forEach((layerConfig) => {
       const hasValidLayerId = /\/\d+$/.test(layerConfig.url);
       if (!hasValidLayerId) {
@@ -680,40 +680,25 @@ export class GeovisorSharedService {
         title: layerConfig.title,
         visible: layerConfig.visible,
       };
-      if (layerConfig.popupTemplate) {
-        layerOptions.popupTemplate = layerConfig.popupTemplate;
-      }
-      if (layerConfig.renderer) {
-        layerOptions.renderer = layerConfig.renderer;
-      }
-      if (layerConfig.labelingInfo) {
-        layerOptions.labelingInfo = layerConfig.labelingInfo;
-      }
-      if (layerConfig.labelsVisible !== false) {
-        layerOptions.labelsVisible = layerConfig.labelsVisible;
-      }
-      if (layerConfig.outFields) {
-        layerOptions.outFields = layerConfig.outFields;
-      }
-      if (layerConfig.maxScale !== undefined) {
-        layerOptions.maxScale = layerConfig.maxScale;
-      }
-      if (layerConfig.minScale !== undefined) {
-        layerOptions.minScale = layerConfig.minScale;
-      }
-      if (layerConfig.featureReduction) {
-        layerOptions.featureReduction = layerConfig.featureReduction;
-      }
-      if (layerConfig.opacity !== undefined) {
-        layerOptions.opacity = layerConfig.opacity;
-      }
+      if (layerConfig.popupTemplate) layerOptions.popupTemplate = layerConfig.popupTemplate;
+      if (layerConfig.renderer) layerOptions.renderer = layerConfig.renderer;
+      if (layerConfig.labelingInfo) layerOptions.labelingInfo = layerConfig.labelingInfo;
+      if (layerConfig.labelsVisible !== false) layerOptions.labelsVisible = layerConfig.labelsVisible;
+      if (layerConfig.outFields) layerOptions.outFields = layerConfig.outFields;
+      if (layerConfig.maxScale !== undefined) layerOptions.maxScale = layerConfig.maxScale;
+      if (layerConfig.minScale !== undefined) layerOptions.minScale = layerConfig.minScale;
+      if (layerConfig.featureReduction) layerOptions.featureReduction = layerConfig.featureReduction;
+      if (layerConfig.opacity !== undefined) layerOptions.opacity = layerConfig.opacity;
+
       const featureLayer = new FeatureLayer(layerOptions);
       this.mapa.add(featureLayer);
     });
 
+
+
     //*Creacion de la Vista del Mapa
     this.view = new MapView({
-      container: container,
+      container: mapViewEl.nativeElement,
       map: this.mapa,
       center: [-74.00000, -10.00000],
       zoom: 6,
@@ -730,12 +715,17 @@ export class GeovisorSharedService {
     });
 
     //*ESCALA DEL MAPA
-    reactiveUtils.watch(
-      () => this.view.scale,
-      (scale) => {
-        this.scale = this.formatScale(scale);
-      }
-    );
+    this.view.when(() => {
+      reactiveUtils.watch(
+        () => this.view!.scale,   // <- aquí el "!" le dice a TS que no es null
+        (scale) => {
+          this.scale = this.formatScale(scale);
+        }
+      );
+    });
+
+
+
     //*CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
     const buscaCapasDEVIDA = [
       {
@@ -783,19 +773,20 @@ export class GeovisorSharedService {
     });
 
     buscar.on("select-result", async (event) => {
-
       const result = event.result;
-      if (result && result.feature && result.feature.geometry) {
+
+      if (result?.feature?.geometry && this.view) {
         const geometry = result.feature.geometry;
+
         try {
           if (geometry.type === "point") {
             await this.view.goTo({
               target: geometry,
-              zoom: 17, // Aplica zoom al punto
+              zoom: 17, // Zoom al punto
             });
           } else if (geometry.extent) {
             await this.view.goTo({
-              target: geometry.extent.expand(1.5), // Aplica zoom a entidades de área
+              target: geometry.extent.expand(1.5), // Zoom a entidades de área
             });
           } else {
             console.warn("La geometría no tiene un 'extent' válido.");
@@ -804,23 +795,29 @@ export class GeovisorSharedService {
           console.error("Error al aplicar el zoom:", error);
         }
       } else {
-        console.error("No se encontró geometría en el resultado.");
+        console.error("No se encontró geometría en el resultado o view no está inicializado.");
       }
     });
+
 
 
     this.view.ui.add(new Zoom({ view: this.view }), { position: 'top-right', index: 1 });
 
     const homeEl = document.createElement('arcgis-home') as any;
+          homeEl.autoDestroyDisabled = true; // 👈 evita que se destruya
           homeEl.view = this.view;
+
     this.view.ui.add(homeEl, {position: 'top-right',index: 2});
 
     const locateEl = document.createElement('arcgis-locate') as any;
+          locateEl.autoDestroyDisabled = true; // 👈 evita que se destruya
           locateEl.view = this.view;
+
     this.view.ui.add(locateEl, {position: 'top-right',index: 3});
 
     //Nueva version del boton de Galeria de mapas
     const galleryEl = document.createElement('arcgis-basemap-gallery') as any;
+          galleryEl.autoDestroyDisabled = true; // 👈 evita que se destruya
           galleryEl.view = this.view;
     const expand = new Expand({
       view: this.view,
@@ -832,16 +829,26 @@ export class GeovisorSharedService {
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
     this.legend = new Legend({ view: this.view, container: document.createElement('div') });
     new CoordinateConversion({ view: this.view });
-    this.view.when(() => {
-      this.view.on('pointer-move', (event) => {
-        const point: any = this.view.toMap({ x: event.x, y: event.y });
-        if (point) this.updateCoordinates(point.latitude, point.longitude);
+    if (this.view) {
+      this.view.when(() => {
+        this.view!.on('pointer-move', (event) => {
+          const point: any = this.view!.toMap({ x: event.x, y: event.y });
+          if (point) this.updateCoordinates(point.latitude, point.longitude);
+        });
       });
-    });
+    }
+
 
     return this.view.when();
 
   } //*FIN <InitializeMap>
+
+  destroyMap(): void {
+    if (this.view) {
+      this.view.container = null; // se libera el contenedor
+    }
+  }
+
 
   //*Inicio del Toogle
   toggleLayerVisibility(layerTitle: string, visibility: boolean): void {
