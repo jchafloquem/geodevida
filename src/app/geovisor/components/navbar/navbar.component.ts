@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { GeovisorSharedService } from '../../services/geovisor.service';
 import { AuthStateService } from '../../../auth/shared/access/auth-state.service';
@@ -7,7 +7,8 @@ import { AuthStateService } from '../../../auth/shared/access/auth-state.service
     selector: 'app-navbar',
     imports: [RouterModule],
     templateUrl: './navbar.component.html',
-    styleUrl: './navbar.component.scss'
+    styleUrl: './navbar.component.scss',
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class NavbarComponent {
 	private _authState = inject(AuthStateService);

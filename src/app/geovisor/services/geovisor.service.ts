@@ -2,21 +2,20 @@ import { ElementRef, Injectable } from '@angular/core';
 import { LayerConfig } from '../interface/layerConfig';
 
 //*LIBRERIA DEL API DE ARCGIS 4.33
-import * as projection from '@arcgis/core/geometry/projection';
+
+import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion.js';
 import Expand from '@arcgis/core/widgets/Expand.js';
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer.js';
 import Legend from '@arcgis/core/widgets/Legend.js';
 import Map from '@arcgis/core/Map.js';
 import MapView from '@arcgis/core/views/MapView.js';
-import Point from '@arcgis/core/geometry/Point';
 import PopupTemplate from "@arcgis/core/PopupTemplate.js";
 import Search from "@arcgis/core/widgets/Search.js";
+import "@arcgis/map-components/components/arcgis-search";
 import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
-import SpatialReference from '@arcgis/core/geometry/SpatialReference';
 import Zoom from '@arcgis/core/widgets/Zoom.js';
-import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 
 
 
@@ -426,11 +425,11 @@ export class GeovisorSharedService {
   public restCaribSurveyPercepcionCafe = {
     serviceBase: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services',
     capas: {
-      infraestructura:'FICHA_DE_MONITOREO_TIPOLOGÍA_INFRAESTRUCTURA_vista/FeatureServer/0',
-      cacao:'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_–_PTA_DEVIDA_vista/FeatureServer/0',
+      infraestructura: 'FICHA_DE_MONITOREO_TIPOLOGÍA_INFRAESTRUCTURA_vista/FeatureServer/0',
+      cacao: 'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_–_PTA_DEVIDA_vista/FeatureServer/0',
       cafe: 'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_%E2%80%93_CAFE_vista/FeatureServer/0',
-      registroForestal:'REGISTRO_FORESTAL_vista/FeatureServer/0',
-      medidasAmbientales:'MEDIDAS_AMBIENTALES_vista/FeatureServer/0'
+      registroForestal: 'REGISTRO_FORESTAL_vista/FeatureServer/0',
+      medidasAmbientales: 'MEDIDAS_AMBIENTALES_vista/FeatureServer/0'
     }
   }
   //*SERVICIOS GLOBALES
@@ -618,7 +617,7 @@ export class GeovisorSharedService {
     {
       title: 'DISTRITOS',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteDistrito}`,
-      labelingInfo:[],
+      labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -637,7 +636,7 @@ export class GeovisorSharedService {
     {
       title: 'DEPARTAMENTOS',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteDepartamento}`,
-      labelingInfo:[],
+      labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
@@ -734,7 +733,7 @@ export class GeovisorSharedService {
         layer: new FeatureLayer({
           url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteCultivo}`
         }),
-        searchFields: ["dni","nombres"],
+        searchFields: ["dni", "nombres"],
         displayField: "nombres",
         exactMatch: true,
         outFields: ["*"],
@@ -761,66 +760,25 @@ export class GeovisorSharedService {
         minSuggestCharacters: 1,
       },
     ]
-
-    const buscar = new Search({
-      view: this.view,
-      sources: buscaCapasDEVIDA,
-      includeDefaultSources: false, // desactiva el World Geocoding Service
-      allPlaceholder: 'Buscar',
-      label: 'Buscar',
-      locationEnabled: true,
-      maxResults: 10,
-      popupEnabled: false,
-      container: "searchDiv"
-    });
-
-    buscar.on("select-result", async (event) => {
-      const result = event.result;
-
-      if (result?.feature?.geometry && this.view) {
-        const geometry = result.feature.geometry;
-
-        try {
-          if (geometry.type === "point") {
-            await this.view.goTo({
-              target: geometry,
-              zoom: 17, // Zoom al punto
-            });
-          } else if (geometry.extent) {
-            await this.view.goTo({
-              target: geometry.extent.expand(1.5), // Zoom a entidades de área
-            });
-          } else {
-            console.warn("La geometría no tiene un 'extent' válido.");
-          }
-        } catch (error) {
-          console.error("Error al aplicar el zoom:", error);
-        }
-      } else {
-        console.error("No se encontró geometría en el resultado o view no está inicializado.");
-      }
-    });
-
-
+    const searchElement = document.querySelector("arcgis-search") as any;
+    if (searchElement) {
+      searchElement.view = this.view;
+      searchElement.sources = buscaCapasDEVIDA; // tus capas personalizadas
+    }
 
     this.view.ui.add(new Zoom({ view: this.view }), { position: 'top-right', index: 1 });
-
     const homeEl = document.createElement('arcgis-home') as any;
-          homeEl.autoDestroyDisabled = true; // 👈 evita que se destruya
-          homeEl.view = this.view;
-
-    this.view.ui.add(homeEl, {position: 'top-right',index: 2});
-
+    homeEl.autoDestroyDisabled = true; // 👈 evita que se destruya
+    homeEl.view = this.view;
+    this.view.ui.add(homeEl, { position: 'top-right', index: 2 });
     const locateEl = document.createElement('arcgis-locate') as any;
-          locateEl.autoDestroyDisabled = true; // 👈 evita que se destruya
-          locateEl.view = this.view;
-
-    this.view.ui.add(locateEl, {position: 'top-right',index: 3});
-
+    locateEl.autoDestroyDisabled = true; // 👈 evita que se destruya
+    locateEl.view = this.view;
+    this.view.ui.add(locateEl, { position: 'top-right', index: 3 });
     //Nueva version del boton de Galeria de mapas
     const galleryEl = document.createElement('arcgis-basemap-gallery') as any;
-          galleryEl.autoDestroyDisabled = true; // 👈 evita que se destruya
-          galleryEl.view = this.view;
+    galleryEl.autoDestroyDisabled = true; // 👈 evita que se destruya
+    galleryEl.view = this.view;
     const expand = new Expand({
       view: this.view,
       content: galleryEl,
@@ -848,7 +806,7 @@ export class GeovisorSharedService {
   } //*FIN <InitializeMap>
 
   destroyMap(): void {
-    if (this.view) {this.view.container = null}
+    if (this.view) { this.view.container = null }
   }
 
 
@@ -894,25 +852,25 @@ export class GeovisorSharedService {
       const e = Math.sqrt(f * (2 - f));
       const N = a / Math.sqrt(1 - Math.pow(e * Math.sin(latRad), 2));
       const T = Math.tan(latRad) ** 2;
-      const C = (e*e)/(1 - e*e) * Math.cos(latRad) ** 2;
+      const C = (e * e) / (1 - e * e) * Math.cos(latRad) ** 2;
       const A = Math.cos(latRad) * (lonRad - lonOriginRad);
       const M = a * (
-        (1 - e*e/4 - 3*e**4/64 - 5*e**6/256) * latRad
-        - (3*e*e/8 + 3*e**4/32 + 45*e**6/1024) * Math.sin(2*latRad)
-        + (15*e**4/256 + 45*e**6/1024) * Math.sin(4*latRad)
-        - (35*e**6/3072) * Math.sin(6*latRad)
+        (1 - e * e / 4 - 3 * e ** 4 / 64 - 5 * e ** 6 / 256) * latRad
+        - (3 * e * e / 8 + 3 * e ** 4 / 32 + 45 * e ** 6 / 1024) * Math.sin(2 * latRad)
+        + (15 * e ** 4 / 256 + 45 * e ** 6 / 1024) * Math.sin(4 * latRad)
+        - (35 * e ** 6 / 3072) * Math.sin(6 * latRad)
       );
       const easting = k0 * N * (
-        A + (1 - T + C) * A**3 / 6
-          + (5 - 18*T + T**2 + 72*C - 58*(e*e/(1-e*e))) * A**5 / 120
+        A + (1 - T + C) * A ** 3 / 6
+        + (5 - 18 * T + T ** 2 + 72 * C - 58 * (e * e / (1 - e * e))) * A ** 5 / 120
       ) + 500000;
       let northing = k0 * (M + N * Math.tan(latRad) * (
-        A**2 / 2 + (5 - T + 9*C + 4*C**2) * A**4/24
-          + (61 - 58*T + T**2 + 600*C - 330*(e*e/(1-e*e))) * A**6/720
+        A ** 2 / 2 + (5 - T + 9 * C + 4 * C ** 2) * A ** 4 / 24
+        + (61 - 58 * T + T ** 2 + 600 * C - 330 * (e * e / (1 - e * e))) * A ** 6 / 720
       ));
       if (lat < 0) northing += 10000000;
       const bands = 'CDEFGHJKLMNPQRSTUVWX';
-      const index = Math.floor((lat + 80)/8);
+      const index = Math.floor((lat + 80) / 8);
       const zoneLetter = bands.charAt(index);
       return { easting, northing, zoneNumber, zoneLetter };
     }
@@ -923,7 +881,7 @@ export class GeovisorSharedService {
     const index = Math.floor((latitude + 80) / 8);
     return bands.charAt(index);
   }
-  
+
   formatScale(scale: number): string {
     return scale.toLocaleString('en-US', {
       minimumFractionDigits: 0,

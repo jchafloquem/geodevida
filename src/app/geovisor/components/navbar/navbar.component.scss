@@ -9,33 +9,6 @@
 #sidebar ul li a.active {
   background-color: #f8f9f9;
 }
-/* Contenedor externo del widget */
-/* Forzar ancho del contenedor Search principal */
-#searchDiv .esri-search {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-}
-/* Forzar el contenedor interno */
-#searchDiv .esri-search__container,
-#searchDiv .esri-search__input-container,
-#searchDiv .esri-input,
-#searchDiv .esri-search__input {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-}
-
-/* El input en sí */
-#searchDiv input.esri-input {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  border: none !important;
-  box-shadow: none !important;
-}
 
 .logout-wrapper {
   width: 40px;
@@ -51,5 +24,8 @@
 .logout-wrapper:hover {
   background-color: #d1d5db; /* gris más oscuro */
 }
+
+
+
 
 

@@ -33,25 +33,26 @@
   >
     GeoVISOR PIRDAIS
   </div>
-
   <!-- Contenedor derecho (search + logout) -->
-  <div class="flex items-center gap-1">
-    <!-- Contenedor del widget con estilo, sin interferir en su DOM interno -->
-    <div
-      class="px-2 py-1 rounded-md shadow-md max-w-[500px] w-full border-none"
-    >
-      <div id="searchDiv" class="w-full"></div>
+  <div class="flex items-center gap-2">
+    <!-- Contenedor del Search -->
+    <div class="flex-1 max-w-[900px] px-1 shadow-md focus-within:ring-2 focus-within:ring-blue-500 transition">
+      <arcgis-search
+        reference-element="mapViewDiv"
+        placeholder="Buscar"
+        max-results="10"
+        popup-enabled="true"
+        ></arcgis-search>
     </div>
-
-    <!-- Botón de logout usando clases personalizadas -->
+    <!-- Botón de logout -->
     <button
       (click)="logout()"
-      class="logout-wrapper w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 shadow-md"
+      class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 shadow-md transition"
       aria-label="Cerrar sesión"
       title="Cerrar sesión"
     >
       <svg
-        class="logout-icon w-5 h-5 text-gray-700"
+        class="w-5 h-5 text-gray-700"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -65,13 +66,11 @@
           d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15"
         />
         <!-- Flecha -->
-        <g class="logout-icon-arrow">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M18 12H9m0 0l3-3m-3 3l3 3"
-          />
-        </g>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M18 12H9m0 0l3-3m-3 3l3 3"
+        />
       </svg>
     </button>
   </div>

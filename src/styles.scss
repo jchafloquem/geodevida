@@ -128,3 +128,48 @@ arcgis-locate {
 }
 
 
+/* Scope si quieres (mejor colocar un id en el wrapper) */
+#searchWrapper arcgis-search {
+  --calcite-input-border-color: transparent;
+  --calcite-input-corner-radius: 0.5rem;
+  --calcite-input-shadow: none;
+  --calcite-input-background-color: #ffffff;
+  --calcite-input-text-color: #374151;            /* text-gray-700 */
+  --calcite-input-placeholder-text-color: #9CA3AF;/* text-gray-400 */
+}
+
+/* Ejemplo: cambiar bordes al foco (si quieres probar) */
+#searchWrapper:focus-within arcgis-search {
+  --calcite-input-border-color: #4f46e5; /* indigo-600 */
+  --calcite-input-shadow: 0 0 6px rgba(79, 70, 229, 0.18);
+}
+/* Forzar ancho completo al componente */
+arcgis-search {
+  display: block;
+  width: 100% !important;
+  max-width: 900px; /* ajusta según necesites */
+}
+
+/* Input interno cuadrado */
+arcgis-search .esri-input,
+arcgis-search .esri-search__input {
+  width: 100% !important;
+  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 !important; /* 👈 lo hace cuadrado */
+}
+
+/* Botones y dropdown internos cuadrados también */
+arcgis-search .esri-widget,
+arcgis-search .esri-button,
+arcgis-search .esri-menu {
+  border-radius: 0 !important;
+}
+
+/* Hover y focus */
+arcgis-search .esri-input:hover,
+arcgis-search .esri-input:focus {
+  border: 1px solid #4f46e5;
+  box-shadow: 0 0 6px rgba(79, 70, 229, 0.4);
+  border-radius: 0 !important;
+}
