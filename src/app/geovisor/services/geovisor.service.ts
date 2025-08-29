@@ -870,7 +870,7 @@ export class GeovisorSharedService {
   getActiveLayers(): FeatureLayer[] {
     return Object.values(this.capas).filter((layer) => layer.visible);
   }
-
+  //* Coordenadas
   async updateCoordinates(lat: number, lon: number): Promise<void> {
     this.gcsLatitude = lat.toFixed(5);
     this.gcsLongitude = lon.toFixed(5);
@@ -918,13 +918,12 @@ export class GeovisorSharedService {
     }
   }
 
-
   getUtmBand(latitude: number): string {
     const bands = 'CDEFGHJKLMNPQRSTUVWX'; // Bands from 80S to 84N
     const index = Math.floor((latitude + 80) / 8);
     return bands.charAt(index);
   }
-
+  
   formatScale(scale: number): string {
     return scale.toLocaleString('en-US', {
       minimumFractionDigits: 0,
