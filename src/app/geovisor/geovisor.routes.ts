@@ -4,7 +4,7 @@ import { privateGuard, publicGuard } from '../core/auth.guard';
 export default [
 			{
 				path: 'map',
-        title:'Visor GIS',
+        title:'Geo PIRDAIS',
         canActivate: [privateGuard()],
 				loadComponent: () => import('./pages/map/map.component').then(m => m.MapComponent),
 			},

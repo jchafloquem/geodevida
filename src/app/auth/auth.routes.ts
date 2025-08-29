@@ -9,7 +9,7 @@ export default [
 			},
 			{
 				path: 'welcome',
-        title:'Bienvenido',
+        title:'Bienvenidos',
 				loadComponent: () => import('./pages/welcome/welcome.component'),
 			},
 			{
