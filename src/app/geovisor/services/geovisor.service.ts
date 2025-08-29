@@ -18,6 +18,8 @@ import SpatialReference from '@arcgis/core/geometry/SpatialReference';
 import Zoom from '@arcgis/core/widgets/Zoom.js';
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 
+
+
 //* POPUP & CLUSTERS
 const popupPoligonoCultivo = new PopupTemplate({
   title: 'Tipo de Cultivo: {cultivo}',
@@ -828,25 +830,25 @@ export class GeovisorSharedService {
 
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
     this.legend = new Legend({ view: this.view, container: document.createElement('div') });
-    new CoordinateConversion({ view: this.view });
+
+    const ccWidget = new CoordinateConversion({ view: this.view });
     if (this.view) {
       this.view.when(() => {
         this.view!.on('pointer-move', (event) => {
-          const point: any = this.view!.toMap({ x: event.x, y: event.y });
-          if (point) this.updateCoordinates(point.latitude, point.longitude);
+          // Convertir posición de pantalla a mapa
+          const point = this.view!.toMap({ x: event.x, y: event.y }) as __esri.Point;
+
+          if (point?.latitude != null && point?.longitude != null) {
+            this.updateCoordinates(point.latitude, point.longitude);
+          }
         });
       });
     }
-
-
     return this.view.when();
-
   } //*FIN <InitializeMap>
 
   destroyMap(): void {
-    if (this.view) {
-      this.view.container = null; // se libera el contenedor
-    }
+    if (this.view) {this.view.container = null}
   }
 
 
@@ -870,36 +872,52 @@ export class GeovisorSharedService {
   }
 
   async updateCoordinates(lat: number, lon: number): Promise<void> {
-    this.gcsLongitude = lon.toFixed(5);
     this.gcsLatitude = lat.toFixed(5);
-
+    this.gcsLongitude = lon.toFixed(5);
     // Calculate UTM Zone
     const zoneNumber = Math.floor((lon + 180) / 6) + 1;
     const utmBand = this.getUtmBand(lat);
     this.utmZone = `${zoneNumber} ${utmBand}`;
-
-    // Convert to UTM
-    const pointUTM = new Point({
-      latitude: lat,
-      longitude: lon,
-      spatialReference: SpatialReference.WGS84,
-    });
-
-      // Cargar proyección
-  await projection.load();
-    const utmWkid = lat >= 0 ? 32600 + zoneNumber : 32700 + zoneNumber;
-    const srUTM = new SpatialReference({ wkid: utmWkid });
-    const projected = projection.project(pointUTM, srUTM) as Point;
-    this.utmEast = `${projected.x.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })} m`;
-
-    this.utmNorth = `${projected.y.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })} m`;
+    const utm = latLonToUTM(lat, lon);
+    this.utmZone = `${utm.zoneNumber} ${utm.zoneLetter}`;
+    this.utmEast = `${utm.easting.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m`;
+    this.utmNorth = `${utm.northing.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m`;
+    function latLonToUTM(lat: number, lon: number) {
+      const a = 6378137.0;
+      const f = 1 / 298.257223563;
+      const k0 = 0.9996;
+      const zoneNumber = Math.floor((lon + 180) / 6) + 1;
+      const lonOrigin = (zoneNumber - 1) * 6 - 180 + 3;
+      const lonOriginRad = lonOrigin * Math.PI / 180;
+      const latRad = lat * Math.PI / 180;
+      const lonRad = lon * Math.PI / 180;
+      const e = Math.sqrt(f * (2 - f));
+      const N = a / Math.sqrt(1 - Math.pow(e * Math.sin(latRad), 2));
+      const T = Math.tan(latRad) ** 2;
+      const C = (e*e)/(1 - e*e) * Math.cos(latRad) ** 2;
+      const A = Math.cos(latRad) * (lonRad - lonOriginRad);
+      const M = a * (
+        (1 - e*e/4 - 3*e**4/64 - 5*e**6/256) * latRad
+        - (3*e*e/8 + 3*e**4/32 + 45*e**6/1024) * Math.sin(2*latRad)
+        + (15*e**4/256 + 45*e**6/1024) * Math.sin(4*latRad)
+        - (35*e**6/3072) * Math.sin(6*latRad)
+      );
+      const easting = k0 * N * (
+        A + (1 - T + C) * A**3 / 6
+          + (5 - 18*T + T**2 + 72*C - 58*(e*e/(1-e*e))) * A**5 / 120
+      ) + 500000;
+      let northing = k0 * (M + N * Math.tan(latRad) * (
+        A**2 / 2 + (5 - T + 9*C + 4*C**2) * A**4/24
+          + (61 - 58*T + T**2 + 600*C - 330*(e*e/(1-e*e))) * A**6/720
+      ));
+      if (lat < 0) northing += 10000000;
+      const bands = 'CDEFGHJKLMNPQRSTUVWX';
+      const index = Math.floor((lat + 80)/8);
+      const zoneLetter = bands.charAt(index);
+      return { easting, northing, zoneNumber, zoneLetter };
+    }
   }
+
 
   getUtmBand(latitude: number): string {
     const bands = 'CDEFGHJKLMNPQRSTUVWX'; // Bands from 80S to 84N
