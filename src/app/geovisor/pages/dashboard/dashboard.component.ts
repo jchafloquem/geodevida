@@ -128,7 +128,7 @@ export class DashboardComponent implements AfterViewInit {
   }
   //*Grafico sobre la Meta & Avance
   crearGraficoProgresoporHectareas(total: number) {
-    const meta = 62000;
+    const meta = 43364;
     const restante = Math.max(meta - total, 0); // porción restante
     const ctx = document.getElementById('graficoMeta') as HTMLCanvasElement;
 
