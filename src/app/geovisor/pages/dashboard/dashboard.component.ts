@@ -782,6 +782,8 @@ export class DashboardComponent implements AfterViewInit {
     getAllCultivoData().catch((err) => console.error('❌ Error al consultar todos los cultivos:', err));
   }
 
+  //*Participantes por oficina Zonal
+
   //*Grafico por cultivo de cafe por Oficina Zonal
   async crearGraficoCantidadRegistrosOZCAFE() {
     const baseUrl =
@@ -857,7 +859,7 @@ export class DashboardComponent implements AfterViewInit {
         labels,
         datasets: [
           {
-            label: 'Cantidad de poligonos de CAFÉ',
+            label: 'Cantidad de polígonos de CAFÉ',
             data: values,
             backgroundColor: backgroundColors,
             borderColor: borderColors,
@@ -876,7 +878,7 @@ export class DashboardComponent implements AfterViewInit {
             beginAtZero: true,
             ticks: {
               callback: (value) =>
-                `${value} registros`,
+                `${Number(value).toLocaleString('es-PE')} polígonos`,
             },
           },
           y: {
@@ -888,7 +890,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'CANTIDAD DE REGISTROS DE CAFÉ POR OFICINA ZONAL',
+            text: 'CANTIDAD DE POLIGONOS DE CAFE POR OFICINA ZONAL',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -896,7 +898,8 @@ export class DashboardComponent implements AfterViewInit {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (ctx) => `${ctx.raw} registros`,
+              label: (ctx) =>
+                `${Number(ctx.raw).toLocaleString('es-PE')} polígonos`,
             },
           },
           datalabels: {
@@ -904,14 +907,14 @@ export class DashboardComponent implements AfterViewInit {
             align: 'right',
             color: '#000',
             font: { weight: 'bold', size: 12 },
-            formatter: (v: number) => `${v} registros`,
+            formatter: (v: number) =>
+              `${Number(v).toLocaleString('es-PE')} polígonos`,
           },
         },
       },
       plugins: [ChartDataLabels],
     });
   }
-
   //*Grafico por cultivo de cacao por Oficina Zonal
   async crearGraficoCantidadRegistrosOZCACAO() {
     const baseUrl =
@@ -963,7 +966,7 @@ export class DashboardComponent implements AfterViewInit {
     const labels = entries.map(e => e[0]);
     const values = entries.map(e => e[1]);
 
-    // 🔹 Colores por ORG (mismo esquema que café, puedes cambiarlo si deseas)
+    // 🔹 Colores por ORG
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
       'OZ PUCALPA': '#B7D9FE',
@@ -987,7 +990,7 @@ export class DashboardComponent implements AfterViewInit {
         labels,
         datasets: [
           {
-            label: 'Cantidad de poligonos de CACAO',
+            label: 'Cantidad de polígonos de CACAO',
             data: values,
             backgroundColor: backgroundColors,
             borderColor: borderColors,
@@ -1005,7 +1008,8 @@ export class DashboardComponent implements AfterViewInit {
           x: {
             beginAtZero: true,
             ticks: {
-              callback: (value) => `${value} registros`,
+              callback: (value) =>
+                `${Number(value).toLocaleString('es-PE')} polígonos`,
             },
           },
           y: {
@@ -1017,7 +1021,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'CANTIDAD DE REGISTROS DE CACAO POR OFICINA ZONAL',
+            text: 'CANTIDAD DE POLIGONOS DE CACAO POR OFICINA ZONAL',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -1025,7 +1029,8 @@ export class DashboardComponent implements AfterViewInit {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (ctx) => `${ctx.raw} registros`,
+              label: (ctx) =>
+                `${Number(ctx.raw).toLocaleString('es-PE')} polígonos`,
             },
           },
           datalabels: {
@@ -1033,15 +1038,12 @@ export class DashboardComponent implements AfterViewInit {
             align: 'right',
             color: '#000',
             font: { weight: 'bold', size: 12 },
-            formatter: (v: number) => `${v} registros`,
+            formatter: (v: number) =>
+              `${Number(v).toLocaleString('es-PE')} polígonos`,
           },
         },
       },
       plugins: [ChartDataLabels],
     });
   }
-
-
-
-
 }
