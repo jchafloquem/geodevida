@@ -18,6 +18,8 @@ Chart.register(ChartDataLabels);
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements AfterViewInit {
+  private readonly SERVICIO_PIRDAIS = 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10';
+  private readonly QUERY_SERVICIO = `${this.SERVICIO_PIRDAIS}/query`;
 
   isMenuOpen = true;   // Estado inicial del menú
   isDesktop = false;   // Detecta si es pantalla grande
@@ -31,10 +33,9 @@ export class DashboardComponent implements AfterViewInit {
   public totalAreaCafe = 0;
   public totalAreaCacao = 0;
 
+
   ngAfterViewInit(): void {
-    const dashboardCultivos = new FeatureLayer({
-      url: 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10',
-    });
+    const dashboardCultivos = new FeatureLayer({ url: this.SERVICIO_PIRDAIS});
 
     dashboardCultivos
       .load()
@@ -47,6 +48,8 @@ export class DashboardComponent implements AfterViewInit {
           this.crearGraficoProgresoporHectareasOZCACAO();
           this.crearGraficoCantidadRegistrosOZCAFE();
           this.crearGraficoCantidadRegistrosOZCACAO();
+          this.crearGraficoCantidadDniOZCAFE();
+          this.crearGraficoCantidadDniOZCACAO();
         });
         this.generarGraficoCultivosPorTipo(dashboardCultivos);
         this.contarCafeCacao(dashboardCultivos).then((res) => {
@@ -71,12 +74,10 @@ export class DashboardComponent implements AfterViewInit {
       outStatisticFieldName: 'sum_area',
       statisticType: 'sum',
     });
-
     const query = layer.createQuery();
     query.where = '1=1';
     query.outStatistics = [statDef];
     query.returnGeometry = false;
-
     try {
       const result = await layer.queryFeatures(query);
       if (result.features.length > 0) {
@@ -199,9 +200,7 @@ export class DashboardComponent implements AfterViewInit {
   //*Fin Grafico sobre la Meta & Avance
   //*Grafico sobre la Meta por Oficina Zonal
   async crearGraficoProgresoporHectareasOZ() {
-    const baseUrl =
-      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
-
+    const baseUrl = this.QUERY_SERVICIO;
     interface Cultivo {
       org: string;
       area_cultivo: number;
@@ -333,8 +332,7 @@ export class DashboardComponent implements AfterViewInit {
 
   //*Grafico sobre la Meta por Oficina Zonal - CAFE
   async crearGraficoProgresoporHectareasOZCAFE() {
-    const baseUrl =
-      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
+    const baseUrl =this.QUERY_SERVICIO;
 
     interface Cultivo {
       org: string;
@@ -469,9 +467,7 @@ export class DashboardComponent implements AfterViewInit {
   //*FIN Grafico sobre la Meta por Oficina Zonal - CAFE
   //*Grafico sobre la Meta por Oficina Zonal - CACAO
   async crearGraficoProgresoporHectareasOZCACAO() {
-    const baseUrl =
-      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
-
+    const baseUrl = this.QUERY_SERVICIO;
     interface Cultivo {
       org: string;
       area_cultivo: number;
@@ -781,14 +777,278 @@ export class DashboardComponent implements AfterViewInit {
 
     getAllCultivoData().catch((err) => console.error('❌ Error al consultar todos los cultivos:', err));
   }
-
   //*Participantes por oficina Zonal
+  async crearGraficoCantidadDniOZCAFE() {
+    const baseUrl =this.QUERY_SERVICIO;
+    interface Cultivo {
+      org: string;
+      cultivo: string;
+      dni: string;
+    }
 
+    let allFeatures: any[] = [];
+    let offset = 0;
+    const pageSize = 2000;
+    let hasMore = true;
+
+    // 🔹 Paginación para traer TODOS los registros SOLO de CAFÉ
+    while (hasMore) {
+      const url =
+        `${baseUrl}?where=cultivo='CAFE'&outFields=org,cultivo,dni` +
+        `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.features?.length) {
+        allFeatures = allFeatures.concat(data.features);
+        offset += pageSize;
+        hasMore = data.features.length === pageSize;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+      org: feat.attributes.org,
+      cultivo: feat.attributes.cultivo,
+      dni: feat.attributes.dni,
+    }));
+
+    // 🔹 Contamos **DNI únicos** de CAFÉ por Oficina Zonal
+    const agrupado: Record<string, Set<string>> = {};
+    rawData.forEach((item: Cultivo) => {
+      if (item.cultivo === 'CAFE' && item.dni) {
+        if (!agrupado[item.org]) agrupado[item.org] = new Set<string>();
+        agrupado[item.org].add(item.dni);
+      }
+    });
+
+    // 🔹 Convertimos los sets a números y ordenamos
+    const entries = Object.entries(agrupado)
+      .map(([org, dnis]) => [org, dnis.size] as [string, number])
+      .sort((a, b) => b[1] - a[1]);
+
+    const labels = entries.map(e => e[0]);
+    const values = entries.map(e => e[1]);
+
+    // 🔹 Colores por ORG
+    const colorMap: Record<string, string> = {
+      'OZ SAN FRANCISCO': '#FEEFD8',
+      'OZ PUCALPA': '#B7D9FE',
+      'OZ LA MERCED': '#FFC0B6',
+      'OZ TINGO MARIA': '#D6F9FD',
+      'OZ TARAPOTO': '#C2BBFE',
+      'OZ SAN JUAN DE ORO': '#FED2F3',
+      'OZ QUILLABAMBA': '#FEFEB9',
+      'OZ IQUITOS': '#CAFEDA',
+    };
+
+    const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
+    const borderColors = backgroundColors.map(c => c);
+
+    const ctx = document.getElementById('graficoCantidadDNIOZCAFE') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Participantes únicos con CAFÉ',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            barThickness: 25,
+            maxBarThickness: 50,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) =>
+                `${Number(value).toLocaleString('es-PE')} participantes`,
+            },
+          },
+          y: {
+            ticks: {
+              font: { size: 12, weight: 'bold' },
+            },
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'PARTICIPANTES ÚNICOS DE CAFÉ POR OFICINA ZONAL',
+            font: { size: 18, weight: 'bold' },
+            color: '#333',
+            padding: { top: 10, bottom: 20 }
+          },
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) =>
+                `${Number(ctx.raw).toLocaleString('es-PE')} participantes`,
+            },
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#000',
+            font: { weight: 'bold', size: 12 },
+            formatter: (v: number) =>
+              `${Number(v).toLocaleString('es-PE')} participantes`,
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  }
+  async crearGraficoCantidadDniOZCACAO() {
+    const baseUrl =this.QUERY_SERVICIO;
+    interface Cultivo {
+      org: string;
+      cultivo: string;
+      dni: string;
+    }
+
+    let allFeatures: any[] = [];
+    let offset = 0;
+    const pageSize = 2000;
+    let hasMore = true;
+
+    // 🔹 Paginación para traer TODOS los registros SOLO de CACAO
+    while (hasMore) {
+      const url =
+        `${baseUrl}?where=cultivo='CACAO'&outFields=org,cultivo,dni` +
+        `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.features?.length) {
+        allFeatures = allFeatures.concat(data.features);
+        offset += pageSize;
+        hasMore = data.features.length === pageSize;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+      org: feat.attributes.org,
+      cultivo: feat.attributes.cultivo,
+      dni: feat.attributes.dni,
+    }));
+
+    // 🔹 Contamos **DNI únicos** de CACAO por Oficina Zonal
+    const agrupado: Record<string, Set<string>> = {};
+    rawData.forEach((item: Cultivo) => {
+      if (item.cultivo === 'CACAO' && item.dni) {
+        if (!agrupado[item.org]) agrupado[item.org] = new Set<string>();
+        agrupado[item.org].add(item.dni);
+      }
+    });
+
+    // 🔹 Convertimos los sets a números y ordenamos
+    const entries = Object.entries(agrupado)
+      .map(([org, dnis]) => [org, dnis.size] as [string, number])
+      .sort((a, b) => b[1] - a[1]);
+
+    const labels = entries.map(e => e[0]);
+    const values = entries.map(e => e[1]);
+
+    // 🔹 Colores por ORG
+    const colorMap: Record<string, string> = {
+      'OZ SAN FRANCISCO': '#FEEFD8',
+      'OZ PUCALPA': '#B7D9FE',
+      'OZ LA MERCED': '#FFC0B6',
+      'OZ TINGO MARIA': '#D6F9FD',
+      'OZ TARAPOTO': '#C2BBFE',
+      'OZ SAN JUAN DE ORO': '#FED2F3',
+      'OZ QUILLABAMBA': '#FEFEB9',
+      'OZ IQUITOS': '#CAFEDA',
+    };
+
+    const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
+    const borderColors = backgroundColors.map(c => c);
+
+    const ctx = document.getElementById('graficoCantidadDNIOZCACAO') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Participantes unicos con CACAO',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            barThickness: 25,
+            maxBarThickness: 50,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) =>
+                `${Number(value).toLocaleString('es-PE')} participantes`,
+            },
+          },
+          y: {
+            ticks: {
+              font: { size: 12, weight: 'bold' },
+            },
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'PARTICIPANTES UNICOS DE CACAO POR OFICINA ZONAL',
+            font: { size: 18, weight: 'bold' },
+            color: '#333',
+            padding: { top: 10, bottom: 20 }
+          },
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) =>
+                `${Number(ctx.raw).toLocaleString('es-PE')} participantes`,
+            },
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#000',
+            font: { weight: 'bold', size: 12 },
+            formatter: (v: number) =>
+              `${Number(v).toLocaleString('es-PE')} participantes`,
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  }
   //*Grafico por cultivo de cafe por Oficina Zonal
   async crearGraficoCantidadRegistrosOZCAFE() {
-    const baseUrl =
-      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
-
+    const baseUrl = this.QUERY_SERVICIO;
     interface Cultivo {
       org: string;
       cultivo: string;
@@ -917,9 +1177,7 @@ export class DashboardComponent implements AfterViewInit {
   }
   //*Grafico por cultivo de cacao por Oficina Zonal
   async crearGraficoCantidadRegistrosOZCACAO() {
-    const baseUrl =
-      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
-
+    const baseUrl = this.QUERY_SERVICIO;
     interface Cultivo {
       org: string;
       cultivo: string;
