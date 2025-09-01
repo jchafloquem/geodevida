@@ -45,6 +45,8 @@ export class DashboardComponent implements AfterViewInit {
           this.crearGraficoProgresoporHectareasOZ();
           this.crearGraficoProgresoporHectareasOZCAFE();
           this.crearGraficoProgresoporHectareasOZCACAO();
+          this.crearGraficoCantidadRegistrosOZCAFE();
+          this.crearGraficoCantidadRegistrosOZCACAO();
         });
         this.generarGraficoCultivosPorTipo(dashboardCultivos);
         this.contarCafeCacao(dashboardCultivos).then((res) => {
@@ -779,4 +781,267 @@ export class DashboardComponent implements AfterViewInit {
 
     getAllCultivoData().catch((err) => console.error('❌ Error al consultar todos los cultivos:', err));
   }
+
+  //*Grafico por cultivo de cafe por Oficina Zonal
+  async crearGraficoCantidadRegistrosOZCAFE() {
+    const baseUrl =
+      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
+
+    interface Cultivo {
+      org: string;
+      cultivo: string;
+    }
+
+    let allFeatures: any[] = [];
+    let offset = 0;
+    const pageSize = 2000;
+    let hasMore = true;
+
+    // 🔹 Paginación para traer TODOS los registros SOLO de CAFÉ
+    while (hasMore) {
+      const url =
+        `${baseUrl}?where=cultivo='CAFE'&outFields=org,cultivo` +
+        `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.features?.length) {
+        allFeatures = allFeatures.concat(data.features);
+        offset += pageSize;
+        hasMore = data.features.length === pageSize;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+      org: feat.attributes.org,
+      cultivo: feat.attributes.cultivo,
+    }));
+
+    // 🔹 Contamos registros de CAFÉ por Oficina Zonal
+    const agrupado: Record<string, number> = {};
+    rawData.forEach((item: Cultivo) => {
+      if (item.cultivo === 'CAFE') {
+        agrupado[item.org] = (agrupado[item.org] || 0) + 1;
+      }
+    });
+
+    // 🔹 Ordenar de mayor a menor
+    const entries = Object.entries(agrupado).sort((a, b) => b[1] - a[1]);
+    const labels = entries.map(e => e[0]);
+    const values = entries.map(e => e[1]);
+
+    // 🔹 Colores por ORG
+    const colorMap: Record<string, string> = {
+      'OZ SAN FRANCISCO': '#FEEFD8',
+      'OZ PUCALPA': '#B7D9FE',
+      'OZ LA MERCED': '#FFC0B6',
+      'OZ TINGO MARIA': '#D6F9FD',
+      'OZ TARAPOTO': '#C2BBFE',
+      'OZ SAN JUAN DE ORO': '#FED2F3',
+      'OZ QUILLABAMBA': '#FEFEB9',
+      'OZ IQUITOS': '#CAFEDA',
+    };
+
+    const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
+    const borderColors = backgroundColors.map(c => c);
+
+    const ctx = document.getElementById('graficoCantidadOZCAFE') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Cantidad de poligonos de CAFÉ',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            barThickness: 25,
+            maxBarThickness: 50,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) =>
+                `${value} registros`,
+            },
+          },
+          y: {
+            ticks: {
+              font: { size: 12, weight: 'bold' },
+            },
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'CANTIDAD DE REGISTROS DE CAFÉ POR OFICINA ZONAL',
+            font: { size: 18, weight: 'bold' },
+            color: '#333',
+            padding: { top: 10, bottom: 20 }
+          },
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.raw} registros`,
+            },
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#000',
+            font: { weight: 'bold', size: 12 },
+            formatter: (v: number) => `${v} registros`,
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  }
+
+  //*Grafico por cultivo de cacao por Oficina Zonal
+  async crearGraficoCantidadRegistrosOZCACAO() {
+    const baseUrl =
+      'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10/query';
+
+    interface Cultivo {
+      org: string;
+      cultivo: string;
+    }
+
+    let allFeatures: any[] = [];
+    let offset = 0;
+    const pageSize = 2000;
+    let hasMore = true;
+
+    // 🔹 Paginación para traer TODOS los registros SOLO de CACAO
+    while (hasMore) {
+      const url =
+        `${baseUrl}?where=cultivo='CACAO'&outFields=org,cultivo` +
+        `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.features?.length) {
+        allFeatures = allFeatures.concat(data.features);
+        offset += pageSize;
+        hasMore = data.features.length === pageSize;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+      org: feat.attributes.org,
+      cultivo: feat.attributes.cultivo,
+    }));
+
+    // 🔹 Contamos registros de CACAO por Oficina Zonal
+    const agrupado: Record<string, number> = {};
+    rawData.forEach((item: Cultivo) => {
+      if (item.cultivo === 'CACAO') {
+        agrupado[item.org] = (agrupado[item.org] || 0) + 1;
+      }
+    });
+
+    // 🔹 Ordenar de mayor a menor
+    const entries = Object.entries(agrupado).sort((a, b) => b[1] - a[1]);
+    const labels = entries.map(e => e[0]);
+    const values = entries.map(e => e[1]);
+
+    // 🔹 Colores por ORG (mismo esquema que café, puedes cambiarlo si deseas)
+    const colorMap: Record<string, string> = {
+      'OZ SAN FRANCISCO': '#FEEFD8',
+      'OZ PUCALPA': '#B7D9FE',
+      'OZ LA MERCED': '#FFC0B6',
+      'OZ TINGO MARIA': '#D6F9FD',
+      'OZ TARAPOTO': '#C2BBFE',
+      'OZ SAN JUAN DE ORO': '#FED2F3',
+      'OZ QUILLABAMBA': '#FEFEB9',
+      'OZ IQUITOS': '#CAFEDA',
+    };
+
+    const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
+    const borderColors = backgroundColors.map(c => c);
+
+    const ctx = document.getElementById('graficoCantidadOZCACAO') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Cantidad de poligonos de CACAO',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            barThickness: 25,
+            maxBarThickness: 50,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) => `${value} registros`,
+            },
+          },
+          y: {
+            ticks: {
+              font: { size: 12, weight: 'bold' },
+            },
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'CANTIDAD DE REGISTROS DE CACAO POR OFICINA ZONAL',
+            font: { size: 18, weight: 'bold' },
+            color: '#333',
+            padding: { top: 10, bottom: 20 }
+          },
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.raw} registros`,
+            },
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#000',
+            font: { weight: 'bold', size: 12 },
+            formatter: (v: number) => `${v} registros`,
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  }
+
+
+
+
 }

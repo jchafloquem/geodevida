@@ -17,6 +17,14 @@ import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
 import Zoom from '@arcgis/core/widgets/Zoom.js';
 
+import TileLayer from "@arcgis/core/layers/TileLayer";
+import WMSLayer from "@arcgis/core/layers/WMSLayer";
+import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
+import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
+import Extent from "@arcgis/core/geometry/Extent";
+import SpatialReference from "@arcgis/core/geometry/SpatialReference";
+
+
 
 
 //* POPUP & CLUSTERS
@@ -400,6 +408,7 @@ const cafeRenderer = new SimpleRenderer({
     style: "circle"
   })
 });
+
 @Injectable({
   providedIn: 'root',
 })
@@ -450,6 +459,10 @@ export class GeovisorSharedService {
     }
   }
   public layers: LayerConfig[] = [
+
+
+
+
     //*SERVICIOS REST DE GEODEVIDA-CARIB
     {
       title: 'POLIGONOS DE CULTIVO',
@@ -653,6 +666,7 @@ export class GeovisorSharedService {
       labelsVisible: false,
       group: 'LIMITES POLITICOS',
     },
+
   ];
 
   public lis: [] = [];
@@ -667,35 +681,66 @@ export class GeovisorSharedService {
   public scale = '00.00';
   public legend!: Legend;
 
+
+
+
+
   constructor() { }
 
   initializeMap(mapViewEl: ElementRef): Promise<void> {
-    this.layers.forEach((layerConfig) => {
-      const hasValidLayerId = /\/\d+$/.test(layerConfig.url);
-      if (!hasValidLayerId) {
-        console.warn(`⚠️ Se ignoró la capa "${layerConfig.title}" porque no tiene un layerId válido: ${layerConfig.url}`);
-        return;
-      }
-      const layerOptions: any = {
-        url: layerConfig.url,
-        title: layerConfig.title,
-        visible: layerConfig.visible,
-      };
-      if (layerConfig.popupTemplate) layerOptions.popupTemplate = layerConfig.popupTemplate;
-      if (layerConfig.renderer) layerOptions.renderer = layerConfig.renderer;
-      if (layerConfig.labelingInfo) layerOptions.labelingInfo = layerConfig.labelingInfo;
-      if (layerConfig.labelsVisible !== false) layerOptions.labelsVisible = layerConfig.labelsVisible;
-      if (layerConfig.outFields) layerOptions.outFields = layerConfig.outFields;
-      if (layerConfig.maxScale !== undefined) layerOptions.maxScale = layerConfig.maxScale;
-      if (layerConfig.minScale !== undefined) layerOptions.minScale = layerConfig.minScale;
-      if (layerConfig.featureReduction) layerOptions.featureReduction = layerConfig.featureReduction;
-      if (layerConfig.opacity !== undefined) layerOptions.opacity = layerConfig.opacity;
 
-      const featureLayer = new FeatureLayer(layerOptions);
-      this.mapa.add(featureLayer);
+    const treeLossLayer = new WebTileLayer({
+      urlTemplate:
+        "https://tiles.globalforestwatch.org/umd_tree_loss/latest/default/{z}/{x}/{y}.png?api_key=a5760f2bebf7c5fe95256cb8ec1045d6",
+      title: "Pérdida de Bosque (GFW)",
+      subDomains: ["a", "b", "c"], // opcional si el servicio lo soporta
+      copyright: "Global Forest Watch"
     });
 
 
+
+
+
+
+
+
+
+
+    this.layers.forEach((layerConfig) => {
+      const hasValidLayerId = /\/\d+$/.test(layerConfig.url);
+      let layer: __esri.Layer;
+
+      if (hasValidLayerId) {
+        // 🔹 Es un FeatureLayer
+        const layerOptions: any = {
+          url: layerConfig.url,
+          title: layerConfig.title,
+          visible: layerConfig.visible,
+        };
+
+        if (layerConfig.popupTemplate) layerOptions.popupTemplate = layerConfig.popupTemplate;
+        if (layerConfig.renderer) layerOptions.renderer = layerConfig.renderer;
+        if (layerConfig.labelingInfo) layerOptions.labelingInfo = layerConfig.labelingInfo;
+        if (layerConfig.labelsVisible !== false) layerOptions.labelsVisible = layerConfig.labelsVisible;
+        if (layerConfig.outFields) layerOptions.outFields = layerConfig.outFields;
+        if (layerConfig.maxScale !== undefined) layerOptions.maxScale = layerConfig.maxScale;
+        if (layerConfig.minScale !== undefined) layerOptions.minScale = layerConfig.minScale;
+        if (layerConfig.featureReduction) layerOptions.featureReduction = layerConfig.featureReduction;
+        if (layerConfig.opacity !== undefined) layerOptions.opacity = layerConfig.opacity;
+
+        layer = new FeatureLayer(layerOptions);
+
+      } else {
+        // 🔹 Es un WebTileLayer (ej. Pérdida de bosque GFW)
+        layer = new WebTileLayer({
+          urlTemplate: layerConfig.url, // Ojo: WebTileLayer usa urlTemplate
+          title: layerConfig.title,
+          visible: layerConfig.visible,
+          opacity: layerConfig.opacity ?? 1
+        });
+      }
+      this.mapa.add(layer);
+    });
 
     //*Creacion de la Vista del Mapa
     this.view = new MapView({
@@ -714,7 +759,6 @@ export class GeovisorSharedService {
         components: [],
       },
     });
-
     //*ESCALA DEL MAPA
     this.view.when(() => {
       reactiveUtils.watch(
@@ -724,9 +768,6 @@ export class GeovisorSharedService {
         }
       );
     });
-
-
-
     //*CONTROLES DE FUNCION DEL MAPA (LADO DERECHO)
     const buscaCapasDEVIDA = [
       {
@@ -804,12 +845,9 @@ export class GeovisorSharedService {
     }
     return this.view.when();
   } //*FIN <InitializeMap>
-
   destroyMap(): void {
     if (this.view) { this.view.container = null }
   }
-
-
   //*Inicio del Toogle
   toggleLayerVisibility(layerTitle: string, visibility: boolean): void {
     const layer = this.mapa.layers.find((layer) => layer.title === layerTitle);
@@ -875,13 +913,11 @@ export class GeovisorSharedService {
       return { easting, northing, zoneNumber, zoneLetter };
     }
   }
-
   getUtmBand(latitude: number): string {
     const bands = 'CDEFGHJKLMNPQRSTUVWX'; // Bands from 80S to 84N
     const index = Math.floor((latitude + 80) / 8);
     return bands.charAt(index);
   }
-
   formatScale(scale: number): string {
     return scale.toLocaleString('en-US', {
       minimumFractionDigits: 0,
