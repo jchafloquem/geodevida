@@ -20,10 +20,8 @@ Chart.register(ChartDataLabels);
 export class DashboardComponent implements AfterViewInit {
   private readonly SERVICIO_PIRDAIS = 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10';
   private readonly QUERY_SERVICIO = `${this.SERVICIO_PIRDAIS}/query`;
-
   isMenuOpen = true;   // Estado inicial del menú
   isDesktop = false;   // Detecta si es pantalla grande
-
   public totalRegistrosCultivos = 0;
   public conteoPorCultivo: Record<string, number> = {};
   public totalCafe = 0;
@@ -33,10 +31,8 @@ export class DashboardComponent implements AfterViewInit {
   public totalAreaCafe = 0;
   public totalAreaCacao = 0;
 
-
   ngAfterViewInit(): void {
     const dashboardCultivos = new FeatureLayer({ url: this.SERVICIO_PIRDAIS});
-
     dashboardCultivos
       .load()
       .then(() => {
@@ -605,10 +601,8 @@ export class DashboardComponent implements AfterViewInit {
   }
   //*FIN Grafico sobre la Meta por Oficina Zonal - CACAO
 
-
   //*Grafico sobre total participantes
   public totalRegistrosUnicosDNI: Record<string, number> = {};
-
   public async contarTotalDNIUnicos(layer: FeatureLayer): Promise<number> {
     try {
       const pageSize = 2000;
@@ -769,7 +763,6 @@ export class DashboardComponent implements AfterViewInit {
       return { cafe: 0, cacao: 0, cafe_y_cacao: 0, total: 0 };
     }
   }
-
   async crearGraficoProgresoporParticipantesOZ() {
     const baseUrl = this.QUERY_SERVICIO;
 
@@ -908,11 +901,6 @@ export class DashboardComponent implements AfterViewInit {
       plugins: [ChartDataLabels],
     });
   }
-
-
-
-
-
 
   //*Grafico sobre total poligonos
   contarCafeCacao(layer: FeatureLayer) {
