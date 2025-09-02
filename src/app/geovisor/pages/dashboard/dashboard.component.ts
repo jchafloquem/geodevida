@@ -1,7 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SidemenuComponent } from '../../components/sidemenu/sidemenu.component';
+import { SidemenuComponent } from '../../components/sidebarmenu/sidemenu.component';
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import StatisticDefinition from '@arcgis/core/rest/support/StatisticDefinition.js';
 import Chart from 'chart.js/auto';
