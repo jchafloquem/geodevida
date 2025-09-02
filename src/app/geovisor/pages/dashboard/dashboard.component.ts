@@ -158,7 +158,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'PROGRESO POR HECTAREAS',  // <<< Aquí el título
+            text: 'META / AVANCE',  // <<< Aquí el título
             font: {
               size: 18,
               weight: 'bold'
@@ -289,7 +289,7 @@ export class DashboardComponent implements AfterViewInit {
             beginAtZero: true,
             ticks: {
               callback: (value) =>
-                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
             },
           },
           y: {
@@ -301,7 +301,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'TOTAL DE AREA CULTIVADA POR OFICINA ZONAL',
+            text: 'OFICINA ZONAL / HECTAREAS CAFE & CACAO',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -406,7 +406,7 @@ export class DashboardComponent implements AfterViewInit {
         labels,
         datasets: [
           {
-            label: 'Área cultivada de CAFÉ (ha)',
+            label: 'Área cultivada de CAFE (ha)',
             data: values,
             backgroundColor: backgroundColors,
             borderColor: borderColors,
@@ -425,7 +425,7 @@ export class DashboardComponent implements AfterViewInit {
             beginAtZero: true,
             ticks: {
               callback: (value) =>
-                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} `,
             },
           },
           y: {
@@ -437,7 +437,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'AREA TOTAL CULTIVADA DE CAFE POR OFICINA ZONAL',
+            text: 'OFICINA ZONAL / HECTAREAS CAFE',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -571,7 +571,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'AREA TOTAL CULTIVADA DE CACAO POR OFICINA ZONAL',
+            text: 'OFICINA ZONAL / HECTAREAS CACAO',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -875,7 +875,7 @@ export class DashboardComponent implements AfterViewInit {
             beginAtZero: true,
             ticks: {
               callback: (value) =>
-                `${Number(value).toLocaleString('es-PE')} participantes`,
+                `${Number(value).toLocaleString('es-PE')}`,
             },
           },
           y: {
@@ -887,7 +887,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'PARTICIPANTES ÚNICOS DE CAFÉ POR OFICINA ZONAL',
+            text: 'OFICINA ZONAL / PARTICIPANTES CAFE',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -905,7 +905,7 @@ export class DashboardComponent implements AfterViewInit {
             color: '#000',
             font: { weight: 'bold', size: 12 },
             formatter: (v: number) =>
-              `${Number(v).toLocaleString('es-PE')} participantes`,
+              `${Number(v).toLocaleString('es-PE')}`,
           },
         },
       },
@@ -1009,7 +1009,7 @@ export class DashboardComponent implements AfterViewInit {
             beginAtZero: true,
             ticks: {
               callback: (value) =>
-                `${Number(value).toLocaleString('es-PE')} participantes`,
+                `${Number(value).toLocaleString('es-PE')}`,
             },
           },
           y: {
@@ -1021,7 +1021,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'PARTICIPANTES UNICOS DE CACAO POR OFICINA ZONAL',
+            text: 'OFICINA ZONAL / PARTICIPANTES CACAO',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -1039,7 +1039,7 @@ export class DashboardComponent implements AfterViewInit {
             color: '#000',
             font: { weight: 'bold', size: 12 },
             formatter: (v: number) =>
-              `${Number(v).toLocaleString('es-PE')} participantes`,
+              `${Number(v).toLocaleString('es-PE')}`,
           },
         },
       },
@@ -1138,7 +1138,7 @@ export class DashboardComponent implements AfterViewInit {
             beginAtZero: true,
             ticks: {
               callback: (value) =>
-                `${Number(value).toLocaleString('es-PE')} polígonos`,
+                `${Number(value).toLocaleString('es-PE')}`,
             },
           },
           y: {
@@ -1150,7 +1150,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'CANTIDAD DE POLIGONOS DE CAFE POR OFICINA ZONAL',
+            text: 'OFICINA ZONAL / POLIGONOS CAFE',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -1168,7 +1168,7 @@ export class DashboardComponent implements AfterViewInit {
             color: '#000',
             font: { weight: 'bold', size: 12 },
             formatter: (v: number) =>
-              `${Number(v).toLocaleString('es-PE')} polígonos`,
+              `${Number(v).toLocaleString('es-PE')}`,
           },
         },
       },
@@ -1267,7 +1267,7 @@ export class DashboardComponent implements AfterViewInit {
             beginAtZero: true,
             ticks: {
               callback: (value) =>
-                `${Number(value).toLocaleString('es-PE')} polígonos`,
+                `${Number(value).toLocaleString('es-PE')}`,
             },
           },
           y: {
@@ -1279,7 +1279,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'CANTIDAD DE POLIGONOS DE CACAO POR OFICINA ZONAL',
+            text: 'OFICINA ZONAL / POLIGONOS DE CACAO',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -1297,7 +1297,7 @@ export class DashboardComponent implements AfterViewInit {
             color: '#000',
             font: { weight: 'bold', size: 12 },
             formatter: (v: number) =>
-              `${Number(v).toLocaleString('es-PE')} polígonos`,
+              `${Number(v).toLocaleString('es-PE')}`,
           },
         },
       },
