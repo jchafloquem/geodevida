@@ -50,6 +50,7 @@ export class DashboardComponent implements AfterViewInit {
           this.crearGraficoCantidadRegistrosOZCACAO();
           this.crearGraficoCantidadDniOZCAFE();
           this.crearGraficoCantidadDniOZCACAO();
+          this.crearGraficoProgresoporParticipantesOZ();
         });
         this.generarGraficoCultivosPorTipo(dashboardCultivos);
         this.contarCafeCacao(dashboardCultivos).then((res) => {
@@ -59,8 +60,10 @@ export class DashboardComponent implements AfterViewInit {
         this.sumarAreaPorCultivo(dashboardCultivos).then((data) => {
           this.areaPorCultivo = data;
         });
-        this.contarRegistrosUnicosPorDNI(dashboardCultivos).then((totalDNI) => {
-        });
+      this.contarRegistrosUnicosPorDNI(dashboardCultivos).then((res) => {
+        this.crearGraficoProgresoporDNI(res["total"]); // 👈 aquí ya pintas el gráfico
+      });
+        this.contarRegistrosUnicosPorDNI(dashboardCultivos);
       })
       .catch((err) => {
         console.error('Error cargando la capa:', err);
@@ -198,6 +201,7 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
   //*Fin Grafico sobre la Meta & Avance
+
   //*Grafico sobre la Meta por Oficina Zonal
   async crearGraficoProgresoporHectareasOZ() {
     const baseUrl = this.QUERY_SERVICIO;
@@ -465,6 +469,7 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
   //*FIN Grafico sobre la Meta por Oficina Zonal - CAFE
+
   //*Grafico sobre la Meta por Oficina Zonal - CACAO
   async crearGraficoProgresoporHectareasOZCACAO() {
     const baseUrl = this.QUERY_SERVICIO;
@@ -599,8 +604,112 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
   //*FIN Grafico sobre la Meta por Oficina Zonal - CACAO
+
+
   //*Grafico sobre total participantes
   public totalRegistrosUnicosDNI: Record<string, number> = {};
+
+  public async contarTotalDNIUnicos(layer: FeatureLayer): Promise<number> {
+    try {
+      const pageSize = 2000;
+      const dnisTotales = new Set<string>();
+
+      const total = await layer.queryFeatureCount({ where: '1=1' });
+      let fetched = 0;
+
+      while (fetched < total) {
+        const result = await layer.queryFeatures({
+          where: '1=1',
+          outFields: ['dni'],
+          returnGeometry: false,
+          start: fetched,
+          num: pageSize,
+        });
+
+        result.features.forEach((f) => {
+          const dni = f.attributes['dni'];
+          if (dni) dnisTotales.add(dni);
+        });
+
+        fetched += result.features.length;
+      }
+
+      return dnisTotales.size;
+    } catch (err) {
+      console.error('❌ Error al contar DNIs únicos:', err);
+      return 0;
+    }
+  }
+  crearGraficoProgresoporDNI(totalDNI: number) {
+    const meta = 38313; // 👉 aquí defines la meta de DNIs únicos
+    const restante = Math.max(meta - totalDNI, 0);
+    const ctx = document.getElementById('graficoMetaDNI') as HTMLCanvasElement;
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['AVANCE', 'RESTANTE'],
+        datasets: [
+          {
+            data: [totalDNI, restante],
+            backgroundColor: [
+              'rgba(255, 159, 64, 0.7)', // naranja avance
+              'rgba(201, 203, 207, 0.3)' // gris claro restante
+            ],
+            borderColor: [
+              '#FF9F40', // borde naranja
+              '#C9CBCF'  // borde gris
+            ],
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1,
+        plugins: {
+          title: {
+            display: true,
+            text: 'META / PARTICIPANTES',
+            font: {
+              size: 18,
+              weight: 'bold'
+            },
+            color: '#333'
+          },
+          legend: {
+            display: true,
+            labels: {
+              font: {
+                weight: 'bold'
+              }
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const value = context.raw as number;
+                return `${context.label}: ${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+              }
+            }
+          },
+          datalabels: {
+            color: 'white',
+            font: {
+              weight: 'bold',
+              size: 16
+            },
+            formatter: (value) => {
+              const porcentaje = (value as number / meta) * 100;
+              return `${porcentaje.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+            }
+          }
+        }
+      },
+      plugins: [ChartDataLabels]
+    });
+  }
   async contarRegistrosUnicosPorDNI(layer: FeatureLayer): Promise<Record<string, number>> {
     try {
       const pageSize = 2000;
@@ -660,6 +769,151 @@ export class DashboardComponent implements AfterViewInit {
       return { cafe: 0, cacao: 0, cafe_y_cacao: 0, total: 0 };
     }
   }
+
+  async crearGraficoProgresoporParticipantesOZ() {
+    const baseUrl = this.QUERY_SERVICIO;
+
+    interface Participante {
+      org: string;
+      dni: string;
+    }
+
+    let allFeatures: any[] = [];
+    let offset = 0;
+    const pageSize = 2000;
+    let hasMore = true;
+
+    // 🔹 Paginación para traer TODOS los registros
+    while (hasMore) {
+      const url =
+        `${baseUrl}?where=1%3D1&outFields=org,dni` +
+        `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.features?.length) {
+        allFeatures = allFeatures.concat(data.features);
+        offset += pageSize;
+        hasMore = data.features.length === pageSize;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    // 🔹 Normalizar datos (org + dni)
+    const rawData: Participante[] = allFeatures.map((feat: any) => ({
+      org: feat.attributes.org,
+      dni: feat.attributes.dni,
+    }));
+
+    // 🔹 Agrupar por Oficina Zonal y contar DNIs únicos
+    const agrupado: Record<string, Set<string>> = {};
+    rawData.forEach((item: Participante) => {
+      if (!item.dni) return;
+      if (!agrupado[item.org]) {
+        agrupado[item.org] = new Set<string>();
+      }
+      agrupado[item.org].add(item.dni);
+    });
+
+    // Convertir los sets a números
+    const entries = Object.entries(agrupado)
+      .map(([org, dnis]) => [org, dnis.size] as [string, number])
+      .sort((a, b) => b[1] - a[1]);
+
+    const labels = entries.map(e => e[0]);
+    const values = entries.map(e => e[1]);
+
+    // 🔹 Colores por ORG (mapa de referencia)
+    const colorMap: Record<string, string> = {
+      'OZ SAN FRANCISCO': '#FEEFD8',
+      'OZ PUCALPA': '#B7D9FE',
+      'OZ LA MERCED': '#FFC0B6',
+      'OZ TINGO MARIA': '#D6F9FD',
+      'OZ TARAPOTO': '#C2BBFE',
+      'OZ SAN JUAN DE ORO': '#FED2F3',
+      'OZ QUILLABAMBA': '#FEFEB9',
+      'OZ IQUITOS': '#CAFEDA',
+    };
+
+    // Asignar colores según el ORG, si no existe usar gris
+    const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
+    const borderColors = backgroundColors.map(c => c);
+
+    const ctx = document.getElementById('graficoMetaParticipantes') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Participantes únicos (DNI)',
+            data: values,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1,
+            barThickness: 25,
+            maxBarThickness: 50,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y', // barras horizontales
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) =>
+                `${Number(value).toLocaleString('es-PE')}`,
+            },
+          },
+          y: {
+            ticks: {
+              font: { size: 12, weight: 'bold' },
+            },
+          },
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'OFICINA ZONAL / PARTICIPANTES',
+            font: { size: 18, weight: 'bold' },
+            color: '#333',
+            padding: { top: 10, bottom: 20 }
+          },
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const value = ctx.raw as number;
+                return `${Number(value).toLocaleString('es-PE')} participantes`;
+              },
+            },
+          },
+          datalabels: {
+            anchor: 'end',
+            align: 'right',
+            color: '#000',
+            font: { weight: 'bold', size: 12 },
+            formatter: (v: number) =>
+              `${Number(v).toLocaleString('es-PE')}`,
+          },
+        },
+      },
+      plugins: [ChartDataLabels],
+    });
+  }
+
+
+
+
+
+
   //*Grafico sobre total poligonos
   contarCafeCacao(layer: FeatureLayer) {
     const pageSize = 2000;
