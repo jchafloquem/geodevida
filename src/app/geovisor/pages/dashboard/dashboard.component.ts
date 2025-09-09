@@ -326,11 +326,7 @@ export class DashboardComponent implements AfterViewInit {
   async crearGraficoProgresoporHectareasOZCAFE() {
     const baseUrl = this.QUERY_SERVICIO;
 
-    interface Cultivo {
-      org: string;
-      area_cultivo: number;
-      cultivo: string;
-    }
+    interface Cultivo { org: string; area_cultivo: number; cultivo: string; }
 
     let allFeatures: any[] = [];
     let offset = 0;
@@ -341,10 +337,8 @@ export class DashboardComponent implements AfterViewInit {
       const url =
         `${baseUrl}?where=cultivo='CAFE'&outFields=org,area_cultivo,cultivo` +
         `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
-
       const res = await fetch(url);
       const data = await res.json();
-
       if (data.features?.length) {
         allFeatures = allFeatures.concat(data.features);
         offset += pageSize;
@@ -354,14 +348,14 @@ export class DashboardComponent implements AfterViewInit {
       }
     }
 
-    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+    const rawData: Cultivo[] = allFeatures.map(feat => ({
       org: feat.attributes.org,
       area_cultivo: feat.attributes.area_cultivo,
       cultivo: feat.attributes.cultivo,
     }));
 
     const agrupado: Record<string, number> = {};
-    rawData.forEach((item: Cultivo) => {
+    rawData.forEach(item => {
       if (item.cultivo === 'CAFE') {
         agrupado[item.org] = (agrupado[item.org] || 0) + item.area_cultivo;
       }
@@ -400,11 +394,10 @@ export class DashboardComponent implements AfterViewInit {
     if (!ctx) return;
 
     new Chart(ctx, {
-      type: 'bar',
+      type: 'bar', // ✅ barras verticales
       data: {
         labels,
         datasets: [
-          // Barras debajo
           {
             label: 'Área cultivada de CAFE (ha)',
             data: values,
@@ -423,17 +416,17 @@ export class DashboardComponent implements AfterViewInit {
                 `${v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
             },
           },
-          // Línea de meta encima de todo
           {
             label: 'Meta',
-            data: metaValues,
             type: 'line',
+            data: metaValues,
             borderColor: '#FF0000',
             borderWidth: 2,
             pointRadius: 3,
             pointBackgroundColor: '#FF0000',
             borderDash: [6, 6],
-            order: 99, // 👈 fuerza que esté arriba
+            fill: false,
+            order: 999, // ✅ línea encima de las barras
             datalabels: {
               anchor: 'end',
               align: 'top',
@@ -444,9 +437,7 @@ export class DashboardComponent implements AfterViewInit {
                 if (!meta || meta <= 0) return '';
                 const diff = meta - valor;
                 const perc = (diff / meta) * 100;
-                if (perc <= 0) {
-                  return `Superado: ${Math.abs(perc).toFixed(1)}%`;
-                }
+                if (perc <= 0) return `Superado: ${Math.abs(perc).toFixed(1)}%`;
                 return `Falta: ${perc.toFixed(1)}%`;
               },
             },
@@ -456,18 +447,12 @@ export class DashboardComponent implements AfterViewInit {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        indexAxis: 'y',
         scales: {
-          x: {
-            beginAtZero: true,
-            stacked: false, // 👈 asegura que barras/líneas no se mezclen
-            ticks: {
-              callback: (value) =>
-                `${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} `,
-            },
-          },
           y: {
-            stacked: false, // 👈 igual aquí
+            beginAtZero: true,
+            ticks: { font: { size: 12, weight: 'bold' } },
+          },
+          x: {
             ticks: { font: { size: 12, weight: 'bold' } },
           },
         },
@@ -503,26 +488,19 @@ export class DashboardComponent implements AfterViewInit {
   async crearGraficoProgresoporHectareasOZCACAO() {
     const baseUrl = this.QUERY_SERVICIO;
 
-    interface Cultivo {
-      org: string;
-      area_cultivo: number;
-      cultivo: string;
-    }
+    interface Cultivo { org: string; area_cultivo: number; cultivo: string; }
 
     let allFeatures: any[] = [];
     let offset = 0;
     const pageSize = 2000;
     let hasMore = true;
 
-    // 🔹 Paginación para traer TODOS los registros SOLO de CACAO
     while (hasMore) {
       const url =
         `${baseUrl}?where=cultivo='CACAO'&outFields=org,area_cultivo,cultivo` +
         `&returnGeometry=false&f=json&resultRecordCount=${pageSize}&resultOffset=${offset}`;
-
       const res = await fetch(url);
       const data = await res.json();
-
       if (data.features?.length) {
         allFeatures = allFeatures.concat(data.features);
         offset += pageSize;
@@ -532,26 +510,23 @@ export class DashboardComponent implements AfterViewInit {
       }
     }
 
-    const rawData: Cultivo[] = allFeatures.map((feat: any) => ({
+    const rawData: Cultivo[] = allFeatures.map(feat => ({
       org: feat.attributes.org,
       area_cultivo: feat.attributes.area_cultivo,
       cultivo: feat.attributes.cultivo,
     }));
 
-    // 🔹 Agrupamos SOLO CACAO por Oficina Zonal
     const agrupado: Record<string, number> = {};
-    rawData.forEach((item: Cultivo) => {
+    rawData.forEach(item => {
       if (item.cultivo === 'CACAO') {
         agrupado[item.org] = (agrupado[item.org] || 0) + item.area_cultivo;
       }
     });
 
-    // 🔹 Ordenar de mayor a menor
     const entries = Object.entries(agrupado).sort((a, b) => b[1] - a[1]);
     const labels = entries.map(e => e[0]);
     const values = entries.map(e => e[1]);
 
-    // 🔹 Metas por Oficina Zonal (ajusta manualmente)
     const metasOZ: Record<string, number> = {
       'OZ SAN FRANCISCO': 4824,
       'OZ PUCALPA': 10154,
@@ -562,10 +537,8 @@ export class DashboardComponent implements AfterViewInit {
       'OZ QUILLABAMBA': 0,
       'OZ IQUITOS': 505,
     };
-
     const metaValues = labels.map(org => metasOZ[org] ?? 0);
 
-    // 🔹 Colores por ORG
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
       'OZ PUCALPA': '#B7D9FE',
@@ -576,7 +549,6 @@ export class DashboardComponent implements AfterViewInit {
       'OZ QUILLABAMBA': '#FEFEB9',
       'OZ IQUITOS': '#CAFEDA',
     };
-
     const backgroundColors = labels.map(org => colorMap[org] || '#cccccc');
     const borderColors = backgroundColors.map(c => c);
 
@@ -584,7 +556,7 @@ export class DashboardComponent implements AfterViewInit {
     if (!ctx) return;
 
     new Chart(ctx, {
-      type: 'bar',
+      type: 'bar', // ✅ barras verticales
       data: {
         labels,
         datasets: [
@@ -596,43 +568,60 @@ export class DashboardComponent implements AfterViewInit {
             borderWidth: 1,
             barThickness: 25,
             maxBarThickness: 50,
+            order: 1,
+            datalabels: {
+              anchor: 'end',
+              align: 'end',
+              color: '#000',
+              font: { weight: 'bold', size: 12 },
+              formatter: (v: number) =>
+                `${v.toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+            },
           },
           {
             label: 'Meta',
-            data: metaValues,
             type: 'line',
+            data: metaValues,
             borderColor: '#FF0000',
             borderWidth: 2,
             pointRadius: 3,
             pointBackgroundColor: '#FF0000',
-            borderDash: [6, 6], // línea punteada
+            borderDash: [6, 6],
+            fill: false,
+            order: 999, // ✅ línea siempre encima
+            datalabels: {
+              anchor: 'end',
+              align: 'top',
+              color: '#FF0000',
+              font: { weight: 'bold', size: 11 },
+              formatter: (meta: number, ctx) => {
+                const valor = values[ctx.dataIndex] ?? 0;
+                if (!meta || meta <= 0) return '';
+                const diff = meta - valor;
+                const perc = (diff / meta) * 100;
+                if (perc <= 0) return `Superado: ${Math.abs(perc).toFixed(1)}%`;
+                return `Falta: ${perc.toFixed(1)}%`;
+              },
+            },
           },
         ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        indexAxis: 'y',
         scales: {
-          x: {
-            beginAtZero: true,
-            ticks: {
-              callback: (value) =>
-                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
-            },
-            stacked: false,
-          },
           y: {
-            ticks: {
-              font: { size: 12, weight: 'bold' },
-            },
-            stacked: false,
+            beginAtZero: true,
+            ticks: { font: { size: 12, weight: 'bold' } },
+          },
+          x: {
+            ticks: { font: { size: 12, weight: 'bold' } },
           },
         },
         plugins: {
           title: {
             display: true,
-            text: 'OFICINA ZONAL / HECTAREAS CACAO vs META',
+            text: 'OFICINA ZONAL / HECTÁREAS CACAO vs META',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -642,33 +631,20 @@ export class DashboardComponent implements AfterViewInit {
             callbacks: {
               label: (ctx) => {
                 const value = ctx.raw as number;
-                return `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
+                const meta = metaValues[ctx.dataIndex];
+                if (ctx.dataset.label === 'Área cultivada de CACAO (ha)') {
+                  return `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
+                }
+                return `Meta: ${Number(meta).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
               },
             },
-          },
-          datalabels: {
-            font: { weight: 'bold', size: 12 },
-            formatter: (v: number, ctx) => {
-              const meta = metaValues[ctx.dataIndex];
-              if (ctx.datasetIndex === 0) {
-                return `${Number(v).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
-              }
-              if (ctx.datasetIndex === 1 && meta > 0) {
-                const falta = Math.max(meta - values[ctx.dataIndex], 0);
-                const porcentaje = (falta / meta) * 100;
-                return `Falta: ${porcentaje.toFixed(2)}%`;
-              }
-              return '';
-            },
-            color: (ctx) => (ctx.datasetIndex === 1 ? 'red' : '#000'),
-            anchor: (ctx) => (ctx.datasetIndex === 0 ? 'end' : 'start'),
-            align: (ctx) => (ctx.datasetIndex === 0 ? 'end' : 'start'),
           },
         },
       },
       plugins: [ChartDataLabels],
     });
   }
+
 
 
   //*FIN Grafico sobre la Meta por Oficina Zonal - CACAO
