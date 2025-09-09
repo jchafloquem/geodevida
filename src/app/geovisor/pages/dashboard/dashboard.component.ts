@@ -128,11 +128,11 @@ export class DashboardComponent implements AfterViewInit {
   //*Grafico sobre la Meta & Avance
   crearGraficoProgresoporHectareas(total: number) {
     const meta = 43364;
-    const restante = Math.max(meta - total, 0); // porción restante
+    const restante = Math.max(meta - total, 0);
     const ctx = document.getElementById('graficoMeta') as HTMLCanvasElement;
 
     new Chart(ctx, {
-      type: 'doughnut', // tipo pastel
+      type: 'doughnut',
       data: {
         labels: ['AVANCE', 'RESTANTE'],
         datasets: [
@@ -140,24 +140,20 @@ export class DashboardComponent implements AfterViewInit {
             data: [total, restante],
             backgroundColor: [
               'rgba(13, 155, 215, 0.7)', // azul
-              'rgba(13, 166, 66, 0.3)'   // verde claro/transparente para la parte restante
+              'rgba(13, 166, 66, 0.3)'   // verde claro/transparente
             ],
-            borderColor: [
-              '#075A73', // borde azul
-              '#085A25'  // borde verde
-            ],
+            borderColor: ['#075A73', '#085A25'],
             borderWidth: 2
           }
         ]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
-        aspectRatio: 1,
+        maintainAspectRatio: false, // <<--- ahora respeta el alto del contenedor
         plugins: {
           title: {
             display: true,
-            text: 'META / AVANCE',  // <<< Aquí el título
+            text: 'META / AVANCE',
             font: {
               size: 18,
               weight: 'bold'
@@ -167,9 +163,7 @@ export class DashboardComponent implements AfterViewInit {
           legend: {
             display: true,
             labels: {
-              font: {
-                weight: 'bold'
-              }
+              font: { weight: 'bold' }
             }
           },
           tooltip: {
@@ -182,10 +176,7 @@ export class DashboardComponent implements AfterViewInit {
           },
           datalabels: {
             color: 'white',
-            font: {
-              weight: 'bold',
-              size: 16
-            },
+            font: { weight: 'bold', size: 16 },
             formatter: (value) => {
               const porcentaje = (value as number / meta) * 100;
               return `${porcentaje.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
@@ -196,6 +187,7 @@ export class DashboardComponent implements AfterViewInit {
       plugins: [ChartDataLabels]
     });
   }
+
   //*Fin Grafico sobre la Meta & Avance
 
   //*Grafico sobre la Meta por Oficina Zonal
@@ -715,7 +707,7 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
   crearGraficoProgresoporDNI(totalDNI: number) {
-    const meta = 38313; // 👉 aquí defines la meta de DNIs únicos
+    const meta = 38313; // meta de DNIs únicos
     const restante = Math.max(meta - totalDNI, 0);
     const ctx = document.getElementById('graficoMetaDNI') as HTMLCanvasElement;
 
@@ -730,35 +722,24 @@ export class DashboardComponent implements AfterViewInit {
               'rgba(255, 159, 64, 0.7)', // naranja avance
               'rgba(201, 203, 207, 0.3)' // gris claro restante
             ],
-            borderColor: [
-              '#FF9F40', // borde naranja
-              '#C9CBCF'  // borde gris
-            ],
+            borderColor: ['#FF9F40', '#C9CBCF'],
             borderWidth: 2
           }
         ]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
-        aspectRatio: 1,
+        maintainAspectRatio: false, // <<--- ahora respeta el alto del contenedor
         plugins: {
           title: {
             display: true,
             text: 'META / PARTICIPANTES',
-            font: {
-              size: 18,
-              weight: 'bold'
-            },
+            font: { size: 18, weight: 'bold' },
             color: '#333'
           },
           legend: {
             display: true,
-            labels: {
-              font: {
-                weight: 'bold'
-              }
-            }
+            labels: { font: { weight: 'bold' } }
           },
           tooltip: {
             callbacks: {
@@ -770,10 +751,7 @@ export class DashboardComponent implements AfterViewInit {
           },
           datalabels: {
             color: 'white',
-            font: {
-              weight: 'bold',
-              size: 16
-            },
+            font: { weight: 'bold', size: 16 },
             formatter: (value) => {
               const porcentaje = (value as number / meta) * 100;
               return `${porcentaje.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
@@ -784,6 +762,7 @@ export class DashboardComponent implements AfterViewInit {
       plugins: [ChartDataLabels]
     });
   }
+
   async contarRegistrosUnicosPorDNI(layer: FeatureLayer): Promise<Record<string, number>> {
     try {
       const pageSize = 2000;
