@@ -11,7 +11,6 @@ import Legend from '@arcgis/core/widgets/Legend.js';
 import Map from '@arcgis/core/Map.js';
 import MapView from '@arcgis/core/views/MapView.js';
 import PopupTemplate from "@arcgis/core/PopupTemplate.js";
-import Search from "@arcgis/core/widgets/Search.js";
 import "@arcgis/map-components/components/arcgis-search";
 import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
@@ -23,6 +22,11 @@ import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
 import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
 import Extent from "@arcgis/core/geometry/Extent";
 import SpatialReference from "@arcgis/core/geometry/SpatialReference";
+
+import PointSymbol3D from "@arcgis/core/symbols/PointSymbol3D";
+import ObjectSymbol3DLayer from "@arcgis/core/symbols/ObjectSymbol3DLayer";
+import IconSymbol3DLayer from "@arcgis/core/symbols/IconSymbol3DLayer";
+
 
 
 
@@ -409,6 +413,52 @@ const cafeRenderer = new SimpleRenderer({
   })
 });
 
+const recopilacionRenderer = new SimpleRenderer({
+  symbol: new SimpleMarkerSymbol({
+    color: [139, 69, 19, 0.9],   // café sólido
+    outline: {
+      color: [255, 255, 255, 1], // borde blanco como GPS
+      width: 1
+    },
+    size: 12,
+    style: "circle"
+  })
+});
+const restCaribRecopilacion = new PopupTemplate({
+  title: "Ficha de Recopilación",
+  outFields: ["*"],
+  content: [
+    {
+      type: "text",
+      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">
+               PARTICIPANTE: {nombre_participante}
+             </div>`
+    },
+    {
+      type: "fields",
+      fieldInfos: [
+        {
+          fieldName: "dni_participante",
+          label: "DNI del participante",
+          visible: true
+        },
+        {
+          fieldName: "objectid",
+          label: "ID interno",
+          visible: false
+        },
+        {
+          fieldName: "globalid",
+          label: "ID global",
+          visible: false
+        }
+      ]
+    },
+    {
+      type: "attachments"
+    }
+  ]
+});
 @Injectable({
   providedIn: 'root',
 })
@@ -431,14 +481,15 @@ export class GeovisorSharedService {
       limiteCultivo: 'services/DPM_LIMITES_PIRDAIS/MapServer/10',
     }
   }
-  public restCaribSurveyPercepcionCafe = {
-    serviceBase: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/arcgis/rest/services',
+  public restCaribSurvey = {
+    serviceBase: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/ArcGIS/rest/services',
     capas: {
       infraestructura: 'FICHA_DE_MONITOREO_TIPOLOGÍA_INFRAESTRUCTURA_vista/FeatureServer/0',
       cacao: 'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_–_PTA_DEVIDA_vista/FeatureServer/0',
       cafe: 'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_%E2%80%93_CAFE_vista/FeatureServer/0',
       registroForestal: 'REGISTRO_FORESTAL_vista/FeatureServer/0',
-      medidasAmbientales: 'MEDIDAS_AMBIENTALES_vista/FeatureServer/0'
+      medidasAmbientales: 'MEDIDAS_AMBIENTALES_vista/FeatureServer/0',
+      recopilacion:'survey123_b76b6ab3a7fa403384473a05b7ecce49_results/FeatureServer/0'
     }
   }
   //*SERVICIOS GLOBALES
@@ -459,10 +510,6 @@ export class GeovisorSharedService {
     }
   }
   public layers: LayerConfig[] = [
-
-
-
-
     //*SERVICIOS REST DE GEODEVIDA-CARIB
     {
       title: 'POLIGONOS DE CULTIVO',
@@ -498,7 +545,7 @@ export class GeovisorSharedService {
     },
     {
       title: 'CUESTIONARIO INFRAESTRUCTURA',
-      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.infraestructura}`,
+      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.recopilacion}`,
       popupTemplate: undefined,
       outFields: ['*'],
       visible: true,
@@ -515,15 +562,15 @@ export class GeovisorSharedService {
       labelsVisible: true,
       opacity: 1,
       group: 'MONITOREO CAFE',
-    },
-    {
+    }, */
+    /* {
       title: 'CUESTIONARIO PERCEPCION CAFE',
-      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.cafe}`,
+      url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.cafe}`,
       labelingInfo: [],
       popupTemplate: restCaribSurveyPercepcionCafe,
-      renderer: cafeRenderer,
+      renderer: undefined,
       visible: true,
-      labelsVisible: true,
+      labelsVisible: false,
       opacity: 1,
       group: 'MONITOREO CAFE',
     }, */
@@ -621,7 +668,7 @@ export class GeovisorSharedService {
       labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
-      visible: true,
+      visible: false,
       labelsVisible: true,
       opacity: 0.85,
       group: 'HIDROGRAFIA',
@@ -633,7 +680,7 @@ export class GeovisorSharedService {
       labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
-      visible: true,
+      visible: false,
       group: 'LIMITES POLITICOS',
     },
     {
@@ -642,7 +689,7 @@ export class GeovisorSharedService {
       labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
-      visible: true,
+      visible: false,
       labelsVisible: false,
       group: 'LIMITES POLITICOS',
     },
@@ -666,7 +713,17 @@ export class GeovisorSharedService {
       labelsVisible: false,
       group: 'LIMITES POLITICOS',
     },
-
+    {
+      title: 'VISITAS DE MONITOREO',
+      url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`,
+      labelingInfo: [],
+      popupTemplate: restCaribRecopilacion,  // 🔹 Quitar temporalmente
+      renderer: recopilacionRenderer,
+      visible: true,
+      labelsVisible: false,
+      opacity: 1,
+      group: 'PIRDAIS',
+    },
   ];
 
   public lis: [] = [];
@@ -681,12 +738,7 @@ export class GeovisorSharedService {
   public scale = '00.00';
   public legend!: Legend;
 
-
-
-
-
   constructor() { }
-
   initializeMap(mapViewEl: ElementRef): Promise<void> {
 
     const treeLossLayer = new WebTileLayer({
@@ -696,15 +748,6 @@ export class GeovisorSharedService {
       subDomains: ["a", "b", "c"], // opcional si el servicio lo soporta
       copyright: "Global Forest Watch"
     });
-
-
-
-
-
-
-
-
-
 
     this.layers.forEach((layerConfig) => {
       const hasValidLayerId = /\/\d+$/.test(layerConfig.url);
@@ -721,7 +764,12 @@ export class GeovisorSharedService {
         if (layerConfig.popupTemplate) layerOptions.popupTemplate = layerConfig.popupTemplate;
         if (layerConfig.renderer) layerOptions.renderer = layerConfig.renderer;
         if (layerConfig.labelingInfo) layerOptions.labelingInfo = layerConfig.labelingInfo;
-        if (layerConfig.labelsVisible !== false) layerOptions.labelsVisible = layerConfig.labelsVisible;
+
+        // ✅ Ahora respeta true o false
+        if (layerConfig.labelsVisible !== undefined) {
+          layerOptions.labelsVisible = layerConfig.labelsVisible;
+        }
+
         if (layerConfig.outFields) layerOptions.outFields = layerConfig.outFields;
         if (layerConfig.maxScale !== undefined) layerOptions.maxScale = layerConfig.maxScale;
         if (layerConfig.minScale !== undefined) layerOptions.minScale = layerConfig.minScale;
@@ -741,6 +789,7 @@ export class GeovisorSharedService {
       }
       this.mapa.add(layer);
     });
+
 
     //*Creacion de la Vista del Mapa
     this.view = new MapView({
@@ -779,6 +828,21 @@ export class GeovisorSharedService {
         exactMatch: true,
         outFields: ["*"],
         name: "CULTIVOS",
+        placeholder: "Digite el DNI",
+        maxResults: 10,
+        maxSuggestions: 10,
+        suggestionsEnabled: true,
+        minSuggestCharacters: 1,
+      },
+      {
+        layer: new FeatureLayer({
+          url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`
+        }),
+        searchFields: ["dni_participante", "nombre_participante"],
+        displayField: "nombre_participante",
+        exactMatch: true,
+        outFields: ["*"],
+        name: "VISITAS DE MONITOREO",
         placeholder: "Digite el DNI",
         maxResults: 10,
         maxSuggestions: 10,
