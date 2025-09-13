@@ -509,6 +509,13 @@ export class GeovisorSharedService {
       comunidadNativa: 'services/servicios_ogc/Catastro_Rural/MapServer/2',
     }
   }
+
+  public restOsinergmin = {
+    serviceBase: 'https://gisem.osinergmin.gob.pe/serverosih/rest/services',
+    capas:{
+      centroPoblado :'Cartografia/CARTOGRAFIA/FeatureServer/0'
+    }
+  }
   public layers: LayerConfig[] = [
     //*SERVICIOS REST DE GEODEVIDA-CARIB
     {
@@ -668,10 +675,21 @@ export class GeovisorSharedService {
       labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
-      visible: false,
+      visible: true,
       labelsVisible: true,
       opacity: 0.85,
       group: 'HIDROGRAFIA',
+    },
+    {
+      title: 'CENTRO POBLADOS',
+      url: `${this.restOsinergmin.serviceBase}/${this.restOsinergmin.capas.centroPoblado}`,
+      labelingInfo: [],
+      popupTemplate: undefined,
+      renderer: undefined,
+      visible: true,
+      labelsVisible: true,
+      opacity: 0.85,
+      group: 'LIMITES POLITICOS',
     },
     //*CARGA DE CAPAS DE LIMITES POLITICOS (IDEP)
     {

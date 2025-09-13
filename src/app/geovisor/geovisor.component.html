@@ -1,10 +1,33 @@
 
-<ngx-spinner
-	bdColor="rgba(32, 145, 199, 0.95)"
-	size="large"
-	color="#125230"
-	type="ball-scale-multiple"
->
-	<p style="font-size: 30px; color: white">Cargando...</p>
+<ngx-spinner bdColor="rgba(32, 145, 199, 0.95)" size="large" color="#125230">
+  <div style="position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    ">
+    <!-- Contenedor relativo -->
+    <div style="position: relative; display: inline-block;">
+      <!-- Imagen -->
+      <img src="assets/images/logos/logoWelBNMini.png" alt="Logo" style="
+          width: 150px;
+          margin-bottom: 15px;
+          box-shadow: 0 0 20px 5px rgba(255, 255, 255, 0.9);
+          border-radius: 100px;
+          display: block;
+        " />
+
+      <!-- Spinner superpuesto -->
+      <div class="spinner-overlay" style="
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        ">
+        <i class="fa fa-spinner fa-spin" style="font-size: 40px; color: white;"></i>
+      </div>
+    </div>
+    <p style="font-size: 30px; color: white; margin: 0">Cargando...</p>
+  </div>
 </ngx-spinner>
 <router-outlet></router-outlet>
