@@ -1434,7 +1434,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'POLIGONOS CAFE',
+            text: 'POLIGONOS DE CAFE',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
