@@ -139,8 +139,8 @@ export class DashboardComponent implements AfterViewInit {
           {
             data: [total, restante],
             backgroundColor: [
-              'rgba(13, 155, 215, 0.7)', // azul
-              'rgba(13, 166, 66, 0.3)'   // verde claro/transparente
+              '#2c9c7d ', // azul
+              '#f9edbc'   // verde claro/transparente
             ],
             borderColor: ['#075A73', '#085A25'],
             borderWidth: 2
@@ -175,11 +175,11 @@ export class DashboardComponent implements AfterViewInit {
             }
           },
           datalabels: {
-            color: 'white',
-            font: { weight: 'bold', size: 16 },
+            color: 'black',
+            font: { weight: 'bold', size: 30 },
             formatter: (value) => {
               const porcentaje = (value as number / meta) * 100;
-              return `${porcentaje.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+              return `${porcentaje.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 1 })}%`;
             }
           }
         }
@@ -281,7 +281,7 @@ export class DashboardComponent implements AfterViewInit {
             beginAtZero: true,
             ticks: {
               callback: (value) =>
-                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
             },
           },
           y: {
@@ -293,7 +293,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'OFICINA ZONAL / HECTAREAS CAFE & CACAO',
+            text: 'AVANCE: HECTAREAS (CACAO & CAFE)',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -303,7 +303,7 @@ export class DashboardComponent implements AfterViewInit {
             callbacks: {
               label: (ctx) => {
                 const value = ctx.raw as number;
-                return `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
+                return `${Number(value).toLocaleString('es-PE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ha`;
               },
             },
           },
@@ -313,7 +313,7 @@ export class DashboardComponent implements AfterViewInit {
             color: '#000',
             font: { weight: 'bold', size: 12 },
             formatter: (v: number) =>
-              `${Number(v).toLocaleString('es-PE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`,
+              `${Number(v).toLocaleString('es-PE', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ha`,
           },
         },
       },
@@ -695,10 +695,10 @@ export class DashboardComponent implements AfterViewInit {
           {
             data: [totalDNI, restante],
             backgroundColor: [
-              'rgba(255, 159, 64, 0.7)', // naranja avance
-              'rgba(201, 203, 207, 0.3)' // gris claro restante
+              '#2c9c7d',
+              '#f9edbc'
             ],
-            borderColor: ['#FF9F40', '#C9CBCF'],
+            borderColor: ['#075A73', '#085A25'],
             borderWidth: 2
           }
         ]
@@ -709,7 +709,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'META / PARTICIPANTES',
+            text: 'META / AVANCE',
             font: { size: 18, weight: 'bold' },
             color: '#333'
           },
@@ -726,11 +726,11 @@ export class DashboardComponent implements AfterViewInit {
             }
           },
           datalabels: {
-            color: 'white',
-            font: { weight: 'bold', size: 16 },
+            color: 'black',
+            font: { weight: 'bold', size: 30 },
             formatter: (value) => {
               const porcentaje = (value as number / meta) * 100;
-              return `${porcentaje.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+              return `${porcentaje.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}%`;
             }
           }
         }
@@ -909,7 +909,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'OFICINA ZONAL / PARTICIPANTES',
+            text: 'AVANCE: FAMILIAS PARTICIPANTES',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -1133,7 +1133,7 @@ export class DashboardComponent implements AfterViewInit {
         labels,
         datasets: [
           {
-            label: 'Participantes únicos con CAFÉ',
+            label: 'Participantes únicos con CAFE',
             data: values,
             backgroundColor: backgroundColors,
             borderColor: borderColors,
@@ -1150,6 +1150,7 @@ export class DashboardComponent implements AfterViewInit {
         scales: {
           x: {
             beginAtZero: true,
+            max: 6000,
             ticks: {
               callback: (value) =>
                 `${Number(value).toLocaleString('es-PE')}`,
@@ -1164,7 +1165,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'OFICINA ZONAL / PARTICIPANTES CAFE',
+            text: 'FAMILIAS PARTICIPANTES CAFE',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -1284,6 +1285,7 @@ export class DashboardComponent implements AfterViewInit {
         scales: {
           x: {
             beginAtZero: true,
+            max: 6000,
             ticks: {
               callback: (value) =>
                 `${Number(value).toLocaleString('es-PE')}`,
@@ -1298,7 +1300,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'OFICINA ZONAL / PARTICIPANTES CACAO',
+            text: 'FAMILIAS PARTICIPANTES CACAO',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -1323,6 +1325,10 @@ export class DashboardComponent implements AfterViewInit {
       plugins: [ChartDataLabels],
     });
   }
+
+
+
+
   //*Grafico por cultivo de cafe por Oficina Zonal
   async crearGraficoCantidadRegistrosOZCAFE() {
     const baseUrl = this.QUERY_SERVICIO;
@@ -1413,6 +1419,7 @@ export class DashboardComponent implements AfterViewInit {
         scales: {
           x: {
             beginAtZero: true,
+            max: 6000,
             ticks: {
               callback: (value) =>
                 `${Number(value).toLocaleString('es-PE')}`,
@@ -1427,7 +1434,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'OFICINA ZONAL / POLIGONOS CAFE',
+            text: 'POLIGONOS CAFE',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }
@@ -1542,6 +1549,7 @@ export class DashboardComponent implements AfterViewInit {
         scales: {
           x: {
             beginAtZero: true,
+            max: 6000,
             ticks: {
               callback: (value) =>
                 `${Number(value).toLocaleString('es-PE')}`,
@@ -1556,7 +1564,7 @@ export class DashboardComponent implements AfterViewInit {
         plugins: {
           title: {
             display: true,
-            text: 'OFICINA ZONAL / POLIGONOS DE CACAO',
+            text: 'POLIGONOS DE CACAO',
             font: { size: 18, weight: 'bold' },
             color: '#333',
             padding: { top: 10, bottom: 20 }

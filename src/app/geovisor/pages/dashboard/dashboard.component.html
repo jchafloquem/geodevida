@@ -12,8 +12,8 @@
     <!-- ESTADISTICA SOBRE HECTAREAS -->
     <div class="rounded-2xl bg-[#0D9BD7] p-6 shadow-md ring-1 ring-gray-200">
       <!-- Título de la tarjeta principal -->
-      <h2 class="text-lg font-semibold text-white mb-6">
-        ESTADISTICA EN HECTAREAS (CAFE & CACAO)
+      <h2 class="text-2xl font-semibold text-black mb-6">
+        HECTAREAS (CACAO & CAFE)
       </h2>
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <!-- Meta Total -->
@@ -35,16 +35,6 @@
           </div>
           <img src="assets/images/dashboard/avance.png" alt="icono" class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
         </div>
-        <!-- Hectáreas de Café -->
-        <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
-          <div>
-            <p class="text-xl font-medium leading-6 text-white">AVANCE CAFE</p>
-            <p class="mt-2 text-4xl font-semibold tracking-tight text-green-400">{{ totalAreaCafe | number : "1.0-0"
-              }}</p>
-          </div>
-          <img src="assets/images/dashboard/grano_cafe.png" alt="icono"
-            class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
-        </div>
         <!-- Hectáreas de Cacao -->
         <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
           <div>
@@ -53,6 +43,16 @@
               }}</p>
           </div>
           <img src="assets/images/dashboard/grano_cacao.png" alt="icono"
+            class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
+        </div>
+        <!-- Hectáreas de Café -->
+        <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
+          <div>
+            <p class="text-xl font-medium leading-6 text-white">AVANCE CAFE</p>
+            <p class="mt-2 text-4xl font-semibold tracking-tight text-green-400">{{ totalAreaCafe | number : "1.0-0"
+              }}</p>
+          </div>
+          <img src="assets/images/dashboard/grano_cafe.png" alt="icono"
             class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
         </div>
       </div>
@@ -69,24 +69,28 @@
         </div>
       </div>
     </div>
-    <div class="bg-white rounded-2xl shadow-lg border p-6">
+
+    <!-- estaditica con meta -->
+
+    <!-- <div class="bg-white rounded-2xl shadow-lg border p-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
-        <!-- Gráfico 1 -->
+
         <div class="w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[500px] 3xl:h-[650px] max-w-full mx-auto">
           <canvas id="graficoMetaOZCAFE" class="w-full h-full"></canvas>
         </div>
-        <!-- Gráfico 2 (barras horizontales) -->
+
         <div class="w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[500px] 3xl:h-[650px] max-w-full mx-auto">
           <canvas id="graficoMetaOZCACAO" class="w-full h-full"></canvas>
         </div>
       </div>
-    </div>
+    </div> -->
+
     <!-- FIND ESTADISTICA SOBRE HECTAREAS -->
 
     <!-- ESTADISTICA SOBRE FAMILIAS -->
     <div class="rounded-2xl bg-[#0D9BD7] p-6 shadow-md ring-1 ring-gray-200">
-      <h2 class="text-lg font-semibold text-white mb-6">
-        ESTADISTICA EN PARTICIPANTES EN CULTIVOS DE CAFE & CACAO
+      <h2 class="text-2xl font-bold text-black mb-6">
+        FAMILIAS PARTICIPANTES EN CULTIVOS DE CACAO & CAFE
       </h2>
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5 cursor-pointer">
 
@@ -107,16 +111,14 @@
           <img src="assets/images/dashboard/avance.png" alt="icono"
             class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
         </div>
-
-        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10">
-          <p class="text-sm font-medium leading-6 text-white">TOTAL DE PARTICIPANTES - CAFE & CACAO</p>
-          <p class="mt-2 flex items-baseline gap-x-2">
-            <span class="text-4xl font-semibold tracking-tight text-green-400">
-              {{ totalRegistrosUnicosDNI["cafe_y_cacao"] | number : "1.0-0" }}
-            </span>
-          </p>
+        <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
+          <div>
+            <p class="text-xl font-medium leading-6 text-white">AVANCE CACAO</p>
+            <p class="mt-2 text-4xl font-semibold tracking-tight text-green-400">{{ totalRegistrosUnicosDNI["cacao"] | number : "1.0-0" }}</p>
+          </div>
+          <img src="assets/images/dashboard/grano_cacao.png" alt="icono"
+            class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
         </div>
-
         <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
           <div>
             <p class="text-xl font-medium leading-6 text-white">AVANCE CAFE</p>
@@ -125,14 +127,13 @@
           <img src="assets/images/dashboard/grano_cafe.png" alt="icono"
             class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
         </div>
-
-        <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
-          <div>
-            <p class="text-xl font-medium leading-6 text-white">AVANCE CACAO</p>
-            <p class="mt-2 text-4xl font-semibold tracking-tight text-green-400">{{ totalRegistrosUnicosDNI["cacao"] | number : "1.0-0" }}</p>
-          </div>
-          <img src="assets/images/dashboard/grano_cacao.png" alt="icono"
-            class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
+        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10">
+          <p class="text-sm font-medium leading-6 text-white">TOTAL DE PARTICIPANTES - CAFE & CACAO</p>
+          <p class="mt-2 flex items-baseline gap-x-2">
+            <span class="text-4xl font-semibold tracking-tight text-green-400">
+              {{ totalRegistrosUnicosDNI["cafe_y_cacao"] | number : "1.0-0" }}
+            </span>
+          </p>
         </div>
       </div>
     </div>
@@ -152,21 +153,21 @@
 
     <div class="bg-white rounded-2xl shadow-lg border p-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
-        <!-- Gráfico 1 -->
-        <div class="w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[500px] 3xl:h-[650px] max-w-full mx-auto">
-          <canvas id="graficoCantidadDNIOZCAFE" class="w-full h-full"></canvas>
-        </div>
         <!-- Gráfico 2 (barras horizontales) -->
         <div class="w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[500px] 3xl:h-[650px] max-w-full mx-auto">
           <canvas id="graficoCantidadDNIOZCACAO" class="w-full h-full"></canvas>
+        </div>
+        <!-- Gráfico 1 -->
+        <div class="w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[500px] 3xl:h-[650px] max-w-full mx-auto">
+          <canvas id="graficoCantidadDNIOZCAFE" class="w-full h-full"></canvas>
         </div>
       </div>
     </div>
 
     <!-- ESTADISTICA POLIGONOS -->
     <div class="rounded-2xl bg-[#0D9BD7] p-6 shadow-md ring-1 ring-gray-200">
-      <h2 class="text-lg font-semibold text-white mb-6">
-        ESTADISTICA EN POLIGONOS DE CAFE & CACAO
+      <h2 class="text-2xl font-bold text-black mb-6">
+        POLIGONOS DE CACAO & CAFE
       </h2>
       <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 cursor-pointer">
         <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
@@ -178,23 +179,14 @@
             class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
         </div>
 
-        <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
+       <!--  <div class="rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
           <p class="text-xl font-medium leading-6 text-white">EN PROCESO</p>
           <p class="mt-2 flex items-baseline gap-x-2">
             <span class="text-4xl font-semibold tracking-tight text-green-400">
               {{ totalRegistrosUnicosDNI[""] | number : "1.0-0" }}
             </span>
           </p>
-        </div>
-
-        <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
-          <div>
-            <p class="text-xl font-medium leading-6 text-white">AVANCE CAFE</p>
-            <p class="mt-2 text-4xl font-semibold tracking-tight text-green-400">{{ totalCafe | number : "1.0-0"}}</p>
-          </div>
-          <img src="assets/images/dashboard/grano_cafe.png" alt="icono"
-            class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
-        </div>
+        </div> -->
 
         <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
           <div>
@@ -205,19 +197,27 @@
             class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
         </div>
 
+        <div class="flex items-center justify-between rounded-2xl bg-gray-900 p-6 shadow ring-1 ring-white/10 cursor-pointer">
+          <div>
+            <p class="text-xl font-medium leading-6 text-white">AVANCE CAFE</p>
+            <p class="mt-2 text-4xl font-semibold tracking-tight text-green-400">{{ totalCafe | number : "1.0-0"}}</p>
+          </div>
+          <img src="assets/images/dashboard/grano_cafe.png" alt="icono"
+            class="w-16 h-16 opacity-80 rounded-full drop-shadow-[0_0_10px_white]">
+        </div>
       </div>
     </div>
     <!-- FIN ESTADISTICA POLIGONOS -->
 
     <div class="bg-white rounded-2xl shadow-lg border p-6">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-1">
+         <!-- Gráfico 2 (barras horizontales) -->
+         <div class="w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[500px] 3xl:h-[650px] max-w-full mx-auto">
+          <canvas id="graficoCantidadOZCACAO" class="w-full h-full"></canvas>
+        </div>
         <!-- Gráfico 1 -->
         <div class="w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[500px] 3xl:h-[650px] max-w-full mx-auto">
           <canvas id="graficoCantidadOZCAFE" class="w-full h-full"></canvas>
-        </div>
-        <!-- Gráfico 2 (barras horizontales) -->
-        <div class="w-full h-[280px] sm:h-[380px] md:h-[450px] lg:h-[500px] 3xl:h-[650px] max-w-full mx-auto">
-          <canvas id="graficoCantidadOZCACAO" class="w-full h-full"></canvas>
         </div>
       </div>
     </div>
