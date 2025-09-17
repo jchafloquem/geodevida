@@ -737,7 +737,7 @@ export class GeovisorSharedService {
       labelingInfo: [],
       popupTemplate: restCaribRecopilacion,  // 🔹 Quitar temporalmente
       renderer: recopilacionRenderer,
-      visible: true,
+      visible: false,
       labelsVisible: false,
       opacity: 1,
       group: 'PIRDAIS',
