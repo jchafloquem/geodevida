@@ -467,6 +467,19 @@ export class GeovisorSharedService {
   public view: MapView | null = null;
 
   //*SERVICIO SISCOD-DEVIDA
+  public restGeoSerfor = {
+    serviceBase: 'https://geo.serfor.gob.pe/geoservicios/rest/services',
+    capas: {
+      bosqueProdPermanente: 'Visor/Ordenamiento_Forestal/MapServer/1',
+      areaNaturalesProtegidas:'Visor/OCAPAS_SERNANP/MapServer/5',
+      areaConservacionRegional:'Visor/OCAPAS_SERNANP/MapServer/6',
+      zonaDeAmortiguamiento: 'Visor/OCAPAS_SERNANP/MapServer/4',
+      comunidadesNativa:'Visor/OCAPAS_MIDAGRI/MapServer/27',
+      monitoreoDeforestacion:'Visor/Monitoreo_Deforestacion_Tala/MapServer/1',
+      limiteDepartamento:'Visor/Limites_Politicos_Administrativos/MapServer/0'
+    }
+  }
+
   public restGeoDevida = {
     serviceBase: 'https://siscod.devida.gob.pe/server/rest',
     capas: {
@@ -517,6 +530,73 @@ export class GeovisorSharedService {
     }
   }
   public layers: LayerConfig[] = [
+    //Informacion de SERFOR
+    {
+      title: 'BPP - BOSQUE DE PRODUCCION PERMANENTE',
+      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.bosqueProdPermanente}`,
+      labelingInfo: undefined,
+      popupTemplate: undefined,
+      renderer: undefined,
+      visible: false,
+      labelsVisible: true,
+      opacity: 0.5,
+      group: 'SERFOR',
+    },
+    {
+      title: 'ANP - AREAS NATURALES PROTEGIDAS',
+      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.areaNaturalesProtegidas}`,
+      labelingInfo: undefined,
+      popupTemplate: undefined,
+      renderer: undefined,
+      visible: false,
+      labelsVisible: true,
+      opacity: 0.5,
+      group: 'SERFOR',
+    },
+    {
+      title: 'ACR - AREAS DE CONSERVACION REGIONAL',
+      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.areaConservacionRegional}`,
+      labelingInfo: undefined,
+      popupTemplate: undefined,
+      renderer: undefined,
+      visible: false,
+      labelsVisible: true,
+      opacity: 0.5,
+      group: 'SERFOR',
+    },
+    {
+      title: 'ZA - ZONAS DE AMORTIGUAMIENTO',
+      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.areaConservacionRegional}`,
+      labelingInfo: undefined,
+      popupTemplate: undefined,
+      renderer: undefined,
+      visible: false,
+      labelsVisible: true,
+      opacity: 0.5,
+      group: 'SERFOR',
+    },
+    {
+      title: 'COMUNIDADES NATIVAS',
+      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.comunidadesNativa}`,
+      labelingInfo: undefined,
+      popupTemplate: undefined,
+      renderer: undefined,
+      visible: false,
+      labelsVisible: true,
+      opacity: 0.5,
+      group: 'SERFOR',
+    },
+    {
+      title: 'MONITOREO DEFORESTACION',
+      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.monitoreoDeforestacion}`,
+      labelingInfo: undefined,
+      popupTemplate: undefined,
+      renderer: undefined,
+      visible: false,
+      labelsVisible: true,
+      opacity: 0.5,
+      group: 'SERFOR',
+    },
     //*SERVICIOS REST DE GEODEVIDA-CARIB
     {
       title: 'POLIGONOS DE CULTIVO',
@@ -592,35 +672,15 @@ export class GeovisorSharedService {
       opacity: 0.5,
       group: 'CARTOGRAFIA DEVIDA',
     },
-    {
-      title: 'ANP - AREA NATURAL PROTEGIDA',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.areaNaturalProtegida}`,
-      labelingInfo: undefined,
-      popupTemplate: caribANP,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'CARTOGRAFIA DEVIDA',
-    },
-    {
-      title: 'BPP - BOSQUE DE PRODUCCION PERMANENTE',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.bosqueProdPermanente}`,
-      labelingInfo: undefined,
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'CARTOGRAFIA DEVIDA',
-    },
+
+
     {
       title: 'OFICINA ZONAL',
       url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.oficinaZonal}`,
       labelingInfo: [],
       popupTemplate: popupLimitesOficinaZonal,
       renderer: undefined,
-      visible: true,
+      visible: false,
       labelsVisible: false,
       group: 'CARTOGRAFIA DEVIDA',
     },
@@ -675,7 +735,7 @@ export class GeovisorSharedService {
       labelingInfo: [],
       popupTemplate: undefined,
       renderer: undefined,
-      visible: true,
+      visible: false,
       labelsVisible: true,
       opacity: 0.85,
       group: 'HIDROGRAFIA',
@@ -718,7 +778,7 @@ export class GeovisorSharedService {
       popupTemplate: undefined,
       renderer: undefined,
       visible: true,
-      labelsVisible: true,
+      labelsVisible: false,
       group: 'LIMITES POLITICOS',
     },
     {
