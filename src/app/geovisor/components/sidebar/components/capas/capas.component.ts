@@ -41,7 +41,7 @@ export class CapasComponent implements OnInit {
 	toggleLayer(title: string): void {
 		const currentVisibility = this._geovisorSharedService.getLayerVisibility(title);
 		this._geovisorSharedService.layers.forEach((layer) => {
-			if (layer.title === title) {
+			if (layer.title === title!) {
 				layer.visible = !currentVisibility;
 			}
 		});
