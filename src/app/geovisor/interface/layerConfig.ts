@@ -1,23 +1,37 @@
 import PopupTemplate from '@arcgis/core/PopupTemplate';
-import SimpleRenderer from '@arcgis/core/renderers/SimpleRenderer.js';
-import LabelClass from '@arcgis/core/layers/support/LabelClass.js';
-
-
+import LabelClass from '@arcgis/core/layers/support/LabelClass';
+import Renderer from '@arcgis/core/renderers/Renderer';
 
 export interface LayerConfig {
-  featureReduction?: any;
-  geometryType?: string;
-  group: string;
-  labelingInfo?: any;
-  labelsVisible?: boolean;
-  maxScale?: number;
-  minScale?: number;
-  outFields?: string[];
-  popupTemplate?: any;
-  renderer?: any;
-  title: string;
+  type: 'feature' | 'map-image' | 'webtile';
   url: string;
-  visible: boolean;
+  title?: string;
+  group: string;
+  visible?: boolean;
   opacity?: number;
-}
+  minScale?: number;
+  maxScale?: number;
 
+
+  // 🔹 Propios de FeatureLayer
+  popupTemplate?: __esri.PopupTemplate;
+  renderer?: __esri.Renderer;
+  labelingInfo?: __esri.LabelClass[];
+  labelsVisible?: boolean;
+  outFields?: string[];
+  featureReduction?: any;
+
+  // 🔹 Propios de MapImageLayer
+  sublayers?: {
+    id: number;
+    title?: string;
+    visible?: boolean;
+    definitionExpression?: string;
+    popupTemplate?: __esri.PopupTemplate;
+    labelingInfo?: __esri.LabelClass[];
+    labelsVisible?: boolean;
+    renderer?: __esri.Renderer;
+    minScale?: number;
+    maxScale?: number;
+  }[];
+}

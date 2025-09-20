@@ -1,31 +1,32 @@
 import { ElementRef, Injectable } from '@angular/core';
+
+//*Interfaces
 import { LayerConfig } from '../interface/layerConfig';
 
 //*LIBRERIA DEL API DE ARCGIS 4.33
-
+import "@arcgis/map-components/components/arcgis-search";
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion.js';
 import Expand from '@arcgis/core/widgets/Expand.js';
+import Extent from "@arcgis/core/geometry/Extent";
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer.js';
+import IconSymbol3DLayer from "@arcgis/core/symbols/IconSymbol3DLayer";
 import Legend from '@arcgis/core/widgets/Legend.js';
 import Map from '@arcgis/core/Map.js';
+import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
 import MapView from '@arcgis/core/views/MapView.js';
+import ObjectSymbol3DLayer from "@arcgis/core/symbols/ObjectSymbol3DLayer";
+import PointSymbol3D from "@arcgis/core/symbols/PointSymbol3D";
 import PopupTemplate from "@arcgis/core/PopupTemplate.js";
-import "@arcgis/map-components/components/arcgis-search";
 import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
+import SpatialReference from "@arcgis/core/geometry/SpatialReference";
+import TileLayer from "@arcgis/core/layers/TileLayer";
+import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
+import WMSLayer from "@arcgis/core/layers/WMSLayer";
 import Zoom from '@arcgis/core/widgets/Zoom.js';
 
-import TileLayer from "@arcgis/core/layers/TileLayer";
-import WMSLayer from "@arcgis/core/layers/WMSLayer";
-import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
-import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
-import Extent from "@arcgis/core/geometry/Extent";
-import SpatialReference from "@arcgis/core/geometry/SpatialReference";
 
-import PointSymbol3D from "@arcgis/core/symbols/PointSymbol3D";
-import ObjectSymbol3DLayer from "@arcgis/core/symbols/ObjectSymbol3DLayer";
-import IconSymbol3DLayer from "@arcgis/core/symbols/IconSymbol3DLayer";
 
 
 
@@ -459,6 +460,8 @@ const restCaribRecopilacion = new PopupTemplate({
     }
   ]
 });
+
+
 @Injectable({
   providedIn: 'root',
 })
@@ -467,33 +470,7 @@ export class GeovisorSharedService {
   public view: MapView | null = null;
 
   //*SERVICIO SISCOD-DEVIDA
-  public restGeoSerfor = {
-    serviceBase: 'https://geo.serfor.gob.pe/geoservicios/rest/services',
-    capas: {
-      bosqueProdPermanente: 'Visor/Ordenamiento_Forestal/MapServer/1',
-      areaNaturalesProtegidas:'Visor/OCAPAS_SERNANP/MapServer/5',
-      areaConservacionRegional:'Visor/OCAPAS_SERNANP/MapServer/6',
-      zonaDeAmortiguamiento: 'Visor/OCAPAS_SERNANP/MapServer/4',
-      comunidadesNativa:'Visor/OCAPAS_MIDAGRI/MapServer/27',
-      monitoreoDeforestacion:'Visor/Monitoreo_Deforestacion_Tala/MapServer/1',
-      limiteDepartamento:'Visor/Limites_Politicos_Administrativos/MapServer/0'
-    }
-  }
-
-  public restGeoDevida = {
-    serviceBase: 'https://siscod.devida.gob.pe/server/rest',
-    capas: {
-      oficinaZonal: 'services/DPM_LIMITES_PIRDAIS/MapServer/0',
-      bosqueProdPermanente: 'services/DPM_LIMITES_PIRDAIS/MapServer/2',
-      zonaAmortiguamiento: 'services/DPM_LIMITES_PIRDAIS/MapServer/3',
-      areaNaturalProtegida: 'services/DPM_LIMITES_PIRDAIS/MapServer/4',
-      limiteDepartamento: 'services/DPM_LIMITES_PIRDAIS/MapServer/5',
-      limiteProvincia: 'services/DPM_LIMITES_PIRDAIS/MapServer/7',
-      limiteDistrito: 'services/DPM_LIMITES_PIRDAIS/MapServer/8',
-      limitePeru: 'services/DPM_LIMITES_PIRDAIS/MapServer/9',
-      limiteCultivo: 'services/DPM_LIMITES_PIRDAIS/MapServer/10',
-    }
-  }
+  public restApiDevida = 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer';
   public restCaribSurvey = {
     serviceBase: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/ArcGIS/rest/services',
     capas: {
@@ -502,296 +479,254 @@ export class GeovisorSharedService {
       cafe: 'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_%E2%80%93_CAFE_vista/FeatureServer/0',
       registroForestal: 'REGISTRO_FORESTAL_vista/FeatureServer/0',
       medidasAmbientales: 'MEDIDAS_AMBIENTALES_vista/FeatureServer/0',
-      recopilacion:'survey123_b76b6ab3a7fa403384473a05b7ecce49_results/FeatureServer/0'
-    }
-  }
-  //*SERVICIOS GLOBALES
-  public restAna = {
-    serviceBase: 'https://geosnirh.ana.gob.pe/server/rest/services/P%C3%BAblico',
-    capas: {
-      lagunas: 'Lagunas/MapServer/36',
-      riosQuebradas: 'Rios/MapServer/37',
-      fajaMarginal: 'DUA_Acuicola/MapServer/22',
-    }
-  }
-  public restMidagri = {
-    serviceBase: 'https://georural.midagri.gob.pe/geoservicios/rest',
-    capas: {
-      predioRural: 'services/servicios_ogc/Catastro_Rural/MapServer/0',
-      comunidadCampesina: 'services/servicios_ogc/Catastro_Rural/MapServer/1',
-      comunidadNativa: 'services/servicios_ogc/Catastro_Rural/MapServer/2',
-    }
-  }
-
-  public restOsinergmin = {
-    serviceBase: 'https://gisem.osinergmin.gob.pe/serverosih/rest/services',
-    capas:{
-      centroPoblado :'Cartografia/CARTOGRAFIA/FeatureServer/0'
+      recopilacion: 'survey123_b76b6ab3a7fa403384473a05b7ecce49_results/FeatureServer/0'
     }
   }
   public layers: LayerConfig[] = [
-    //Informacion de SERFOR
     {
-      title: 'BPP - BOSQUE DE PRODUCCION PERMANENTE',
-      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.bosqueProdPermanente}`,
-      labelingInfo: undefined,
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'SERFOR',
-    },
-    {
-      title: 'ANP - AREAS NATURALES PROTEGIDAS',
-      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.areaNaturalesProtegidas}`,
-      labelingInfo: undefined,
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'SERFOR',
-    },
-    {
-      title: 'ACR - AREAS DE CONSERVACION REGIONAL',
-      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.areaConservacionRegional}`,
-      labelingInfo: undefined,
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'SERFOR',
-    },
-    {
-      title: 'ZA - ZONAS DE AMORTIGUAMIENTO',
-      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.areaConservacionRegional}`,
-      labelingInfo: undefined,
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'SERFOR',
-    },
-    {
-      title: 'COMUNIDADES NATIVAS',
-      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.comunidadesNativa}`,
-      labelingInfo: undefined,
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'SERFOR',
-    },
-    {
-      title: 'MONITOREO DEFORESTACION',
-      url: `${this.restGeoSerfor.serviceBase}/${this.restGeoSerfor.capas.monitoreoDeforestacion}`,
-      labelingInfo: undefined,
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'SERFOR',
-    },
-    //*SERVICIOS REST DE GEODEVIDA-CARIB
-    {
+      type: 'map-image',
       title: 'POLIGONOS DE CULTIVO',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteCultivo}`,
-      popupTemplate: popupPoligonoCultivo,
-      outFields: ['*'],
+      url: this.restApiDevida,
       visible: true,
-      labelsVisible: false,
       opacity: 1,
-      minScale: 0,   // solo se ven al acercar a 1:50,000 o más
+      minScale: 0,
       maxScale: 0,
-      group: 'PIRDAIS',
-    },
-    /* {
-      title: 'CUESTIONARIO MEDIDAS AMBIENTALES',
-      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.medidasAmbientales}`,
-      popupTemplate: undefined,
-      outFields: ['*'],
-      visible: true,
-      labelsVisible: false,
-      opacity: 1,
-      group: 'MONITOREO CAFE',
-    },
-    {
-      title: 'CUESTIONARIO REGISTRO FORESTAL',
-      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.registroForestal}`,
-      popupTemplate: undefined,
-      outFields: ['*'],
-      visible: true,
-      labelsVisible: true,
-      opacity: 1,
-      group: 'MONITOREO CAFE',
-    },
-    {
-      title: 'CUESTIONARIO INFRAESTRUCTURA',
-      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.recopilacion}`,
-      popupTemplate: undefined,
-      outFields: ['*'],
-      visible: true,
-      labelsVisible: true,
-      opacity: 1,
-      group: 'MONITOREO CAFE',
-    },
-    {
-      title: 'CUESTIONARIO PERCEPCION CACAO',
-      url: `${this.restCaribSurveyPercepcionCafe.serviceBase}/${this.restCaribSurveyPercepcionCafe.capas.cacao}`,
-      popupTemplate: undefined,
-      outFields: ['*'],
-      visible: true,
-      labelsVisible: true,
-      opacity: 1,
-      group: 'MONITOREO CAFE',
-    }, */
-    /* {
-      title: 'CUESTIONARIO PERCEPCION CAFE',
-      url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.cafe}`,
-      labelingInfo: [],
-      popupTemplate: restCaribSurveyPercepcionCafe,
-      renderer: undefined,
-      visible: true,
-      labelsVisible: false,
-      opacity: 1,
-      group: 'MONITOREO CAFE',
-    }, */
-    {
-      title: 'ZA - ZONA DE AMORTIGUAMIENTO',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.zonaAmortiguamiento}`,
-      labelingInfo: undefined,
-      popupTemplate: caribZA,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'CARTOGRAFIA DEVIDA',
+      group: '(PIRDAIS)',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 0, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+          popupTemplate: popupPoligonoCultivo
+        }
+      ]
     },
 
+    //* (SERFOR)
 
     {
-      title: 'OFICINA ZONAL',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.oficinaZonal}`,
-      labelingInfo: [],
-      popupTemplate: popupLimitesOficinaZonal,
-      renderer: undefined,
+      type: 'map-image',
+      title: 'MONITOREO DEFORESTACION',
+      url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Monitoreo_Deforestacion_Tala/MapServer`,
       visible: false,
-      labelsVisible: false,
-      group: 'CARTOGRAFIA DEVIDA',
+      opacity: 0.2,
+      minScale: 0,
+      maxScale: 0,
+      group: '(SERFOR)',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 1, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
-    //*CARGA DE CAPAS DE HIDROGRAFIA
     {
+      type: 'map-image',
       title: 'COMUNIDADES NATIVAS',
-      url: `${this.restMidagri.serviceBase}/${this.restMidagri.capas.comunidadNativa}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
+      url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
       visible: false,
-      labelsVisible: false,
-      opacity: 0.5,
-      group: 'MIDAGRI',
+      opacity: 0.2,
+      minScale: 0,
+      maxScale: 0,
+      group: '(SERFOR)',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 27, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
     {
-      title: 'COMUNIDADES CAMPESINAS',
-      url: `${this.restMidagri.serviceBase}/${this.restMidagri.capas.comunidadCampesina}`,
-      labelingInfo: undefined,
-      popupTemplate: undefined,
-      renderer: undefined,
+      type: 'map-image',
+      title: 'ZA - ZONAS DE AMORTIGUAMIENTO',
+      url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
       visible: false,
-      labelsVisible: true,
-      opacity: 0.5,
-      group: 'MIDAGRI',
+      opacity: 0.65,
+      minScale: 0,
+      maxScale: 0,
+      group: '(SERFOR)',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 4, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
     {
-      title: 'PREDIO RURAL',
-      url: `${this.restMidagri.serviceBase}/${this.restMidagri.capas.predioRural}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
+      type: 'map-image',
+      title: 'ACR - AREAS DE CONSERVACION REGIONAL',
+      url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
       visible: false,
-      labelsVisible: false,
-      opacity: 0.5,
-      group: 'MIDAGRI',
+      opacity: 0.65,
+      minScale: 0,
+      maxScale: 0,
+      group: '(SERFOR)',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 6, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
     {
-      title: 'RIOS & QUEBRADAS',
-      url: `${this.restAna.serviceBase}/${this.restAna.capas.riosQuebradas}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
+      type: 'map-image',
+      title: 'BPP - BOSQUE DE PRODUCCION PERMANENTE',
+      url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer`,
       visible: false,
-      labelsVisible: true,
-      opacity: 0.85,
-      group: 'HIDROGRAFIA',
+      opacity: 0.65,
+      minScale: 0,
+      maxScale: 0,
+      group: '(SERFOR)',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 1, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
+
+
+
     {
-      title: 'LAGUNAS',
-      url: `${this.restAna.serviceBase}/${this.restAna.capas.lagunas}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
+      type: 'map-image',
+      title: 'OFICINAS ZONALES',
+      url: this.restApiDevida,
       visible: false,
-      labelsVisible: true,
-      opacity: 0.85,
-      group: 'HIDROGRAFIA',
+      opacity: 0.9,
+      minScale: 0,
+      maxScale: 0,
+      group: 'CARTOGRAFIA DEVIDA',
+
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 5, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
+    //*(LIMITES POLITICOS)
     {
-      title: 'CENTRO POBLADOS',
-      url: `${this.restOsinergmin.serviceBase}/${this.restOsinergmin.capas.centroPoblado}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
+      type: 'map-image',
+      title: 'DISTRITO',
+      url: this.restApiDevida,
       visible: true,
-      labelsVisible: true,
-      opacity: 0.85,
+      opacity: 0.9,
+      minScale: 0,
+      maxScale: 0,
       group: 'LIMITES POLITICOS',
-    },
-    //*CARGA DE CAPAS DE LIMITES POLITICOS (IDEP)
-    {
-      title: 'DISTRITOS',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteDistrito}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      group: 'LIMITES POLITICOS',
-    },
-    {
-      title: 'PROVINCIAS',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteProvincia}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
-      visible: false,
-      labelsVisible: false,
-      group: 'LIMITES POLITICOS',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 1, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
     {
-      title: 'DEPARTAMENTOS',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteDepartamento}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
+      type: 'map-image',
+      title: 'PROVINCIA',
+      url: this.restApiDevida,
       visible: true,
-      labelsVisible: false,
+      opacity: 0.9,
+      minScale: 0,
+      maxScale: 0,
       group: 'LIMITES POLITICOS',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 2, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
     {
+      type: 'map-image',
+      title: 'DEPARTAMENTO',
+      url: this.restApiDevida,
+      visible: true,
+      opacity: 0.9,
+      minScale: 0,
+      maxScale: 0,
+      group: 'LIMITES POLITICOS',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 3, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
+    },
+
+    {
+      type: 'map-image',
       title: 'PERU',
-      url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limitePeru}`,
-      labelingInfo: [],
-      popupTemplate: undefined,
-      renderer: undefined,
+      url: this.restApiDevida,
       visible: true,
-      labelsVisible: false,
+      opacity: 0.9,
+      minScale: 0,
+      maxScale: 0,
       group: 'LIMITES POLITICOS',
+
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 4, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
     },
     {
+      type: 'feature',
       title: 'VISITAS DE MONITOREO',
       url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`,
       labelingInfo: [],
@@ -818,48 +753,45 @@ export class GeovisorSharedService {
 
   constructor() { }
   initializeMap(mapViewEl: ElementRef): Promise<void> {
-
-    const treeLossLayer = new WebTileLayer({
-      urlTemplate:
-        "https://tiles.globalforestwatch.org/umd_tree_loss/latest/default/{z}/{x}/{y}.png?api_key=a5760f2bebf7c5fe95256cb8ec1045d6",
-      title: "Pérdida de Bosque (GFW)",
-      subDomains: ["a", "b", "c"], // opcional si el servicio lo soporta
-      copyright: "Global Forest Watch"
-    });
-
     this.layers.forEach((layerConfig) => {
-      const hasValidLayerId = /\/\d+$/.test(layerConfig.url);
+      const hasValidLayerId = /\/\d+$/.test(layerConfig.url); // Ej. .../MapServer/0
+      const isMapImage = /\/MapServer$/.test(layerConfig.url); // Ej. .../MapServer
       let layer: __esri.Layer;
-
       if (hasValidLayerId) {
         // 🔹 Es un FeatureLayer
-        const layerOptions: any = {
+        const layerOptions: __esri.FeatureLayerProperties = {
           url: layerConfig.url,
           title: layerConfig.title,
           visible: layerConfig.visible,
         };
-
         if (layerConfig.popupTemplate) layerOptions.popupTemplate = layerConfig.popupTemplate;
         if (layerConfig.renderer) layerOptions.renderer = layerConfig.renderer;
         if (layerConfig.labelingInfo) layerOptions.labelingInfo = layerConfig.labelingInfo;
-
-        // ✅ Ahora respeta true o false
         if (layerConfig.labelsVisible !== undefined) {
           layerOptions.labelsVisible = layerConfig.labelsVisible;
         }
-
         if (layerConfig.outFields) layerOptions.outFields = layerConfig.outFields;
         if (layerConfig.maxScale !== undefined) layerOptions.maxScale = layerConfig.maxScale;
         if (layerConfig.minScale !== undefined) layerOptions.minScale = layerConfig.minScale;
         if (layerConfig.featureReduction) layerOptions.featureReduction = layerConfig.featureReduction;
         if (layerConfig.opacity !== undefined) layerOptions.opacity = layerConfig.opacity;
-
         layer = new FeatureLayer(layerOptions);
-
+      } else if (isMapImage) {
+        // 🔹 Es un MapImageLayer
+        const layerOptions: __esri.MapImageLayerProperties = {
+          url: layerConfig.url,
+          title: layerConfig.title,
+          visible: layerConfig.visible,
+          opacity: layerConfig.opacity ?? 1,
+        };
+        if (layerConfig.minScale !== undefined) layerOptions.minScale = layerConfig.minScale;
+        if (layerConfig.maxScale !== undefined) layerOptions.maxScale = layerConfig.maxScale;
+        if (layerConfig.sublayers) layerOptions.sublayers = layerConfig.sublayers;
+        layer = new MapImageLayer(layerOptions);
       } else {
-        // 🔹 Es un WebTileLayer (ej. Pérdida de bosque GFW)
+        // 🔹 Es un WebTileLayer
         layer = new WebTileLayer({
-          urlTemplate: layerConfig.url, // Ojo: WebTileLayer usa urlTemplate
+          urlTemplate: layerConfig.url,
           title: layerConfig.title,
           visible: layerConfig.visible,
           opacity: layerConfig.opacity ?? 1
@@ -867,7 +799,6 @@ export class GeovisorSharedService {
       }
       this.mapa.add(layer);
     });
-
 
     //*Creacion de la Vista del Mapa
     this.view = new MapView({
@@ -899,7 +830,7 @@ export class GeovisorSharedService {
     const buscaCapasDEVIDA = [
       {
         layer: new FeatureLayer({
-          url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.limiteCultivo}`
+          url: `${this.restApiDevida}/0`
         }),
         searchFields: ["dni", "nombres"],
         displayField: "nombres",
@@ -907,8 +838,8 @@ export class GeovisorSharedService {
         outFields: ["*"],
         name: "CULTIVOS",
         placeholder: "Digite el DNI",
-        maxResults: 10,
-        maxSuggestions: 10,
+        maxResults: 1,
+        maxSuggestions: 20,
         suggestionsEnabled: true,
         minSuggestCharacters: 1,
       },
@@ -929,7 +860,7 @@ export class GeovisorSharedService {
       },
       {
         layer: new FeatureLayer({
-          url: `${this.restGeoDevida.serviceBase}/${this.restGeoDevida.capas.oficinaZonal}`
+          url: `${this.restApiDevida}/5`
         }),
         searchFields: ["nombre"],
         displayField: "nombre",
