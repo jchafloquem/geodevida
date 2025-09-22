@@ -8,29 +8,16 @@ import "@arcgis/map-components/components/arcgis-search";
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion.js';
 import Expand from '@arcgis/core/widgets/Expand.js';
-import Extent from "@arcgis/core/geometry/Extent";
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer.js';
-import IconSymbol3DLayer from "@arcgis/core/symbols/IconSymbol3DLayer";
 import Legend from '@arcgis/core/widgets/Legend.js';
 import Map from '@arcgis/core/Map.js';
 import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
 import MapView from '@arcgis/core/views/MapView.js';
-import ObjectSymbol3DLayer from "@arcgis/core/symbols/ObjectSymbol3DLayer";
-import PointSymbol3D from "@arcgis/core/symbols/PointSymbol3D";
 import PopupTemplate from "@arcgis/core/PopupTemplate.js";
 import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
-import SpatialReference from "@arcgis/core/geometry/SpatialReference";
-import TileLayer from "@arcgis/core/layers/TileLayer";
 import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
-import WMSLayer from "@arcgis/core/layers/WMSLayer";
 import Zoom from '@arcgis/core/widgets/Zoom.js';
-
-
-
-
-
-
 
 //* POPUP & CLUSTERS
 const popupPoligonoCultivo = new PopupTemplate({
@@ -460,7 +447,6 @@ const restCaribRecopilacion = new PopupTemplate({
     }
   ]
 });
-
 
 @Injectable({
   providedIn: 'root',
@@ -934,7 +920,6 @@ export class GeovisorSharedService {
     const layer = this.mapa.layers.find((layer) => layer.title === layerTitle);
     return layer ? layer.visible : false;
   }
-
   private capas: Record<string, FeatureLayer> = {};
   getActiveLayers(): FeatureLayer[] {
     return Object.values(this.capas).filter((layer) => layer.visible);
