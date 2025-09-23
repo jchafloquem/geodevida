@@ -1049,29 +1049,107 @@ export class GeovisorSharedService {
     };
     const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
 
+    // 👉 modal para tipo de coordenadas
     if (!coordType) {
-      const inputType = prompt("¿Sus coordenadas están en UTM o GEOGRÁFICAS? (Escriba 'UTM' o 'GEOGRAFICA')");
-      if (!inputType || !["UTM", "GEOGRAFICA"].includes(inputType.toUpperCase())) {
-        alert("Tipo de coordenadas no válido. Use 'UTM' o 'GEOGRAFICA'.");
-        return;
-      }
-      coordType = inputType.toUpperCase() as "UTM" | "GEOGRAFICA";
+      coordType = await new Promise<"UTM" | "GEOGRAFICA" | undefined>((resolve) => {
+        const overlay = document.createElement("div");
+        overlay.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+
+        const modal = document.createElement("div");
+        modal.className = "bg-white p-6 rounded shadow-lg w-80 text-center";
+        modal.innerHTML = `
+          <h2 class="text-lg font-semibold mb-4">Tipo de coordenadas</h2>
+          <select id="coordTypeSelect" class="p-2 border rounded w-full">
+            <option value="">-- Seleccione --</option>
+            <option value="UTM">UTM</option>
+            <option value="GEOGRAFICA">GEOGRÁFICA</option>
+          </select>
+          <div class="mt-4 flex justify-end gap-2">
+            <button id="coordCancel" class="px-4 py-2 bg-gray-400 text-white rounded">Cancelar</button>
+            <button id="coordConfirm" class="px-4 py-2 bg-blue-600 text-white rounded">Aceptar</button>
+          </div>
+        `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        const select = modal.querySelector<HTMLSelectElement>("#coordTypeSelect")!;
+        const btnOk = modal.querySelector<HTMLButtonElement>("#coordConfirm")!;
+        const btnCancel = modal.querySelector<HTMLButtonElement>("#coordCancel")!;
+
+        btnOk.onclick = () => {
+          const value = select.value as "UTM" | "GEOGRAFICA";
+          if (!value) {
+            alert("⚠️ Debe seleccionar un tipo de coordenadas.");
+            return;
+          }
+          overlay.remove();
+          resolve(value);
+        };
+
+        btnCancel.onclick = () => {
+          overlay.remove();
+          resolve(undefined);
+        };
+      });
+
+      if (!coordType) return;
     }
 
+    // 👉 modal para zona UTM
     let utmZone: "17S" | "18S" | "19S" | undefined;
     if (coordType === "UTM") {
-      const zoneInput = prompt("Indique la zona UTM de sus coordenadas (17S, 18S, 19S):");
-      if (!zoneInput || !["17S", "18S", "19S"].includes(zoneInput)) {
-        alert("Zona UTM no válida. Use 17S, 18S o 19S.");
-        return;
-      }
-      utmZone = zoneInput as "17S" | "18S" | "19S";
+      utmZone = await new Promise<"17S" | "18S" | "19S" | undefined>((resolve) => {
+        const overlay = document.createElement("div");
+        overlay.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
+
+        const modal = document.createElement("div");
+        modal.className = "bg-white p-6 rounded shadow-lg w-80 text-center";
+        modal.innerHTML = `
+          <h2 class="text-lg font-semibold mb-4">Zona UTM</h2>
+          <select id="utmZoneSelect" class="p-2 border rounded w-full">
+            <option value="">-- Seleccione --</option>
+            <option value="17S">17S</option>
+            <option value="18S">18S</option>
+            <option value="19S">19S</option>
+          </select>
+          <div class="mt-4 flex justify-end gap-2">
+            <button id="utmCancel" class="px-4 py-2 bg-gray-400 text-white rounded">Cancelar</button>
+            <button id="utmConfirm" class="px-4 py-2 bg-green-600 text-white rounded">Aceptar</button>
+          </div>
+        `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        const select = modal.querySelector<HTMLSelectElement>("#utmZoneSelect")!;
+        const btnOk = modal.querySelector<HTMLButtonElement>("#utmConfirm")!;
+        const btnCancel = modal.querySelector<HTMLButtonElement>("#utmCancel")!;
+
+        btnOk.onclick = () => {
+          const value = select.value as "17S" | "18S" | "19S";
+          if (!value) {
+            alert("⚠️ Debe seleccionar una zona UTM.");
+            return;
+          }
+          overlay.remove();
+          resolve(value);
+        };
+
+        btnCancel.onclick = () => {
+          overlay.remove();
+          resolve(undefined);
+        };
+      });
+
+      if (!utmZone) return;
     }
 
     function reproyectarCoord(coord: number[]): number[] {
       if (!utmZone) return coord;
       return proj4(utmDefs[utmZone!], wgs84, coord);
     }
+
     function reproyectarGeoJSONGeometry(geom: any): any {
       if (!geom) return geom;
       const mapCoord = (c: number[]) => reproyectarCoord(c);
@@ -1193,6 +1271,78 @@ export class GeovisorSharedService {
       alert("Ocurrió un error procesando el archivo. Revisa la consola.");
     }
   }
+
+  private showModal(message: string, type: "success" | "error" | "info" = "info", title?: string): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const icons: Record<typeof type, string> = {
+        success: "✅",
+        error: "⚠️",
+        info: "ℹ️"
+      };
+
+      const titles: Record<typeof type, string> = {
+        success: "Éxito",
+        error: "Error",
+        info: "Aviso"
+      };
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
+
+      wrapper.innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <div class="flex items-center mb-4">
+            <span class="text-2xl mr-2">${icons[type]}</span>
+            <h2 class="text-lg font-bold">${title || titles[type]}</h2>
+          </div>
+          <p class="mb-4">${message}</p>
+          <button id="modalOk" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Aceptar</button>
+        </div>
+      `;
+      document.body.appendChild(wrapper);
+
+      const btn = wrapper.querySelector<HTMLButtonElement>("#modalOk")!;
+      btn.onclick = () => {
+        wrapper.remove();
+        resolve();
+      };
+    });
+  }
+
+  private showSelect<T extends string>(label: string, options: { value: T, label: string }[]): Promise<T | undefined> {
+    return new Promise<T | undefined>((resolve) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
+
+      wrapper.innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <div class="flex items-center mb-4">
+            <span class="text-2xl mr-2">📌</span>
+            <h2 class="text-lg font-bold">Seleccione una opción</h2>
+          </div>
+          <p class="mb-2">${label}</p>
+          <select id="modalSelect" class="p-2 border rounded w-full mb-4">
+            <option value="">-- Seleccione --</option>
+            ${options.map(o => `<option value="${o.value}">${o.label}</option>`).join("")}
+          </select>
+          <button id="modalOk" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Aceptar</button>
+        </div>
+      `;
+      document.body.appendChild(wrapper);
+
+      const select = wrapper.querySelector<HTMLSelectElement>("#modalSelect")!;
+      const btn = wrapper.querySelector<HTMLButtonElement>("#modalOk")!;
+
+      btn.onclick = () => {
+        const value = select.value as T;
+        wrapper.remove();
+        resolve(value || undefined);
+      };
+    });
+  }
+
+
+
 
 
 }
