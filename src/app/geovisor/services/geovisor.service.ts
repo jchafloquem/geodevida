@@ -1036,19 +1036,19 @@ export class GeovisorSharedService {
   async dataImport(file: File, coordType?: "UTM" | "GEOGRAFICA"): Promise<void> {
     if (!file || !this.view || !this.mapa) return;
     const fileName = file.name.toLowerCase();
-    // Solo permitir json, geojson y csv
+
     if (!fileName.endsWith(".json") && !fileName.endsWith(".geojson") && !fileName.endsWith(".csv")) {
       alert("Formato no soportado. Solo se permiten archivos .json, .geojson o .csv");
       return;
     }
-    // --- Definir proyecciones UTM sur ---
+
     const utmDefs: Record<string, string> = {
       "17S": "+proj=utm +zone=17 +south +datum=WGS84 +units=m +no_defs",
       "18S": "+proj=utm +zone=18 +south +datum=WGS84 +units=m +no_defs",
       "19S": "+proj=utm +zone=19 +south +datum=WGS84 +units=m +no_defs"
     };
     const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
-    // --- Preguntar tipo de coordenadas si no se pasa ---
+
     if (!coordType) {
       const inputType = prompt("¿Sus coordenadas están en UTM o GEOGRÁFICAS? (Escriba 'UTM' o 'GEOGRAFICA')");
       if (!inputType || !["UTM", "GEOGRAFICA"].includes(inputType.toUpperCase())) {
@@ -1057,6 +1057,7 @@ export class GeovisorSharedService {
       }
       coordType = inputType.toUpperCase() as "UTM" | "GEOGRAFICA";
     }
+
     let utmZone: "17S" | "18S" | "19S" | undefined;
     if (coordType === "UTM") {
       const zoneInput = prompt("Indique la zona UTM de sus coordenadas (17S, 18S, 19S):");
@@ -1066,9 +1067,9 @@ export class GeovisorSharedService {
       }
       utmZone = zoneInput as "17S" | "18S" | "19S";
     }
-    // --- Funciones internas de reproyección ---
+
     function reproyectarCoord(coord: number[]): number[] {
-      if (!utmZone) return coord; // Si es geográfica, no se reproyecta
+      if (!utmZone) return coord;
       return proj4(utmDefs[utmZone!], wgs84, coord);
     }
     function reproyectarGeoJSONGeometry(geom: any): any {
@@ -1084,11 +1085,17 @@ export class GeovisorSharedService {
         case "MultiLineString":
           return { type: geom.type, coordinates: geom.coordinates.map((ring: any) => ring.map(mapCoord)) };
         case "MultiPolygon":
-          return { type: "MultiPolygon", coordinates: geom.coordinates.map((poly: any) => poly.map((ring: any) => ring.map(mapCoord))) };
+          return {
+            type: "MultiPolygon",
+            coordinates: geom.coordinates.map((poly: any) =>
+              poly.map((ring: any) => ring.map(mapCoord))
+            )
+          };
         default:
           return geom;
       }
     }
+
     try {
       let geojson: any;
       let layer: __esri.Layer | null = null;
@@ -1108,6 +1115,11 @@ export class GeovisorSharedService {
           return;
         }
 
+        // --- contar polígonos ---
+        const polygonCount = validFeatures.filter(
+          (f: any) => f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon"
+        ).length;
+
         const featuresProcesadas = validFeatures.map((f: any) => ({
           ...f,
           geometry: reproyectarGeoJSONGeometry(f.geometry)
@@ -1118,7 +1130,7 @@ export class GeovisorSharedService {
           { type: "application/json" }
         );
         const blobUrl = URL.createObjectURL(blob);
-        // --- Detectar tipo de geometría para asignar renderer ---
+
         const sampleGeom = featuresProcesadas[0].geometry;
         let renderer: any;
         if (!sampleGeom) {
@@ -1154,6 +1166,12 @@ export class GeovisorSharedService {
         }
 
         layer = new GeoJSONLayer({ url: blobUrl, title: file.name, renderer });
+
+        // --- mostrar cantidad de polígonos ---
+        if (polygonCount > 0) {
+          console.log(`📌 Se importaron ${polygonCount} polígonos`);
+          alert(`Se importaron ${polygonCount} polígonos.`);
+        }
       }
 
       if (!layer) return;
@@ -1175,5 +1193,6 @@ export class GeovisorSharedService {
       alert("Ocurrió un error procesando el archivo. Revisa la consola.");
     }
   }
+
 
 }
