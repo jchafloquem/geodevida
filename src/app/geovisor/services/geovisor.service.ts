@@ -993,7 +993,7 @@ export class GeovisorSharedService {
     });
   }
 
-  async loadUserLayer(file: File, utmZone?: "17S" | "18S" | "19S"): Promise<void> {
+  async loadUserLayer(file: File): Promise<void> {
     if (!file || !this.view || !this.mapa) return;
 
     const fileName = file.name.toLowerCase();
@@ -1007,27 +1007,34 @@ export class GeovisorSharedService {
     };
     const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
 
-    // --- Función para reproyectar coordenadas ---
-    function reproyectarCoord(coord: number[]): number[] {
-      if (!utmZone) return coord; // No se reproyecta si no se indica zona UTM
-      return proj4(utmDefs[utmZone], wgs84, coord);
+    // --- Pedir zona UTM al usuario ---
+    const utmZone = prompt("Indique la zona UTM de sus coordenadas (17S, 18S, 19S):");
+    if (!utmZone || !["17S","18S","19S"].includes(utmZone)) {
+      alert("Zona UTM no válida. Use 17S, 18S o 19S.");
+      return;
     }
 
-    // --- Función para reproyectar geometrías GeoJSON ---
+    // --- Reproyectar coordenadas ---
+    function reproyectarCoord(coord: number[]): number[] {
+      return proj4(utmDefs[utmZone!], wgs84, coord);
+    }
+
     function reproyectarGeoJSONGeometry(geom: any): any {
       if (!geom) return geom;
       const { type, coordinates } = geom;
+      const mapCoord = (c: number[]) => reproyectarCoord(c);
+
       switch (type) {
         case "Point":
-          return { type, coordinates: reproyectarCoord(coordinates) };
+          return { type, coordinates: mapCoord(coordinates) };
         case "LineString":
         case "MultiPoint":
-          return { type, coordinates: coordinates.map(reproyectarCoord) };
+          return { type, coordinates: coordinates.map(mapCoord) };
         case "Polygon":
         case "MultiLineString":
-          return { type, coordinates: coordinates.map((ring: any) => ring.map(reproyectarCoord)) };
+          return { type, coordinates: coordinates.map((ring: any) => ring.map(mapCoord)) };
         case "MultiPolygon":
-          return { type, coordinates: coordinates.map((poly: any) => poly.map((ring: any) => ring.map(reproyectarCoord))) };
+          return { type, coordinates: coordinates.map((poly: any) => poly.map((ring: any) => ring.map(mapCoord))) };
         default:
           return geom;
       }
@@ -1052,14 +1059,12 @@ export class GeovisorSharedService {
       }
 
       if (!layer && geojson) {
-        // --- Filtrar geometrías válidas ---
         const validFeatures = geojson.features?.filter((f: any) => f.geometry) || [];
         if (validFeatures.length === 0) {
           alert("El archivo no contiene geometrías válidas para mostrar en el mapa.");
           return;
         }
 
-        // --- Reproyectar si es UTM ---
         const featuresReproyectadas = validFeatures.map((f: any) => ({
           ...f,
           geometry: reproyectarGeoJSONGeometry(f.geometry)
@@ -1093,6 +1098,9 @@ export class GeovisorSharedService {
       alert("Ocurrió un error procesando el archivo. Revisa la consola.");
     }
   }
+
+
+
 
   // --- Convertir KML plano a GeoJSON ---
   private async convertKmlToGeoJSON(file: File): Promise<any> {
