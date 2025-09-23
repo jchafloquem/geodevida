@@ -3,7 +3,19 @@
 <app-info-coordenadas class="print:hidden"></app-info-coordenadas>
 <div class="relative h-full w-full">
   <!-- Aquí el mapa -->
-  <div #mapViewNode class="absolute inset-0"></div>
+
+
+  <input
+    type="file"
+    (change)="onFileSelected($event)"
+    accept=".kml,.kmz,.geojson,.json,.csv,.zip"
+    class="absolute top-4 left-4 z-50 border rounded p-2 bg-white"
+  >
+
+
+
+
+  <div #mapViewNode class="absolute inset-0 z-0"></div>
 
   <!-- Bloque de usuario en esquina inferior izquierda -->
   <div

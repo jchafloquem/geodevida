@@ -1,9 +1,6 @@
 import { ElementRef, Injectable } from '@angular/core';
 
-//*Interfaces
-import { LayerConfig } from '../interface/layerConfig';
-
-//*LIBRERIA DEL API DE ARCGIS 4.33
+//Libreria actual de ArcGIS 4.33
 import "@arcgis/map-components/components/arcgis-search";
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion.js';
@@ -18,6 +15,20 @@ import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
 import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
 import Zoom from '@arcgis/core/widgets/Zoom.js';
+
+import { LayerConfig } from '../interface/layerConfig';
+
+import * as JSZip from 'jszip';
+import { DOMParser } from 'xmldom';
+import * as toGeoJSON from '@tmcw/togeojson';
+import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
+import KMLLayer from '@arcgis/core/layers/KMLLayer';
+import CSVLayer from '@arcgis/core/layers/CSVLayer';
+import proj4 from "proj4";
+
+
+
+
 
 //* POPUP & CLUSTERS
 const popupPoligonoCultivo = new PopupTemplate({
@@ -400,7 +411,6 @@ const cafeRenderer = new SimpleRenderer({
     style: "circle"
   })
 });
-
 const recopilacionRenderer = new SimpleRenderer({
   symbol: new SimpleMarkerSymbol({
     color: [139, 69, 19, 0.9],   // café sólido
@@ -981,5 +991,143 @@ export class GeovisorSharedService {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });
+  }
+
+  async loadUserLayer(file: File, utmZone?: "17S" | "18S" | "19S"): Promise<void> {
+    if (!file || !this.view || !this.mapa) return;
+
+    const fileName = file.name.toLowerCase();
+    let layer: __esri.Layer | null = null;
+
+    // --- Definir proyecciones UTM sur ---
+    const utmDefs: Record<string, string> = {
+      "17S": "+proj=utm +zone=17 +south +datum=WGS84 +units=m +no_defs",
+      "18S": "+proj=utm +zone=18 +south +datum=WGS84 +units=m +no_defs",
+      "19S": "+proj=utm +zone=19 +south +datum=WGS84 +units=m +no_defs"
+    };
+    const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
+
+    // --- Función para reproyectar coordenadas ---
+    function reproyectarCoord(coord: number[]): number[] {
+      if (!utmZone) return coord; // No se reproyecta si no se indica zona UTM
+      return proj4(utmDefs[utmZone], wgs84, coord);
+    }
+
+    // --- Función para reproyectar geometrías GeoJSON ---
+    function reproyectarGeoJSONGeometry(geom: any): any {
+      if (!geom) return geom;
+      const { type, coordinates } = geom;
+      switch (type) {
+        case "Point":
+          return { type, coordinates: reproyectarCoord(coordinates) };
+        case "LineString":
+        case "MultiPoint":
+          return { type, coordinates: coordinates.map(reproyectarCoord) };
+        case "Polygon":
+        case "MultiLineString":
+          return { type, coordinates: coordinates.map((ring: any) => ring.map(reproyectarCoord)) };
+        case "MultiPolygon":
+          return { type, coordinates: coordinates.map((poly: any) => poly.map((ring: any) => ring.map(reproyectarCoord))) };
+        default:
+          return geom;
+      }
+    }
+
+    try {
+      let geojson: any;
+
+      if (fileName.endsWith(".kml")) {
+        geojson = await this.convertKmlToGeoJSON(file);
+      } else if (fileName.endsWith(".kmz")) {
+        geojson = await this.convertKmzToGeoJSON(file);
+      } else if (fileName.endsWith(".geojson") || fileName.endsWith(".json")) {
+        const text = await file.text();
+        geojson = JSON.parse(text);
+      } else if (fileName.endsWith(".csv")) {
+        const blobUrl = URL.createObjectURL(file);
+        layer = new CSVLayer({ url: blobUrl, title: file.name });
+      } else {
+        alert("Formato no soportado. Use: KML, KMZ, GeoJSON, CSV");
+        return;
+      }
+
+      if (!layer && geojson) {
+        // --- Filtrar geometrías válidas ---
+        const validFeatures = geojson.features?.filter((f: any) => f.geometry) || [];
+        if (validFeatures.length === 0) {
+          alert("El archivo no contiene geometrías válidas para mostrar en el mapa.");
+          return;
+        }
+
+        // --- Reproyectar si es UTM ---
+        const featuresReproyectadas = validFeatures.map((f: any) => ({
+          ...f,
+          geometry: reproyectarGeoJSONGeometry(f.geometry)
+        }));
+
+        const blob = new Blob(
+          [JSON.stringify({ type: "FeatureCollection", features: featuresReproyectadas })],
+          { type: "application/json" }
+        );
+        const blobUrl = URL.createObjectURL(blob);
+
+        layer = new GeoJSONLayer({ url: blobUrl, title: file.name });
+      }
+
+      if (!layer) return;
+
+      this.mapa.add(layer);
+
+      layer.when(() => {
+        if (layer!.fullExtent && this.view) {
+          this.view.goTo(layer!.fullExtent).catch(err => console.warn("No se pudo hacer zoom a la capa:", err));
+        }
+        alert(`Capa "${file.name}" cargada correctamente.`);
+      }).catch(err => {
+        console.error("Error cargando la capa:", err);
+        alert("Ocurrió un error cargando la capa. Revisa la consola.");
+      });
+
+    } catch (err) {
+      console.error("Error procesando el archivo:", err);
+      alert("Ocurrió un error procesando el archivo. Revisa la consola.");
+    }
+  }
+
+  // --- Convertir KML plano a GeoJSON ---
+  private async convertKmlToGeoJSON(file: File): Promise<any> {
+    const text = await file.text();
+    const { DOMParser } = await import("@xmldom/xmldom");
+    const parser = new DOMParser({
+      errorHandler: { warning: () => {}, error: () => {}, fatalError: e => console.error(e) }
+    });
+
+    const kmlDoc = parser.parseFromString(text, "application/xml");
+    if (!kmlDoc || !kmlDoc.documentElement) throw new Error("No se pudo parsear el KML correctamente.");
+
+    const { kml } = await import("@mapbox/togeojson");
+    return kml(kmlDoc);
+  }
+
+  // --- Convertir KMZ a GeoJSON ---
+  private async convertKmzToGeoJSON(file: File): Promise<any> {
+    const JSZip = (await import("jszip")).default;
+    const zip = await JSZip.loadAsync(file);
+
+    const kmlFileName = Object.keys(zip.files).find(name => name.toLowerCase().endsWith(".kml"));
+    if (!kmlFileName) throw new Error("No se encontró KML dentro del KMZ");
+
+    const kmlText = await zip.file(kmlFileName)!.async("text");
+
+    const { DOMParser } = await import("@xmldom/xmldom");
+    const parser = new DOMParser({
+      errorHandler: { warning: () => {}, error: () => {}, fatalError: e => console.error(e) }
+    });
+
+    const kmlDoc = parser.parseFromString(kmlText, "application/xml");
+    if (!kmlDoc || !kmlDoc.documentElement) throw new Error("No se pudo parsear el KML dentro del KMZ.");
+
+    const { kml } = await import("@mapbox/togeojson");
+    return kml(kmlDoc);
   }
 }
