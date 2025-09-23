@@ -2,17 +2,16 @@
 <app-fab-container-top class="print:hidden"></app-fab-container-top>
 <app-info-coordenadas class="print:hidden"></app-info-coordenadas>
 <div class="relative h-full w-full">
+
+
+
+
+
   <div #mapViewNode class="absolute inset-0 z-0"></div>
   <!-- Bloque de usuario en esquina inferior izquierda -->
-  <div
-    *ngIf="usuario"
-    class="hidden lg:flex absolute bottom-4 left-[100px] z-50 bg-[#323232] bg-opacity-95 p-3 rounded-lg shadow-md items-center gap-3 text-sm print:hidden"
-  >
-    <img
-      [src]="usuario.foto"
-      alt="Foto del usuario"
-      class="w-10 h-10 rounded-full border border-gray-300"
-    />
+  <div *ngIf="usuario"
+    class="hidden lg:flex absolute bottom-4 left-[100px] z-50 bg-[#323232] bg-opacity-95 p-3 rounded-lg shadow-md items-center gap-3 text-sm print:hidden">
+    <img [src]="usuario.foto" alt="Foto del usuario" class="w-10 h-10 rounded-full border border-gray-300" />
     <div class="text-left leading-tight">
       <div class="font-semibold text-white">{{ usuario.nombre }}</div>
       <div class="text-sm text-white/70">{{ usuario.email }}</div>
@@ -21,4 +20,3 @@
   </div>
   <app-sidebar class="print:hidden"></app-sidebar>
 </div>
-

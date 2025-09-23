@@ -10,6 +10,7 @@ import { Usuario } from '../../../auth/interface/usuario';
 import { AuthStateService } from '../../../auth/shared/access/auth-state.service';
 
 @Component({
+  standalone: true,
   selector: 'app-map',
   imports: [
     RouterModule,
@@ -20,9 +21,10 @@ import { AuthStateService } from '../../../auth/shared/access/auth-state.service
     CommonModule
   ],
   templateUrl: './map.component.html',
-  styleUrl: './map.component.scss'
+  styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
+  public capasVisibles: __esri.FeatureLayer[] = [];
   private _authStateService = inject(AuthStateService);
   public _geovisorSharedService = inject(GeovisorSharedService);
 
@@ -64,15 +66,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this._geovisorSharedService.dataImport(file);
     }
   }
-
   ngOnDestroy(): void {
     // Destruye la vista usando el servicio
     this._geovisorSharedService.destroyMap();
-
     // Limpia el intervalo de sesión
     clearInterval(this.intervaloSesion);
   }
-
-
-
+  capaSelect() {
+    this._geovisorSharedService.analizarSuperposicion();
+  }
 }

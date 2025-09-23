@@ -2,35 +2,27 @@ import { ElementRef, Injectable } from '@angular/core';
 
 //Libreria actual de ArcGIS 4.33
 import "@arcgis/map-components/components/arcgis-search";
+import { LayerConfig } from '../interface/layerConfig';
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion.js';
+import CSVLayer from '@arcgis/core/layers/CSVLayer';
 import Expand from '@arcgis/core/widgets/Expand.js';
 import FeatureLayer from '@arcgis/core/layers/FeatureLayer.js';
+import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
 import Legend from '@arcgis/core/widgets/Legend.js';
 import Map from '@arcgis/core/Map.js';
 import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
 import MapView from '@arcgis/core/views/MapView.js';
 import PopupTemplate from "@arcgis/core/PopupTemplate.js";
+import proj4 from "proj4";
 import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
 import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
 import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
 import Zoom from '@arcgis/core/widgets/Zoom.js';
 
-import { LayerConfig } from '../interface/layerConfig';
-
-import * as JSZip from 'jszip';
-import { DOMParser } from 'xmldom';
-import * as toGeoJSON from '@tmcw/togeojson';
-import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
-import KMLLayer from '@arcgis/core/layers/KMLLayer';
-import CSVLayer from '@arcgis/core/layers/CSVLayer';
-import proj4 from "proj4";
-
-import FileUpload from "@arcgis/core/widgets/Widget";
-
-
-
-
+import * as geometryEngineAsync from "@arcgis/core/geometry/geometryEngineAsync";
+import Graphic from "@arcgis/core/Graphic";
+import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 
 
 
@@ -468,6 +460,7 @@ const restCaribRecopilacion = new PopupTemplate({
 export class GeovisorSharedService {
   public mapa = new Map({ basemap: 'satellite' });
   public view: MapView | null = null;
+  private highlightLayer = new GraphicsLayer({ id: "highlight-overlaps" });
 
   //*SERVICIO SISCOD-DEVIDA
   public restApiDevida = 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer';
@@ -485,7 +478,7 @@ export class GeovisorSharedService {
   public layers: LayerConfig[] = [
     //* (DEVIDA)
     {
-      type: 'map-image',
+      type: 'feature',
       title: 'POLIGONOS DE CULTIVO',
       url: this.restApiDevida,
       visible: true,
@@ -612,10 +605,10 @@ export class GeovisorSharedService {
       ]
     },
     {
-      type: 'map-image',
+      type: 'feature',
       title: 'BPP - BOSQUE DE PRODUCCION PERMANENTE',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer`,
-      visible: false,
+      visible: true,
       opacity: 0.5,
       minScale: 0,
       maxScale: 0,
@@ -718,7 +711,6 @@ export class GeovisorSharedService {
         }
       ]
     },
-
     {
       type: 'map-image',
       title: 'PERU',
@@ -767,7 +759,10 @@ export class GeovisorSharedService {
   public scale = '00.00';
   public legend!: Legend;
 
-  constructor() { }
+  constructor() {
+    this.mapa.add(this.highlightLayer);
+   }
+
   initializeMap(mapViewEl: ElementRef): Promise<void> {
     this.layers.forEach((layerConfig) => {
       const hasValidLayerId = /\/\d+$/.test(layerConfig.url); // Ej. .../MapServer/0
@@ -833,8 +828,29 @@ export class GeovisorSharedService {
         components: [],
       },
     });
+
+    this.mapa.layers.on("after-add", (event) => {
+      const lyr = event.item;
+      console.log("Nueva capa agregada:", lyr.title || lyr.id);
+
+      // Forzar carga interna de la capa o sublayer
+      if (lyr.type === "feature") {
+        (lyr as __esri.FeatureLayer).load().then(() => this.actualizarSelectCapas());
+      } else if (lyr.type === "map-image") {
+        (lyr as __esri.MapImageLayer).sublayers?.forEach(sub => {
+          (sub as unknown as __esri.FeatureLayer).load().then(() => this.actualizarSelectCapas());
+        });
+      }
+    });
+
+
+
     //*ESCALA DEL MAPA
     this.view.when(() => {
+      this.actualizarSelectCapas();
+      this.mapa.layers.on("change", () => {
+        this.actualizarSelectCapas();
+      });
       reactiveUtils.watch(
         () => this.view!.scale,   // <- aquí el "!" le dice a TS que no es null
         (scale) => {
@@ -941,7 +957,6 @@ export class GeovisorSharedService {
     });
 
     uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
-
     // Crear un Expand para integrarlo al MapView
     const expanduploadEl = new Expand({
       view: this.view,
@@ -953,6 +968,117 @@ export class GeovisorSharedService {
     // Añadir el widget a la vista
     this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
     //*Fin de Funcion para importar Data (GeoJson)-Widget
+
+
+
+    const uploadEl6 = document.createElement("div");
+
+uploadEl6.className = "file-upload-widget p-2 bg-white rounded shadow";
+const titleEl = document.createElement("div");
+titleEl.textContent = "Selecciona capas para superposición:";
+titleEl.className = "mb-2 font-semibold";
+uploadEl6.appendChild(titleEl);
+
+const selectEl = document.createElement("select");
+selectEl.multiple = true;
+selectEl.className = "w-full p-1 border rounded mb-2";
+uploadEl6.appendChild(selectEl);
+
+const buttonEl = document.createElement("button");
+buttonEl.textContent = "🔎 Analizar superposición";
+buttonEl.className = `
+  w-full px-4 py-2
+  bg-blue-600 hover:bg-blue-700
+  text-white font-semibold rounded
+  text-sm
+  transition-colors
+`;
+uploadEl6.appendChild(buttonEl);
+
+const capasVisibles: __esri.FeatureLayer[] = [];
+this.mapa.layers.forEach((lyr) => {
+  const layerType = (lyr as any).type;
+
+  if (layerType === "feature" && lyr.visible) {
+    capasVisibles.push(lyr as __esri.FeatureLayer);
+
+    const opt = document.createElement("option");
+    opt.value = lyr.id;
+    opt.text = (lyr as any).title || (lyr as any).name || lyr.id;
+    selectEl.appendChild(opt);
+  }
+  else if (layerType === "map-image" && lyr.visible) {
+    const mapImg = lyr as __esri.MapImageLayer;
+
+    mapImg.sublayers?.forEach((sub) => {
+      if (sub.visible && 'queryFeatures' in sub) {
+        const fl = sub as unknown as __esri.FeatureLayer;
+        capasVisibles.push(fl);
+
+        const opt = document.createElement("option");
+        opt.value = fl.id.toString();
+
+        // 🔹 Prioridad para mostrar el título
+        // 1. sublayer.title si existe
+        // 2. sublayer.name si existe
+        // 3. mapImg.title + id si no hay ninguno
+        opt.text = (sub as any).title || (sub as any).name || `${mapImg.title}`;
+        selectEl.appendChild(opt);
+      }
+    });
+  }
+});
+
+
+
+buttonEl.onclick = async () => {
+  try {
+    await this.analizarSuperposicion();
+  } catch (err) {
+    console.error("Error en el análisis:", err);
+  }
+};
+
+const expandAnalisis = new Expand({
+  view: this.view,
+  content: uploadEl6,
+  expandTooltip: "Analizar superposición",
+  expandIcon: "analysis"
+});
+this.view.ui.add(expandAnalisis, { position: "top-right", index: 6 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     this.legend = new Legend({ view: this.view, container: document.createElement('div') });
     const ccWidget = new CoordinateConversion({ view: this.view });
@@ -980,7 +1106,6 @@ export class GeovisorSharedService {
       layer.visible = visibility;
     }
   } //*Fin de toggleLayerVisibility
-
   //*Inicio carga de capa
   getLayerVisibility(layerTitle: string): boolean {
     const layer = this.mapa.layers.find((layer) => layer.title === layerTitle);
@@ -1048,7 +1173,6 @@ export class GeovisorSharedService {
       maximumFractionDigits: 0,
     });
   }
-
   async dataImport(file: File, coordType?: "UTM" | "GEOGRAFICA"): Promise<void> {
     if (!file || !this.view || !this.mapa) return;
     const fileName = file.name.toLowerCase();
@@ -1217,8 +1341,6 @@ export class GeovisorSharedService {
       this.showModal("Ocurrió un error procesando el archivo. Revisa la consola.", "⚠️ Error");
     }
   }
-
-
   private showModal(
     message: string,
     typeOrTitle?: "success" | "error" | "info" | string,
@@ -1297,8 +1419,6 @@ export class GeovisorSharedService {
       window.addEventListener("keydown", onKey);
     });
   }
-
-
   private showSelect<T extends string>(label: string, options: { value: T, label: string }[]): Promise<T | undefined> {
     return new Promise<T | undefined>((resolve) => {
       const wrapper = document.createElement("div");
@@ -1330,6 +1450,202 @@ export class GeovisorSharedService {
       };
     });
   }
+
+  async analizarSuperposicion(): Promise<void> {
+    if (!this.view || !this.mapa) return;
+
+    this.highlightLayer.removeAll();
+
+    try {
+      console.log("🔹 Cargando capa SERFOR...");
+      const capaSerfor = new FeatureLayer({
+        url: "https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer/1"
+      });
+      await capaSerfor.load();
+
+      // --- Paginación para obtener todos los features de SERFOR ---
+      let featuresA: __esri.Graphic[] = [];
+      let startA = 0;
+      const num = 2000;
+      while (true) {
+        const res = await capaSerfor.queryFeatures({
+          where: "1=1",
+          outFields: ["*"],
+          returnGeometry: true,
+          start: startA,
+          num
+        });
+        featuresA.push(...res.features);
+        if (res.features.length < num) break;
+        startA += num;
+      }
+      console.log(`✅ Capa SERFOR cargada con ${featuresA.length} features.`);
+
+      // --- Filtrar solo geometrías válidas ---
+      const validGeometriesA = featuresA
+        .map(f => f.geometry)
+        .filter((g): g is __esri.Polygon => !!g && ["polygon", "multipolygon"].includes(g.type.toLowerCase()));
+
+      if (!validGeometriesA.length) {
+        alert("⚠️ No hay geometrías válidas en SERFOR.");
+        return;
+      }
+
+      // --- Unir todas las geometrías de SERFOR ---
+      const geomA = await geometryEngineAsync.union(validGeometriesA) as __esri.GeometryUnion;
+      if (!geomA) {
+        alert("⚠️ No se pudieron unir las geometrías de SERFOR.");
+        return;
+      }
+
+      // --- Capa B seleccionada ---
+      const selectEl = document.querySelector<HTMLSelectElement>(".file-upload-widget select");
+      if (!selectEl) return;
+      const selectedId = selectEl.value;
+      if (!selectedId) {
+        alert("⚠️ Selecciona una capa para analizar.");
+        return;
+      }
+
+      // Buscar la capa B
+      let capaB: __esri.Layer | undefined = this.mapa.layers.find(l => l.id === selectedId);
+      if (!capaB) {
+        for (const l of this.mapa.layers.toArray()) {
+          if (l.type === "map-image") {
+            const mapImg = l as __esri.MapImageLayer;
+            const sub = mapImg.sublayers?.find(s => s.id.toString() === selectedId);
+            if (sub) {
+              capaB = sub as unknown as __esri.Layer;
+              break;
+            }
+          }
+        }
+      }
+
+      if (!capaB) {
+        alert("⚠️ No se encontró la capa seleccionada en el mapa.");
+        return;
+      }
+
+      console.log(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`);
+      await capaB.load?.();
+
+      // --- Obtener features de B con paginación ---
+      let featuresB: __esri.Graphic[] = [];
+      if ("queryFeatures" in capaB) {
+        let startB = 0;
+        while (true) {
+          const resB = await (capaB as __esri.FeatureLayer).queryFeatures({
+            where: "1=1",
+            outFields: ["*"],
+            returnGeometry: true,
+            start: startB,
+            num
+          });
+          featuresB.push(...resB.features);
+          if (resB.features.length < num) break;
+          startB += num;
+        }
+      } else if ("source" in capaB) {
+        featuresB = (capaB as any).source.items as __esri.Graphic[];
+      }
+
+      console.log(`   → Capas B: ${featuresB.length} features`);
+
+      if (!featuresB.length) {
+        alert("⚠️ La capa seleccionada no contiene geometrías.");
+        return;
+      }
+
+      // --- Analizar intersecciones con contador ---
+      const overlaps: __esri.Graphic[] = [];
+      let contador = 0;
+
+      for (const fB of featuresB) {
+        contador++;
+        if (contador % 50 === 0) console.log(`🔹 Procesadas ${contador} de ${featuresB.length} features de B...`);
+
+        if (!fB.geometry || !["polygon", "multipolygon"].includes(fB.geometry.type.toLowerCase())) continue;
+
+        const geomB = fB.geometry as __esri.GeometryUnion;
+        const intersecta = await geometryEngineAsync.intersects(geomB, geomA);
+
+        if (intersecta) {
+          overlaps.push(new Graphic({
+            geometry: geomB,
+            attributes: { capaA: "Ordenamiento Forestal", capaB: capaB.title || capaB.id, ...fB.attributes },
+            symbol: { type: "simple-fill", color: [255,0,0,0.4], outline: { color: [255,0,0], width: 2 } } as any,
+            popupTemplate: {
+              title: "Superposición detectada",
+              content: `Polígono de <b>${capaB.title || capaB.id}</b> se superpone con <b>Ordenamiento Forestal</b>.`
+            }
+          }));
+        }
+      }
+
+      // --- Resultado final ---
+      console.log("🔹 Proceso de análisis de superposición finalizado.");
+      if (overlaps.length) {
+        this.highlightLayer.addMany(overlaps);
+        this.view.goTo(overlaps.map(g => g.geometry));
+        console.log(`✅ Se encontraron ${overlaps.length} superposiciones.`);
+      } else {
+        alert("✅ No se encontraron superposiciones.");
+      }
+
+    } catch (error) {
+      console.error("Error analizando superposiciones:", error);
+      alert("❌ Ocurrió un error al analizar superposiciones.");
+    }
+  }
+  actualizarSelectCapas() {
+    const selectEl = document.querySelector<HTMLSelectElement>(".file-upload-widget select");
+    if (!selectEl) return;
+
+    // Limpiar opciones existentes
+    selectEl.innerHTML = "";
+
+    const capasExcluir = ["DISTRITO", "PROVINCIA", "DEPARTAMENTO", "PERU"];
+
+    this.mapa.layers.toArray().forEach(lyr => {
+      const tituloLyr = lyr.title?.toUpperCase() || "";
+
+      // Ignorar capas excluidas
+      if (capasExcluir.includes(tituloLyr)) return;
+
+      if (lyr.type === "feature" || lyr.type === "geojson" || lyr.type === "csv") {
+        // Para capas FeatureLayer, CSVLayer o GeoJSONLayer
+        const opt = document.createElement("option");
+        opt.value = lyr.id;
+        opt.text = lyr.title || lyr.id;
+        selectEl.appendChild(opt);
+      } else if (lyr.type === "map-image") {
+        (lyr as __esri.MapImageLayer).sublayers?.forEach(sub => {
+          const tituloSub = (sub as any).title?.toUpperCase() || "";
+          if (capasExcluir.includes(tituloSub)) return;
+
+          const opt = document.createElement("option");
+          opt.value = sub.id.toString();
+          opt.text = (sub as any).title || `${lyr.title}`;
+          selectEl.appendChild(opt);
+        });
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
