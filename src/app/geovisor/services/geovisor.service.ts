@@ -931,59 +931,83 @@ export class GeovisorSharedService {
       expandTooltip: 'Galería de Mapas Base',
       expandIcon: 'basemap'
     });
-
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
 
     //*Funcion para importar Data (GeoJson)-Widget
-    const uploadEl = document.createElement("div");
-    uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
+    // --- Crear contenedor del widget ---
+const uploadEl = document.createElement("div");
+uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
 
-    const inputEl = document.createElement("input");
-    inputEl.type = "file";
-    inputEl.accept = ".json,.geojson,.csv"; // solo los formatos permitidos
-    inputEl.style.cursor = "pointer";
-    inputEl.className = "border rounded p-1";
+// --- Crear input de archivos ---
+const inputEl = document.createElement("input");
+inputEl.type = "file";
+inputEl.accept = ".json,.geojson,.csv"; // solo los formatos permitidos
+inputEl.style.cursor = "pointer";
+inputEl.className = "border rounded p-1";
 
-    // Conectar el evento change
-    inputEl.addEventListener("change", (evt: Event) => {
-      const target = evt.target as HTMLInputElement;
-      const file = target.files?.[0];
-      if (file) {
-        this.dataImport(file).then(() => {
-          // Limpiar el input después de cargar el archivo
-          target.value = "";
-        });
-      }
+// Conectar evento change
+inputEl.addEventListener("change", (evt: Event) => {
+  const target = evt.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (file) {
+    this.dataImport(file).then(() => {
+      target.value = ""; // limpiar input después de cargar
     });
+  }
+});
 
-    uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
-    // Crear un Expand para integrarlo al MapView
-    const expanduploadEl = new Expand({
-      view: this.view,
-      content: uploadEl,
-      expandTooltip: "Cargar archivo",
-      expandIcon: "upload"
-    });
+uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
 
-    // Añadir el widget a la vista
-    this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
+// --- Crear Expand ---
+const expanduploadEl = new Expand({
+  view: this.view,
+  content: uploadEl,
+  expandTooltip: "Cargar archivo",
+  expandIcon: "upload"
+});
+
+// Añadir el widget a la vista
+this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
+
+// --- Función para ocultar o mostrar en móviles ---
+function toggleUploadWidget() {
+  if (!expanduploadEl.container) return; // verificar que exista
+
+  if (window.innerWidth < 768) {
+    expanduploadEl.container.style.display = "none"; // ocultar en móviles
+    expanduploadEl.collapse(); // asegurar que esté cerrado
+  } else {
+    expanduploadEl.container.style.display = "block"; // mostrar en desktop
+  }
+}
+
+// Ejecutar al cargar
+toggleUploadWidget();
+
+// Escuchar cambios de tamaño de pantalla
+window.addEventListener("resize", toggleUploadWidget);
+
     //*Fin de Funcion para importar Data (GeoJson)-Widget
 
 
 
-    const uploadEl6 = document.createElement("div");
-
+    // --- Crear contenedor del widget ---
+const uploadEl6 = document.createElement("div");
 uploadEl6.className = "file-upload-widget p-2 bg-white rounded shadow";
+
+// Título
 const titleEl = document.createElement("div");
 titleEl.textContent = "Selecciona capas para superposición:";
 titleEl.className = "mb-2 font-semibold";
 uploadEl6.appendChild(titleEl);
 
+// Select multiple
 const selectEl = document.createElement("select");
 selectEl.multiple = true;
 selectEl.className = "w-full p-1 border rounded mb-2";
 uploadEl6.appendChild(selectEl);
 
+// Botón analizar
 const buttonEl = document.createElement("button");
 buttonEl.textContent = "🔎 Analizar superposición";
 buttonEl.className = `
@@ -995,33 +1019,25 @@ buttonEl.className = `
 `;
 uploadEl6.appendChild(buttonEl);
 
+// --- Llenar select con capas visibles ---
 const capasVisibles: __esri.FeatureLayer[] = [];
 this.mapa.layers.forEach((lyr) => {
   const layerType = (lyr as any).type;
 
   if (layerType === "feature" && lyr.visible) {
     capasVisibles.push(lyr as __esri.FeatureLayer);
-
     const opt = document.createElement("option");
     opt.value = lyr.id;
     opt.text = (lyr as any).title || (lyr as any).name || lyr.id;
     selectEl.appendChild(opt);
-  }
-  else if (layerType === "map-image" && lyr.visible) {
+  } else if (layerType === "map-image" && lyr.visible) {
     const mapImg = lyr as __esri.MapImageLayer;
-
     mapImg.sublayers?.forEach((sub) => {
       if (sub.visible && 'queryFeatures' in sub) {
         const fl = sub as unknown as __esri.FeatureLayer;
         capasVisibles.push(fl);
-
         const opt = document.createElement("option");
         opt.value = fl.id.toString();
-
-        // 🔹 Prioridad para mostrar el título
-        // 1. sublayer.title si existe
-        // 2. sublayer.name si existe
-        // 3. mapImg.title + id si no hay ninguno
         opt.text = (sub as any).title || (sub as any).name || `${mapImg.title}`;
         selectEl.appendChild(opt);
       }
@@ -1029,8 +1045,7 @@ this.mapa.layers.forEach((lyr) => {
   }
 });
 
-
-
+// --- Evento del botón ---
 buttonEl.onclick = async () => {
   try {
     await this.analizarSuperposicion();
@@ -1039,6 +1054,7 @@ buttonEl.onclick = async () => {
   }
 };
 
+// --- Crear Expand ---
 const expandAnalisis = new Expand({
   view: this.view,
   content: uploadEl6,
@@ -1046,6 +1062,25 @@ const expandAnalisis = new Expand({
   expandIcon: "analysis"
 });
 this.view.ui.add(expandAnalisis, { position: "top-right", index: 6 });
+
+// --- Función para ocultar o mostrar widget en móviles ---
+function toggleAnalisisWidget() {
+  if (!expandAnalisis.container) return;
+
+  if (window.innerWidth < 768) {
+    expandAnalisis.container.style.display = "none"; // ocultar en móvil
+    expandAnalisis.collapse(); // asegurar que esté cerrado
+  } else {
+    expandAnalisis.container.style.display = "block"; // mostrar en desktop
+  }
+}
+
+// Ejecutar al cargar
+toggleAnalisisWidget();
+
+// Escuchar cambios de tamaño de pantalla
+window.addEventListener("resize", toggleAnalisisWidget);
+
 
 
 
