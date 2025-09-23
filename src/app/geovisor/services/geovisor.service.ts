@@ -1038,7 +1038,7 @@ export class GeovisorSharedService {
     const fileName = file.name.toLowerCase();
 
     if (!fileName.endsWith(".json") && !fileName.endsWith(".geojson") && !fileName.endsWith(".csv")) {
-      alert("Formato no soportado. Solo se permiten archivos .json, .geojson o .csv");
+      await this.showModal("Formato no soportado. Solo se permiten archivos .json, .geojson o .csv", "⚠️ Error");
       return;
     }
 
@@ -1049,99 +1049,29 @@ export class GeovisorSharedService {
     };
     const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
 
-    // 👉 modal para tipo de coordenadas
+    // 👉 reemplazo de prompt por select (tipo coordenadas)
     if (!coordType) {
-      coordType = await new Promise<"UTM" | "GEOGRAFICA" | undefined>((resolve) => {
-        const overlay = document.createElement("div");
-        overlay.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
-
-        const modal = document.createElement("div");
-        modal.className = "bg-white p-6 rounded shadow-lg w-80 text-center";
-        modal.innerHTML = `
-          <h2 class="text-lg font-semibold mb-4">Tipo de coordenadas</h2>
-          <select id="coordTypeSelect" class="p-2 border rounded w-full">
-            <option value="">-- Seleccione --</option>
-            <option value="UTM">UTM</option>
-            <option value="GEOGRAFICA">GEOGRÁFICA</option>
-          </select>
-          <div class="mt-4 flex justify-end gap-2">
-            <button id="coordCancel" class="px-4 py-2 bg-gray-400 text-white rounded">Cancelar</button>
-            <button id="coordConfirm" class="px-4 py-2 bg-blue-600 text-white rounded">Aceptar</button>
-          </div>
-        `;
-
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
-
-        const select = modal.querySelector<HTMLSelectElement>("#coordTypeSelect")!;
-        const btnOk = modal.querySelector<HTMLButtonElement>("#coordConfirm")!;
-        const btnCancel = modal.querySelector<HTMLButtonElement>("#coordCancel")!;
-
-        btnOk.onclick = () => {
-          const value = select.value as "UTM" | "GEOGRAFICA";
-          if (!value) {
-            alert("⚠️ Debe seleccionar un tipo de coordenadas.");
-            return;
-          }
-          overlay.remove();
-          resolve(value);
-        };
-
-        btnCancel.onclick = () => {
-          overlay.remove();
-          resolve(undefined);
-        };
-      });
-
+      coordType = await this.showSelect<"UTM" | "GEOGRAFICA">(
+        "Seleccione el tipo de coordenadas:",
+        [
+          { value: "UTM", label: "UTM" },
+          { value: "GEOGRAFICA", label: "GEOGRÁFICA" }
+        ]
+      );
       if (!coordType) return;
     }
 
-    // 👉 modal para zona UTM
+    // 👉 si eligió UTM, pedimos zona con otro select
     let utmZone: "17S" | "18S" | "19S" | undefined;
     if (coordType === "UTM") {
-      utmZone = await new Promise<"17S" | "18S" | "19S" | undefined>((resolve) => {
-        const overlay = document.createElement("div");
-        overlay.className = "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50";
-
-        const modal = document.createElement("div");
-        modal.className = "bg-white p-6 rounded shadow-lg w-80 text-center";
-        modal.innerHTML = `
-          <h2 class="text-lg font-semibold mb-4">Zona UTM</h2>
-          <select id="utmZoneSelect" class="p-2 border rounded w-full">
-            <option value="">-- Seleccione --</option>
-            <option value="17S">17S</option>
-            <option value="18S">18S</option>
-            <option value="19S">19S</option>
-          </select>
-          <div class="mt-4 flex justify-end gap-2">
-            <button id="utmCancel" class="px-4 py-2 bg-gray-400 text-white rounded">Cancelar</button>
-            <button id="utmConfirm" class="px-4 py-2 bg-green-600 text-white rounded">Aceptar</button>
-          </div>
-        `;
-
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
-
-        const select = modal.querySelector<HTMLSelectElement>("#utmZoneSelect")!;
-        const btnOk = modal.querySelector<HTMLButtonElement>("#utmConfirm")!;
-        const btnCancel = modal.querySelector<HTMLButtonElement>("#utmCancel")!;
-
-        btnOk.onclick = () => {
-          const value = select.value as "17S" | "18S" | "19S";
-          if (!value) {
-            alert("⚠️ Debe seleccionar una zona UTM.");
-            return;
-          }
-          overlay.remove();
-          resolve(value);
-        };
-
-        btnCancel.onclick = () => {
-          overlay.remove();
-          resolve(undefined);
-        };
-      });
-
+      utmZone = await this.showSelect<"17S" | "18S" | "19S">(
+        "Seleccione la zona UTM:",
+        [
+          { value: "17S", label: "17S" },
+          { value: "18S", label: "18S" },
+          { value: "19S", label: "19S" }
+        ]
+      );
       if (!utmZone) return;
     }
 
@@ -1189,7 +1119,7 @@ export class GeovisorSharedService {
       if (!layer && geojson) {
         const validFeatures = geojson.features?.filter((f: any) => f.geometry) || [];
         if (validFeatures.length === 0) {
-          alert("El archivo no contiene geometrías válidas para mostrar en el mapa.");
+          await this.showModal("El archivo no contiene geometrías válidas para mostrar en el mapa.", "⚠️ Error");
           return;
         }
 
@@ -1248,7 +1178,7 @@ export class GeovisorSharedService {
         // --- mostrar cantidad de polígonos ---
         if (polygonCount > 0) {
           console.log(`📌 Se importaron ${polygonCount} polígonos`);
-          alert(`Se importaron ${polygonCount} polígonos.`);
+          await this.showModal(`Se importaron ${polygonCount} polígonos.`, "✅ Importación exitosa");
         }
       }
 
@@ -1260,31 +1190,62 @@ export class GeovisorSharedService {
         if (layer!.fullExtent && this.view) {
           this.view.goTo(layer!.fullExtent).catch(err => console.warn("No se pudo hacer zoom a la capa:", err));
         }
-        alert(`Capa "${file.name}" cargada correctamente.`);
+        this.showModal(`Capa "${file.name}" cargada correctamente.`, "✅ Éxito");
       }).catch(err => {
         console.error("Error cargando la capa:", err);
-        alert("Ocurrió un error cargando la capa. Revisa la consola.");
+        this.showModal("Ocurrió un error cargando la capa. Revisa la consola.", "⚠️ Error");
       });
 
     } catch (err) {
       console.error("Error procesando el archivo:", err);
-      alert("Ocurrió un error procesando el archivo. Revisa la consola.");
+      this.showModal("Ocurrió un error procesando el archivo. Revisa la consola.", "⚠️ Error");
     }
   }
 
-  private showModal(message: string, type: "success" | "error" | "info" = "info", title?: string): Promise<void> {
+
+  private showModal(
+    message: string,
+    typeOrTitle?: "success" | "error" | "info" | string,
+    title?: string
+  ): Promise<void> {
     return new Promise<void>((resolve) => {
-      const icons: Record<typeof type, string> = {
+      // mapa de iconos y títulos por defecto
+      const icons: Record<"success" | "error" | "info", string> = {
         success: "✅",
         error: "⚠️",
         info: "ℹ️"
       };
-
-      const titles: Record<typeof type, string> = {
+      const defaultTitles: Record<"success" | "error" | "info", string> = {
         success: "Éxito",
         error: "Error",
         info: "Aviso"
       };
+
+      // determinar type y título final según lo que se pase
+      let type: "success" | "error" | "info" = "info";
+      let finalTitle: string | undefined = title;
+
+      if (typeof typeOrTitle === "string") {
+        // si es exactamente uno de los tipos
+        if (typeOrTitle === "success" || typeOrTitle === "error" || typeOrTitle === "info") {
+          type = typeOrTitle;
+        } else if (typeOrTitle.includes("✅")) {
+          type = "success";
+          finalTitle = typeOrTitle;
+        } else if (typeOrTitle.includes("⚠️")) {
+          type = "error";
+          finalTitle = typeOrTitle;
+        } else if (typeOrTitle.includes("ℹ️")) {
+          type = "info";
+          finalTitle = typeOrTitle;
+        } else {
+          // si no contiene emoji ni es literal tipo, lo tratamos como título personalizado
+          finalTitle = typeOrTitle;
+        }
+      }
+
+      const icon = icons[type];
+      const header = finalTitle || defaultTitles[type];
 
       const wrapper = document.createElement("div");
       wrapper.className = "modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
@@ -1292,11 +1253,13 @@ export class GeovisorSharedService {
       wrapper.innerHTML = `
         <div class="bg-white rounded-lg shadow-lg p-6 w-96">
           <div class="flex items-center mb-4">
-            <span class="text-2xl mr-2">${icons[type]}</span>
-            <h2 class="text-lg font-bold">${title || titles[type]}</h2>
+            <span class="text-2xl mr-3">${icon}</span>
+            <h2 class="text-lg font-bold">${header}</h2>
           </div>
           <p class="mb-4">${message}</p>
-          <button id="modalOk" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Aceptar</button>
+          <div class="flex justify-end">
+            <button id="modalOk" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Aceptar</button>
+          </div>
         </div>
       `;
       document.body.appendChild(wrapper);
@@ -1306,8 +1269,19 @@ export class GeovisorSharedService {
         wrapper.remove();
         resolve();
       };
+
+      // opcional: cerrar con ESC
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          wrapper.remove();
+          window.removeEventListener("keydown", onKey);
+          resolve();
+        }
+      };
+      window.addEventListener("keydown", onKey);
     });
   }
+
 
   private showSelect<T extends string>(label: string, options: { value: T, label: string }[]): Promise<T | undefined> {
     return new Promise<T | undefined>((resolve) => {
