@@ -483,6 +483,7 @@ export class GeovisorSharedService {
     }
   }
   public layers: LayerConfig[] = [
+    //* (DEVIDA)
     {
       type: 'map-image',
       title: 'POLIGONOS DE CULTIVO',
@@ -505,15 +506,33 @@ export class GeovisorSharedService {
         }
       ]
     },
-
     //* (SERFOR)
-
+    {
+      type: 'map-image',
+      title: 'ANP - AREAS NATURALES PROTEGIDAS',
+      url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
+      visible: false,
+      opacity: 0.5,
+      maxScale: 0,
+      group: '(SERFOR)',
+      // 🔹 Aquí defines las subcapas visibles
+      sublayers: [
+        {
+          id: 5, // 👈 cambia por el id real de la subcapa que quieras mostrar
+          //title: 'Límites Oficina Zonal',
+          visible: true,
+          labelsVisible: true,
+          minScale: 0,
+          maxScale: 0,
+        }
+      ]
+    },
     {
       type: 'map-image',
       title: 'MONITOREO DEFORESTACION',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Monitoreo_Deforestacion_Tala/MapServer`,
       visible: false,
-      opacity: 0.2,
+      opacity: 0.5,
       minScale: 0,
       maxScale: 0,
       group: '(SERFOR)',
@@ -534,7 +553,7 @@ export class GeovisorSharedService {
       title: 'COMUNIDADES NATIVAS',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
       visible: false,
-      opacity: 0.2,
+      opacity: 0.5,
       minScale: 0,
       maxScale: 0,
       group: '(SERFOR)',
@@ -555,7 +574,7 @@ export class GeovisorSharedService {
       title: 'ZA - ZONAS DE AMORTIGUAMIENTO',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
       visible: false,
-      opacity: 0.65,
+      opacity: 0.5,
       minScale: 0,
       maxScale: 0,
       group: '(SERFOR)',
@@ -576,7 +595,7 @@ export class GeovisorSharedService {
       title: 'ACR - AREAS DE CONSERVACION REGIONAL',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
       visible: false,
-      opacity: 0.65,
+      opacity: 0.5,
       minScale: 0,
       maxScale: 0,
       group: '(SERFOR)',
@@ -597,7 +616,7 @@ export class GeovisorSharedService {
       title: 'BPP - BOSQUE DE PRODUCCION PERMANENTE',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer`,
       visible: false,
-      opacity: 0.65,
+      opacity: 0.5,
       minScale: 0,
       maxScale: 0,
       group: '(SERFOR)',
@@ -613,15 +632,12 @@ export class GeovisorSharedService {
         }
       ]
     },
-
-
-
     {
       type: 'map-image',
       title: 'OFICINAS ZONALES',
       url: this.restApiDevida,
       visible: false,
-      opacity: 0.9,
+      opacity: 1,
       minScale: 0,
       maxScale: 0,
       group: 'CARTOGRAFIA DEVIDA',
