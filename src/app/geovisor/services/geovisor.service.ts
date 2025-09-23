@@ -1491,8 +1491,32 @@ window.addEventListener("resize", toggleAnalisisWidget);
 
     this.highlightLayer.removeAll();
 
+    // --- Crear overlay de carga ---
+    let overlay = document.getElementById("loading-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "loading-overlay";
+      overlay.style.position = "absolute";
+      overlay.style.top = "0";
+      overlay.style.left = "0";
+      overlay.style.width = "100%";
+      overlay.style.height = "100%";
+      overlay.style.backgroundColor = "rgba(0,0,0,0.3)";
+      overlay.style.display = "flex";
+      overlay.style.justifyContent = "center";
+      overlay.style.alignItems = "center";
+      overlay.style.zIndex = "9999";
+      overlay.style.fontSize = "1.2rem";
+      overlay.style.color = "#fff";
+      overlay.textContent = "Analizando superposición, por favor espere...";
+      document.body.appendChild(overlay);
+    }
+    overlay.style.display = "flex";
+
     try {
       console.log("🔹 Cargando capa SERFOR...");
+      alert("🔹 Cargando capa SERFOR...");
+
       const capaSerfor = new FeatureLayer({
         url: "https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer/1"
       });
@@ -1515,6 +1539,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
         startA += num;
       }
       console.log(`✅ Capa SERFOR cargada con ${featuresA.length} features.`);
+      alert(`✅ Capa SERFOR cargada con ${featuresA.length} features.`);
 
       // --- Filtrar solo geometrías válidas ---
       const validGeometriesA = featuresA
@@ -1523,6 +1548,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
 
       if (!validGeometriesA.length) {
         alert("⚠️ No hay geometrías válidas en SERFOR.");
+        overlay.style.display = "none";
         return;
       }
 
@@ -1530,6 +1556,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
       const geomA = await geometryEngineAsync.union(validGeometriesA) as __esri.GeometryUnion;
       if (!geomA) {
         alert("⚠️ No se pudieron unir las geometrías de SERFOR.");
+        overlay.style.display = "none";
         return;
       }
 
@@ -1539,6 +1566,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
       const selectedId = selectEl.value;
       if (!selectedId) {
         alert("⚠️ Selecciona una capa para analizar.");
+        overlay.style.display = "none";
         return;
       }
 
@@ -1556,13 +1584,14 @@ window.addEventListener("resize", toggleAnalisisWidget);
           }
         }
       }
-
       if (!capaB) {
         alert("⚠️ No se encontró la capa seleccionada en el mapa.");
+        overlay.style.display = "none";
         return;
       }
 
       console.log(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`);
+      alert(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`);
       await capaB.load?.();
 
       // --- Obtener features de B con paginación ---
@@ -1586,9 +1615,11 @@ window.addEventListener("resize", toggleAnalisisWidget);
       }
 
       console.log(`   → Capas B: ${featuresB.length} features`);
+      alert(`   → Capas B: ${featuresB.length} features`);
 
       if (!featuresB.length) {
         alert("⚠️ La capa seleccionada no contiene geometrías.");
+        overlay.style.display = "none";
         return;
       }
 
@@ -1598,7 +1629,10 @@ window.addEventListener("resize", toggleAnalisisWidget);
 
       for (const fB of featuresB) {
         contador++;
-        if (contador % 50 === 0) console.log(`🔹 Procesadas ${contador} de ${featuresB.length} features de B...`);
+        if (contador % 50 === 0) {
+          console.log(`🔹 Procesadas ${contador} de ${featuresB.length} features de B...`);
+          overlay.textContent = `Procesadas ${contador} de ${featuresB.length} features de B...`;
+        }
 
         if (!fB.geometry || !["polygon", "multipolygon"].includes(fB.geometry.type.toLowerCase())) continue;
 
@@ -1623,7 +1657,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
       if (overlaps.length) {
         this.highlightLayer.addMany(overlaps);
         this.view.goTo(overlaps.map(g => g.geometry));
-        console.log(`✅ Se encontraron ${overlaps.length} superposiciones.`);
+        alert(`✅ Se encontraron ${overlaps.length} superposiciones.`);
       } else {
         alert("✅ No se encontraron superposiciones.");
       }
@@ -1631,8 +1665,12 @@ window.addEventListener("resize", toggleAnalisisWidget);
     } catch (error) {
       console.error("Error analizando superposiciones:", error);
       alert("❌ Ocurrió un error al analizar superposiciones.");
+    } finally {
+      if (overlay) overlay.style.display = "none"; // quitar overlay al finalizar
     }
   }
+
+
   actualizarSelectCapas() {
     const selectEl = document.querySelector<HTMLSelectElement>(".file-upload-widget select");
     if (!selectEl) return;
