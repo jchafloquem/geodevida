@@ -902,48 +902,43 @@ export class GeovisorSharedService {
 
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
 
-    //*Funcion para importar Data (GeoJson)
+    //*Funcion para importar Data (GeoJson)-Widget
     const uploadEl = document.createElement("div");
-uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
+    uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
 
-const inputEl = document.createElement("input");
-inputEl.type = "file";
-inputEl.accept = ".json,.geojson,.csv"; // solo los formatos permitidos
-inputEl.style.cursor = "pointer";
-inputEl.className = "border rounded p-1";
+    const inputEl = document.createElement("input");
+    inputEl.type = "file";
+    inputEl.accept = ".json,.geojson,.csv"; // solo los formatos permitidos
+    inputEl.style.cursor = "pointer";
+    inputEl.className = "border rounded p-1";
 
-// Conectar el evento change
-inputEl.addEventListener("change", (evt: Event) => {
-  const target = evt.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (file) {
-    this.dataImport(file).then(() => {
-      // Limpiar el input después de cargar el archivo
-      target.value = "";
+    // Conectar el evento change
+    inputEl.addEventListener("change", (evt: Event) => {
+      const target = evt.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (file) {
+        this.dataImport(file).then(() => {
+          // Limpiar el input después de cargar el archivo
+          target.value = "";
+        });
+      }
     });
-  }
-});
 
-uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
+    uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
 
-// Crear un Expand para integrarlo al MapView
-const expanduploadEl = new Expand({
-  view: this.view,
-  content: uploadEl,
-  expandTooltip: "Cargar archivo",
-  expandIcon: "upload"
-});
+    // Crear un Expand para integrarlo al MapView
+    const expanduploadEl = new Expand({
+      view: this.view,
+      content: uploadEl,
+      expandTooltip: "Cargar archivo",
+      expandIcon: "upload"
+    });
 
-// Añadir el widget a la vista
-this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
-
-
-
-
-
+    // Añadir el widget a la vista
+    this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
+    //*Fin de Funcion para importar Data (GeoJson)-Widget
 
     this.legend = new Legend({ view: this.view, container: document.createElement('div') });
-
     const ccWidget = new CoordinateConversion({ view: this.view });
     if (this.view) {
       this.view.when(() => {
@@ -1040,15 +1035,12 @@ this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
 
   async dataImport(file: File, coordType?: "UTM" | "GEOGRAFICA"): Promise<void> {
     if (!file || !this.view || !this.mapa) return;
-
     const fileName = file.name.toLowerCase();
-
     // Solo permitir json, geojson y csv
     if (!fileName.endsWith(".json") && !fileName.endsWith(".geojson") && !fileName.endsWith(".csv")) {
       alert("Formato no soportado. Solo se permiten archivos .json, .geojson o .csv");
       return;
     }
-
     // --- Definir proyecciones UTM sur ---
     const utmDefs: Record<string, string> = {
       "17S": "+proj=utm +zone=17 +south +datum=WGS84 +units=m +no_defs",
@@ -1056,7 +1048,6 @@ this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
       "19S": "+proj=utm +zone=19 +south +datum=WGS84 +units=m +no_defs"
     };
     const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
-
     // --- Preguntar tipo de coordenadas si no se pasa ---
     if (!coordType) {
       const inputType = prompt("¿Sus coordenadas están en UTM o GEOGRÁFICAS? (Escriba 'UTM' o 'GEOGRAFICA')");
@@ -1066,7 +1057,6 @@ this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
       }
       coordType = inputType.toUpperCase() as "UTM" | "GEOGRAFICA";
     }
-
     let utmZone: "17S" | "18S" | "19S" | undefined;
     if (coordType === "UTM") {
       const zoneInput = prompt("Indique la zona UTM de sus coordenadas (17S, 18S, 19S):");
@@ -1076,17 +1066,14 @@ this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
       }
       utmZone = zoneInput as "17S" | "18S" | "19S";
     }
-
     // --- Funciones internas de reproyección ---
     function reproyectarCoord(coord: number[]): number[] {
       if (!utmZone) return coord; // Si es geográfica, no se reproyecta
       return proj4(utmDefs[utmZone!], wgs84, coord);
     }
-
     function reproyectarGeoJSONGeometry(geom: any): any {
       if (!geom) return geom;
       const mapCoord = (c: number[]) => reproyectarCoord(c);
-
       switch (geom.type) {
         case "Point":
           return { type: "Point", coordinates: mapCoord(geom.coordinates) };
@@ -1102,7 +1089,6 @@ this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
           return geom;
       }
     }
-
     try {
       let geojson: any;
       let layer: __esri.Layer | null = null;
@@ -1132,11 +1118,9 @@ this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
           { type: "application/json" }
         );
         const blobUrl = URL.createObjectURL(blob);
-
         // --- Detectar tipo de geometría para asignar renderer ---
         const sampleGeom = featuresProcesadas[0].geometry;
         let renderer: any;
-
         if (!sampleGeom) {
           renderer = undefined;
         } else if (sampleGeom.type === "Point" || sampleGeom.type === "MultiPoint") {
