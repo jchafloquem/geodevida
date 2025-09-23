@@ -902,10 +902,10 @@ export class GeovisorSharedService {
 
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
 
+    //*Funcion para importar Data (GeoJson)
     const uploadEl = document.createElement("div");
     uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
 
-    // Crear el input de archivos dentro del contenedor
     const inputEl = document.createElement("input");
     inputEl.type = "file";
     //inputEl.accept = ".kml,.kmz,.geojson,.json,.csv,.zip";
@@ -913,7 +913,6 @@ export class GeovisorSharedService {
     inputEl.style.cursor = "pointer";
     inputEl.className = "border rounded p-1";
 
-    // Conectar el evento change
     inputEl.addEventListener("change", (evt: Event) => {
       const target = evt.target as HTMLInputElement;
       const file = target.files?.[0];
@@ -922,7 +921,6 @@ export class GeovisorSharedService {
       }
     }); uploadEl.appendChild(inputEl);
 
-    // Crear un Expand para integrarlo al MapView
     const expanduploadEl = new Expand({
       view: this.view,
       content: uploadEl,
@@ -930,7 +928,6 @@ export class GeovisorSharedService {
       expandIcon: "upload" // icono de subida
     });
 
-    // Añadir el widget a la vista
     this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
 
 
@@ -1053,7 +1050,7 @@ export class GeovisorSharedService {
 
     // --- Preguntar tipo de coordenadas ---
     const coordType = prompt("¿Sus coordenadas están en UTM o GEOGRÁFICAS? (Escriba 'UTM' o 'GEOGRAFICA')");
-    if (!coordType || !["UTM","GEOGRAFICA"].includes(coordType.toUpperCase())) {
+    if (!coordType || !["UTM", "GEOGRAFICA"].includes(coordType.toUpperCase())) {
       alert("Tipo de coordenadas no válido. Use 'UTM' o 'GEOGRAFICA'.");
       return;
     }
@@ -1061,7 +1058,7 @@ export class GeovisorSharedService {
     let utmZone: "17S" | "18S" | "19S" | undefined;
     if (coordType.toUpperCase() === "UTM") {
       const zoneInput = prompt("Indique la zona UTM de sus coordenadas (17S, 18S, 19S):");
-      if (!zoneInput || !["17S","18S","19S"].includes(zoneInput)) {
+      if (!zoneInput || !["17S", "18S", "19S"].includes(zoneInput)) {
         alert("Zona UTM no válida. Use 17S, 18S o 19S.");
         return;
       }
