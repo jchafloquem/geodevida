@@ -1513,9 +1513,23 @@ window.addEventListener("resize", toggleAnalisisWidget);
     }
     overlay.style.display = "flex";
 
+    const showToast = (msg: string, type: "info" | "success" | "error" = "info") => {
+      const toast = document.createElement("div");
+      toast.className = `
+        fixed top-4 right-4 z-50
+        px-4 py-2 rounded shadow
+        text-white font-semibold
+        ${type === "info" ? "bg-blue-500" : type === "success" ? "bg-green-500" : "bg-red-500"}
+        animate-fadein animate-fadeout
+      `;
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    };
+
     try {
       console.log("🔹 Cargando capa SERFOR...");
-      alert("🔹 Cargando capa SERFOR...");
+      showToast("🔹 Cargando capa SERFOR...", "info");
 
       const capaSerfor = new FeatureLayer({
         url: "https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer/1"
@@ -1539,7 +1553,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
         startA += num;
       }
       console.log(`✅ Capa SERFOR cargada con ${featuresA.length} features.`);
-      alert(`✅ Capa SERFOR cargada con ${featuresA.length} features.`);
+      showToast(`✅ Capa SERFOR cargada con ${featuresA.length} features.`, "success");
 
       // --- Filtrar solo geometrías válidas ---
       const validGeometriesA = featuresA
@@ -1547,7 +1561,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
         .filter((g): g is __esri.Polygon => !!g && ["polygon", "multipolygon"].includes(g.type.toLowerCase()));
 
       if (!validGeometriesA.length) {
-        alert("⚠️ No hay geometrías válidas en SERFOR.");
+        showToast("⚠️ No hay geometrías válidas en SERFOR.", "error");
         overlay.style.display = "none";
         return;
       }
@@ -1555,7 +1569,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
       // --- Unir todas las geometrías de SERFOR ---
       const geomA = await geometryEngineAsync.union(validGeometriesA) as __esri.GeometryUnion;
       if (!geomA) {
-        alert("⚠️ No se pudieron unir las geometrías de SERFOR.");
+        showToast("⚠️ No se pudieron unir las geometrías de SERFOR.", "error");
         overlay.style.display = "none";
         return;
       }
@@ -1565,7 +1579,7 @@ window.addEventListener("resize", toggleAnalisisWidget);
       if (!selectEl) return;
       const selectedId = selectEl.value;
       if (!selectedId) {
-        alert("⚠️ Selecciona una capa para analizar.");
+        showToast("⚠️ Selecciona una capa para analizar.", "error");
         overlay.style.display = "none";
         return;
       }
@@ -1585,13 +1599,13 @@ window.addEventListener("resize", toggleAnalisisWidget);
         }
       }
       if (!capaB) {
-        alert("⚠️ No se encontró la capa seleccionada en el mapa.");
+        showToast("⚠️ No se encontró la capa seleccionada en el mapa.", "error");
         overlay.style.display = "none";
         return;
       }
 
       console.log(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`);
-      alert(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`);
+      showToast(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`, "info");
       await capaB.load?.();
 
       // --- Obtener features de B con paginación ---
@@ -1615,10 +1629,10 @@ window.addEventListener("resize", toggleAnalisisWidget);
       }
 
       console.log(`   → Capas B: ${featuresB.length} features`);
-      alert(`   → Capas B: ${featuresB.length} features`);
+      showToast(`   → Capas B: ${featuresB.length} features`, "info");
 
       if (!featuresB.length) {
-        alert("⚠️ La capa seleccionada no contiene geometrías.");
+        showToast("⚠️ La capa seleccionada no contiene geometrías.", "error");
         overlay.style.display = "none";
         return;
       }
@@ -1657,18 +1671,19 @@ window.addEventListener("resize", toggleAnalisisWidget);
       if (overlaps.length) {
         this.highlightLayer.addMany(overlaps);
         this.view.goTo(overlaps.map(g => g.geometry));
-        alert(`✅ Se encontraron ${overlaps.length} superposiciones.`);
+        showToast(`✅ Se encontraron ${overlaps.length} superposiciones.`, "success");
       } else {
-        alert("✅ No se encontraron superposiciones.");
+        showToast("✅ No se encontraron superposiciones.", "success");
       }
 
     } catch (error) {
       console.error("Error analizando superposiciones:", error);
-      alert("❌ Ocurrió un error al analizar superposiciones.");
+      showToast("❌ Ocurrió un error al analizar superposiciones.", "error");
     } finally {
-      if (overlay) overlay.style.display = "none"; // quitar overlay al finalizar
+      if (overlay) overlay.style.display = "none";
     }
   }
+
 
 
   actualizarSelectCapas() {
