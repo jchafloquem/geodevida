@@ -904,31 +904,39 @@ export class GeovisorSharedService {
 
     //*Funcion para importar Data (GeoJson)
     const uploadEl = document.createElement("div");
-    uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
+uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
 
-    const inputEl = document.createElement("input");
-    inputEl.type = "file";
-    //inputEl.accept = ".kml,.kmz,.geojson,.json,.csv,.zip";
-    inputEl.accept = ".json,.geojson,.csv";
-    inputEl.style.cursor = "pointer";
-    inputEl.className = "border rounded p-1";
+const inputEl = document.createElement("input");
+inputEl.type = "file";
+inputEl.accept = ".json,.geojson,.csv"; // solo los formatos permitidos
+inputEl.style.cursor = "pointer";
+inputEl.className = "border rounded p-1";
 
-    inputEl.addEventListener("change", (evt: Event) => {
-      const target = evt.target as HTMLInputElement;
-      const file = target.files?.[0];
-      if (file) {
-        this.dataImport(file); // tu función de carga de capas
-      }
-    }); uploadEl.appendChild(inputEl);
-
-    const expanduploadEl = new Expand({
-      view: this.view,
-      content: uploadEl,
-      expandTooltip: "Cargar archivo",
-      expandIcon: "upload" // icono de subida
+// Conectar el evento change
+inputEl.addEventListener("change", (evt: Event) => {
+  const target = evt.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (file) {
+    this.dataImport(file).then(() => {
+      // Limpiar el input después de cargar el archivo
+      target.value = "";
     });
+  }
+});
 
-    this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
+uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
+
+// Crear un Expand para integrarlo al MapView
+const expanduploadEl = new Expand({
+  view: this.view,
+  content: uploadEl,
+  expandTooltip: "Cargar archivo",
+  expandIcon: "upload"
+});
+
+// Añadir el widget a la vista
+this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
+
 
 
 
@@ -1030,10 +1038,11 @@ export class GeovisorSharedService {
     });
   }
 
-  async dataImport(file: File): Promise<void> {
+  async dataImport(file: File, coordType?: "UTM" | "GEOGRAFICA"): Promise<void> {
     if (!file || !this.view || !this.mapa) return;
 
     const fileName = file.name.toLowerCase();
+
     // Solo permitir json, geojson y csv
     if (!fileName.endsWith(".json") && !fileName.endsWith(".geojson") && !fileName.endsWith(".csv")) {
       alert("Formato no soportado. Solo se permiten archivos .json, .geojson o .csv");
@@ -1048,15 +1057,18 @@ export class GeovisorSharedService {
     };
     const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
 
-    // --- Preguntar tipo de coordenadas ---
-    const coordType = prompt("¿Sus coordenadas están en UTM o GEOGRÁFICAS? (Escriba 'UTM' o 'GEOGRAFICA')");
-    if (!coordType || !["UTM", "GEOGRAFICA"].includes(coordType.toUpperCase())) {
-      alert("Tipo de coordenadas no válido. Use 'UTM' o 'GEOGRAFICA'.");
-      return;
+    // --- Preguntar tipo de coordenadas si no se pasa ---
+    if (!coordType) {
+      const inputType = prompt("¿Sus coordenadas están en UTM o GEOGRÁFICAS? (Escriba 'UTM' o 'GEOGRAFICA')");
+      if (!inputType || !["UTM", "GEOGRAFICA"].includes(inputType.toUpperCase())) {
+        alert("Tipo de coordenadas no válido. Use 'UTM' o 'GEOGRAFICA'.");
+        return;
+      }
+      coordType = inputType.toUpperCase() as "UTM" | "GEOGRAFICA";
     }
 
     let utmZone: "17S" | "18S" | "19S" | undefined;
-    if (coordType.toUpperCase() === "UTM") {
+    if (coordType === "UTM") {
       const zoneInput = prompt("Indique la zona UTM de sus coordenadas (17S, 18S, 19S):");
       if (!zoneInput || !["17S", "18S", "19S"].includes(zoneInput)) {
         alert("Zona UTM no válida. Use 17S, 18S o 19S.");
@@ -1099,7 +1111,6 @@ export class GeovisorSharedService {
         const blobUrl = URL.createObjectURL(file);
         layer = new CSVLayer({ url: blobUrl, title: file.name });
       } else {
-        // Solo json/geojson
         const text = await file.text();
         geojson = JSON.parse(text);
       }
@@ -1122,7 +1133,43 @@ export class GeovisorSharedService {
         );
         const blobUrl = URL.createObjectURL(blob);
 
-        layer = new GeoJSONLayer({ url: blobUrl, title: file.name });
+        // --- Detectar tipo de geometría para asignar renderer ---
+        const sampleGeom = featuresProcesadas[0].geometry;
+        let renderer: any;
+
+        if (!sampleGeom) {
+          renderer = undefined;
+        } else if (sampleGeom.type === "Point" || sampleGeom.type === "MultiPoint") {
+          renderer = {
+            type: "simple",
+            symbol: {
+              type: "simple-marker",
+              color: [0, 128, 255, 0.8],
+              size: 8,
+              outline: { color: [0, 0, 0, 0.8], width: 1 }
+            }
+          };
+        } else if (sampleGeom.type === "LineString" || sampleGeom.type === "MultiLineString") {
+          renderer = {
+            type: "simple",
+            symbol: {
+              type: "simple-line",
+              color: [0, 255, 0, 0.8],
+              width: 2
+            }
+          };
+        } else if (sampleGeom.type === "Polygon" || sampleGeom.type === "MultiPolygon") {
+          renderer = {
+            type: "simple",
+            symbol: {
+              type: "simple-fill",
+              color: [0, 0, 255, 0.3],
+              outline: { color: [255, 0, 0, 1], width: 1 }
+            }
+          };
+        }
+
+        layer = new GeoJSONLayer({ url: blobUrl, title: file.name, renderer });
       }
 
       if (!layer) return;
@@ -1145,39 +1192,4 @@ export class GeovisorSharedService {
     }
   }
 
-  // --- Convertir KML plano a GeoJSON ---
-  private async convertKmlToGeoJSON(file: File): Promise<any> {
-    const text = await file.text();
-    const { DOMParser } = await import("@xmldom/xmldom");
-    const parser = new DOMParser({
-      errorHandler: { warning: () => { }, error: () => { }, fatalError: e => console.error(e) }
-    });
-
-    const kmlDoc = parser.parseFromString(text, "application/xml");
-    if (!kmlDoc || !kmlDoc.documentElement) throw new Error("No se pudo parsear el KML correctamente.");
-
-    const { kml } = await import("@mapbox/togeojson");
-    return kml(kmlDoc);
-  }
-  // --- Convertir KMZ a GeoJSON ---
-  private async convertKmzToGeoJSON(file: File): Promise<any> {
-    const JSZip = (await import("jszip")).default;
-    const zip = await JSZip.loadAsync(file);
-
-    const kmlFileName = Object.keys(zip.files).find(name => name.toLowerCase().endsWith(".kml"));
-    if (!kmlFileName) throw new Error("No se encontró KML dentro del KMZ");
-
-    const kmlText = await zip.file(kmlFileName)!.async("text");
-
-    const { DOMParser } = await import("@xmldom/xmldom");
-    const parser = new DOMParser({
-      errorHandler: { warning: () => { }, error: () => { }, fatalError: e => console.error(e) }
-    });
-
-    const kmlDoc = parser.parseFromString(kmlText, "application/xml");
-    if (!kmlDoc || !kmlDoc.documentElement) throw new Error("No se pudo parsear el KML dentro del KMZ.");
-
-    const { kml } = await import("@mapbox/togeojson");
-    return kml(kmlDoc);
-  }
 }
