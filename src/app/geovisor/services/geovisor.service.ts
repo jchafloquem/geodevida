@@ -26,6 +26,10 @@ import KMLLayer from '@arcgis/core/layers/KMLLayer';
 import CSVLayer from '@arcgis/core/layers/CSVLayer';
 import proj4 from "proj4";
 
+import FileUpload from "@arcgis/core/widgets/Widget";
+
+
+
 
 
 
@@ -721,18 +725,18 @@ export class GeovisorSharedService {
         }
       ]
     },
-/*     {
-      type: 'feature',
-      title: 'VISITAS DE MONITOREO',
-      url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`,
-      labelingInfo: [],
-      popupTemplate: restCaribRecopilacion,  // 🔹 Quitar temporalmente
-      renderer: recopilacionRenderer,
-      visible: false,
-      labelsVisible: false,
-      opacity: 1,
-      group: 'PIRDAIS',
-    }, */
+    /*     {
+          type: 'feature',
+          title: 'VISITAS DE MONITOREO',
+          url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`,
+          labelingInfo: [],
+          popupTemplate: restCaribRecopilacion,  // 🔹 Quitar temporalmente
+          renderer: recopilacionRenderer,
+          visible: false,
+          labelsVisible: false,
+          opacity: 1,
+          group: 'PIRDAIS',
+        }, */
   ];
 
   public lis: [] = [];
@@ -897,6 +901,42 @@ export class GeovisorSharedService {
     });
 
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
+
+    const uploadEl = document.createElement("div");
+    uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
+
+    // Crear el input de archivos dentro del contenedor
+    const inputEl = document.createElement("input");
+    inputEl.type = "file";
+    //inputEl.accept = ".kml,.kmz,.geojson,.json,.csv,.zip";
+    inputEl.accept = ".json,.geojson,.csv";
+    inputEl.style.cursor = "pointer";
+    inputEl.className = "border rounded p-1";
+
+    // Conectar el evento change
+    inputEl.addEventListener("change", (evt: Event) => {
+      const target = evt.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (file) {
+        this.dataImport(file); // tu función de carga de capas
+      }
+    }); uploadEl.appendChild(inputEl);
+
+    // Crear un Expand para integrarlo al MapView
+    const expanduploadEl = new Expand({
+      view: this.view,
+      content: uploadEl,
+      expandTooltip: "Cargar archivo",
+      expandIcon: "upload" // icono de subida
+    });
+
+    // Añadir el widget a la vista
+    this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
+
+
+
+
+
     this.legend = new Legend({ view: this.view, container: document.createElement('div') });
 
     const ccWidget = new CoordinateConversion({ view: this.view });
@@ -993,11 +1033,15 @@ export class GeovisorSharedService {
     });
   }
 
-  async loadUserLayer(file: File): Promise<void> {
+  async dataImport(file: File): Promise<void> {
     if (!file || !this.view || !this.mapa) return;
 
     const fileName = file.name.toLowerCase();
-    let layer: __esri.Layer | null = null;
+    // Solo permitir json, geojson y csv
+    if (!fileName.endsWith(".json") && !fileName.endsWith(".geojson") && !fileName.endsWith(".csv")) {
+      alert("Formato no soportado. Solo se permiten archivos .json, .geojson o .csv");
+      return;
+    }
 
     // --- Definir proyecciones UTM sur ---
     const utmDefs: Record<string, string> = {
@@ -1007,34 +1051,44 @@ export class GeovisorSharedService {
     };
     const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
 
-    // --- Pedir zona UTM al usuario ---
-    const utmZone = prompt("Indique la zona UTM de sus coordenadas (17S, 18S, 19S):");
-    if (!utmZone || !["17S","18S","19S"].includes(utmZone)) {
-      alert("Zona UTM no válida. Use 17S, 18S o 19S.");
+    // --- Preguntar tipo de coordenadas ---
+    const coordType = prompt("¿Sus coordenadas están en UTM o GEOGRÁFICAS? (Escriba 'UTM' o 'GEOGRAFICA')");
+    if (!coordType || !["UTM","GEOGRAFICA"].includes(coordType.toUpperCase())) {
+      alert("Tipo de coordenadas no válido. Use 'UTM' o 'GEOGRAFICA'.");
       return;
     }
 
-    // --- Reproyectar coordenadas ---
+    let utmZone: "17S" | "18S" | "19S" | undefined;
+    if (coordType.toUpperCase() === "UTM") {
+      const zoneInput = prompt("Indique la zona UTM de sus coordenadas (17S, 18S, 19S):");
+      if (!zoneInput || !["17S","18S","19S"].includes(zoneInput)) {
+        alert("Zona UTM no válida. Use 17S, 18S o 19S.");
+        return;
+      }
+      utmZone = zoneInput as "17S" | "18S" | "19S";
+    }
+
+    // --- Funciones internas de reproyección ---
     function reproyectarCoord(coord: number[]): number[] {
+      if (!utmZone) return coord; // Si es geográfica, no se reproyecta
       return proj4(utmDefs[utmZone!], wgs84, coord);
     }
 
     function reproyectarGeoJSONGeometry(geom: any): any {
       if (!geom) return geom;
-      const { type, coordinates } = geom;
       const mapCoord = (c: number[]) => reproyectarCoord(c);
 
-      switch (type) {
+      switch (geom.type) {
         case "Point":
-          return { type, coordinates: mapCoord(coordinates) };
+          return { type: "Point", coordinates: mapCoord(geom.coordinates) };
         case "LineString":
         case "MultiPoint":
-          return { type, coordinates: coordinates.map(mapCoord) };
+          return { type: geom.type, coordinates: geom.coordinates.map(mapCoord) };
         case "Polygon":
         case "MultiLineString":
-          return { type, coordinates: coordinates.map((ring: any) => ring.map(mapCoord)) };
+          return { type: geom.type, coordinates: geom.coordinates.map((ring: any) => ring.map(mapCoord)) };
         case "MultiPolygon":
-          return { type, coordinates: coordinates.map((poly: any) => poly.map((ring: any) => ring.map(mapCoord))) };
+          return { type: "MultiPolygon", coordinates: geom.coordinates.map((poly: any) => poly.map((ring: any) => ring.map(mapCoord))) };
         default:
           return geom;
       }
@@ -1042,20 +1096,15 @@ export class GeovisorSharedService {
 
     try {
       let geojson: any;
+      let layer: __esri.Layer | null = null;
 
-      if (fileName.endsWith(".kml")) {
-        geojson = await this.convertKmlToGeoJSON(file);
-      } else if (fileName.endsWith(".kmz")) {
-        geojson = await this.convertKmzToGeoJSON(file);
-      } else if (fileName.endsWith(".geojson") || fileName.endsWith(".json")) {
-        const text = await file.text();
-        geojson = JSON.parse(text);
-      } else if (fileName.endsWith(".csv")) {
+      if (fileName.endsWith(".csv")) {
         const blobUrl = URL.createObjectURL(file);
         layer = new CSVLayer({ url: blobUrl, title: file.name });
       } else {
-        alert("Formato no soportado. Use: KML, KMZ, GeoJSON, CSV");
-        return;
+        // Solo json/geojson
+        const text = await file.text();
+        geojson = JSON.parse(text);
       }
 
       if (!layer && geojson) {
@@ -1065,13 +1114,13 @@ export class GeovisorSharedService {
           return;
         }
 
-        const featuresReproyectadas = validFeatures.map((f: any) => ({
+        const featuresProcesadas = validFeatures.map((f: any) => ({
           ...f,
           geometry: reproyectarGeoJSONGeometry(f.geometry)
         }));
 
         const blob = new Blob(
-          [JSON.stringify({ type: "FeatureCollection", features: featuresReproyectadas })],
+          [JSON.stringify({ type: "FeatureCollection", features: featuresProcesadas })],
           { type: "application/json" }
         );
         const blobUrl = URL.createObjectURL(blob);
@@ -1099,15 +1148,12 @@ export class GeovisorSharedService {
     }
   }
 
-
-
-
   // --- Convertir KML plano a GeoJSON ---
   private async convertKmlToGeoJSON(file: File): Promise<any> {
     const text = await file.text();
     const { DOMParser } = await import("@xmldom/xmldom");
     const parser = new DOMParser({
-      errorHandler: { warning: () => {}, error: () => {}, fatalError: e => console.error(e) }
+      errorHandler: { warning: () => { }, error: () => { }, fatalError: e => console.error(e) }
     });
 
     const kmlDoc = parser.parseFromString(text, "application/xml");
@@ -1116,7 +1162,6 @@ export class GeovisorSharedService {
     const { kml } = await import("@mapbox/togeojson");
     return kml(kmlDoc);
   }
-
   // --- Convertir KMZ a GeoJSON ---
   private async convertKmzToGeoJSON(file: File): Promise<any> {
     const JSZip = (await import("jszip")).default;
@@ -1129,7 +1174,7 @@ export class GeovisorSharedService {
 
     const { DOMParser } = await import("@xmldom/xmldom");
     const parser = new DOMParser({
-      errorHandler: { warning: () => {}, error: () => {}, fatalError: e => console.error(e) }
+      errorHandler: { warning: () => { }, error: () => { }, fatalError: e => console.error(e) }
     });
 
     const kmlDoc = parser.parseFromString(kmlText, "application/xml");

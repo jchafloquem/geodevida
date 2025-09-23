@@ -61,7 +61,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file) {
-      this._geovisorSharedService.loadUserLayer(file);
+      this._geovisorSharedService.dataImport(file);
     }
   }
 
