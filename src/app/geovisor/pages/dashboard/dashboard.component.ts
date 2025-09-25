@@ -18,7 +18,7 @@ Chart.register(ChartDataLabels);
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements AfterViewInit {
-  private readonly SERVICIO_PIRDAIS = 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/10';
+  private readonly SERVICIO_PIRDAIS = 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer/0';
   private readonly QUERY_SERVICIO = `${this.SERVICIO_PIRDAIS}/query`;
   isMenuOpen = true;   // Estado inicial del menú
   isDesktop = false;   // Detecta si es pantalla grande
