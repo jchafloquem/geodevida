@@ -773,7 +773,7 @@ export class GeovisorSharedService {
         },
       ],
     },
-    /*     {
+    {
           type: 'feature',
           title: 'VISITAS DE MONITOREO',
           url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`,
@@ -784,7 +784,7 @@ export class GeovisorSharedService {
           labelsVisible: false,
           opacity: 1,
           group: 'PIRDAIS',
-        }, */
+     },
   ];
 
   public lis: [] = [];

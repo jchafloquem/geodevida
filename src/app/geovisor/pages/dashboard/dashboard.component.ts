@@ -1326,9 +1326,6 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
 
-
-
-
   //*Grafico por cultivo de cafe por Oficina Zonal
   async crearGraficoCantidadRegistrosOZCAFE() {
     const baseUrl = this.QUERY_SERVICIO;
