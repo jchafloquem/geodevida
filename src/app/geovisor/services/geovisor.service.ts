@@ -1642,6 +1642,7 @@ export class GeovisorSharedService {
 
     const progressText = document.getElementById("progress-text")!;
     let overlaps: __esri.Graphic[] = [];
+    let intersectedFeaturesB: __esri.Graphic[] = []; // <-- Array de polígonos intersectados
     let capaBTitle = "la capa seleccionada";
 
     try {
@@ -1654,7 +1655,7 @@ export class GeovisorSharedService {
 
       const featuresA: __esri.Graphic[] = [];
       const num = 2000;
-      for (let startA = 0; ; startA += num) {
+      for (let startA = 0;; startA += num) {
         const res = await capaSerfor.queryFeatures({
           where: "1=1",
           outFields: ["*"],
@@ -1715,7 +1716,7 @@ export class GeovisorSharedService {
       // --- Cargar features de la capa B ---
       let featuresB: __esri.Graphic[] = [];
       if ("queryFeatures" in capaB) {
-        for (let startB = 0; ; startB += num) {
+        for (let startB = 0;; startB += num) {
           const resB = await (capaB as __esri.FeatureLayer).queryFeatures({
             where: "1=1",
             outFields: ["*"],
@@ -1739,12 +1740,14 @@ export class GeovisorSharedService {
       // --- Procesamiento por bloques ---
       const blockSize = 50;
       overlaps = [];
+      intersectedFeaturesB = [];
       for (let i = 0; i < featuresB.length; i += blockSize) {
         const block = featuresB.slice(i, i + blockSize);
         const promises = block.map(fB => (async () => {
           if (!fB.geometry || !["polygon", "multipolygon"].includes(fB.geometry.type.toLowerCase())) return null;
           const intersecta = await geometryEngineAsync.intersects(fB.geometry as __esri.GeometryUnion, geomA);
           if (intersecta) {
+            intersectedFeaturesB.push(fB); // <-- guardamos la feature de B
             return new Graphic({
               geometry: fB.geometry,
               attributes: { capaA: "Ordenamiento Forestal", capaB: capaB.title || capaB.id, ...fB.attributes },
@@ -1774,7 +1777,7 @@ export class GeovisorSharedService {
       // 🔹 Ocultar overlay
       if (overlay) overlay.style.display = "none";
 
-      // 🔹 Modal interactivo separado
+      // 🔹 Modal interactivo con exportación CSV
       const modal = document.createElement("div");
       modal.id = "resultado-modal";
       Object.assign(modal.style, {
@@ -1787,19 +1790,36 @@ export class GeovisorSharedService {
         alignItems: "center",
         zIndex: "10001",
       });
+
+      const csvButton = intersectedFeaturesB.length > 0
+        ? `<button id="export-csv"
+            style="
+              margin-top:10px;
+              padding:6px 12px;
+              background-color:#16A34A;
+              color:white;
+              border:none;
+              border-radius:6px;
+              font-weight:bold;
+              cursor:pointer;
+              transition: background-color 0.3s;
+            "
+            onmouseover="this.style.backgroundColor='#15803D'"
+            onmouseout="this.style.backgroundColor='#16A34A'">
+            Exportar CSV
+          </button>`
+        : '';
+
       modal.innerHTML = `
-        <div style="background:white;padding:20px;border-radius:8px;max-width:400px;text-align:center;">
+        <div style="background:white;padding:20px;border-radius:8px;max-width:450px;text-align:center;">
           <h2>Resultado del análisis</h2>
-          <p>${
-        overlapsCount > 0
-          ? `Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.`
-          : `No se encontraron superposiciones.`
-          }</p>
+          <p>${overlapsCount > 0 ? `Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.` : `No se encontraron superposiciones.`}</p>
+          ${csvButton}
           <button id="modal-close"
               style="
                 margin-top:10px;
                 padding:6px 12px;
-                background-color:#2563EB; /* azul similar a bg-blue-600 */
+                background-color:#2563EB;
                 color:white;
                 border:none;
                 border-radius:6px;
@@ -1823,6 +1843,29 @@ export class GeovisorSharedService {
         });
       }
 
+      const exportBtn = modal.querySelector<HTMLButtonElement>("#export-csv");
+      if (exportBtn) {
+        exportBtn.addEventListener("click", () => {
+          if (!intersectedFeaturesB.length) return;
+
+          const keys = Object.keys(intersectedFeaturesB[0].attributes);
+          const csvContent = [
+            keys.join(","), // encabezado
+            ...intersectedFeaturesB.map(f =>
+              keys.map(k => `"${(f.attributes[k] ?? '').toString().replace(/"/g, '""')}"`).join(",")
+            )
+          ].join("\n");
+
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `superposiciones_${capaBTitle}.csv`;
+          a.click();
+          URL.revokeObjectURL(url);
+        });
+      }
+
       // 🔹 Toast resumen
       const toastMessage = overlapsCount > 0
         ? `✅ Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.`
@@ -1830,6 +1873,7 @@ export class GeovisorSharedService {
       this.showToast(toastMessage, "success", false);
     }
   }
+
 
   //Funcion para actualizar las capas del Visor
   actualizarSelectCapas() {
