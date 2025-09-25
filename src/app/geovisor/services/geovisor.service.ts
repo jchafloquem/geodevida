@@ -774,17 +774,17 @@ export class GeovisorSharedService {
       ],
     },
     {
-          type: 'feature',
-          title: 'VISITAS DE MONITOREO',
-          url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`,
-          labelingInfo: [],
-          popupTemplate: restCaribRecopilacion,  // 🔹 Quitar temporalmente
-          renderer: recopilacionRenderer,
-          visible: false,
-          labelsVisible: false,
-          opacity: 1,
-          group: '(PIRDAIS)',
-     },
+      type: 'feature',
+      title: 'VISITAS DE MONITOREO',
+      url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`,
+      labelingInfo: [],
+      popupTemplate: restCaribRecopilacion,  // 🔹 Quitar temporalmente
+      renderer: recopilacionRenderer,
+      visible: false,
+      labelsVisible: false,
+      opacity: 1,
+      group: '(PIRDAIS)',
+    },
   ];
 
   public lis: [] = [];
@@ -1023,7 +1023,6 @@ export class GeovisorSharedService {
 
     // Añadir el widget a la vista
     this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
-
     // --- Función para ocultar o mostrar en móviles ---
     function toggleUploadWidget() {
       if (!expanduploadEl.container) return; // verificar que exista
@@ -1035,30 +1034,25 @@ export class GeovisorSharedService {
         expanduploadEl.container.style.display = 'block'; // mostrar en desktop
       }
     }
-
     // Ejecutar al cargar
     toggleUploadWidget();
-
     // Escuchar cambios de tamaño de pantalla
     window.addEventListener('resize', toggleUploadWidget);
-
     //*Fin de Funcion para importar Data (GeoJson)-Widget
-    // --- Crear contenedor del widget ---
+
+    //*Funcion para Superposicion capa BBP(SERFOR)
     const uploadEl6 = document.createElement('div');
     uploadEl6.className = 'file-upload-widget p-2 bg-white rounded shadow';
-
     // Título
     const titleEl = document.createElement('div');
     titleEl.textContent = 'Selecciona capas para superposición:';
     titleEl.className = 'mb-2 font-semibold';
     uploadEl6.appendChild(titleEl);
-
     // Select multiple
     const selectEl = document.createElement('select');
     selectEl.multiple = true;
     selectEl.className = 'w-full p-1 border rounded mb-2';
     uploadEl6.appendChild(selectEl);
-
     // Botón analizar
     const buttonEl = document.createElement('button');
     buttonEl.textContent = '🔎 Analizar superposición';
@@ -1072,7 +1066,6 @@ export class GeovisorSharedService {
         block
       `;
     uploadEl6.appendChild(buttonEl);
-
     // --- Llenar select con capas visibles ---
     const capasVisibles: __esri.FeatureLayer[] = [];
     this.mapa.layers.forEach((lyr) => {
@@ -1099,7 +1092,6 @@ export class GeovisorSharedService {
         });
       }
     });
-
     // --- Evento del botón ---
     buttonEl.onclick = async () => {
       try {
@@ -1108,7 +1100,6 @@ export class GeovisorSharedService {
         console.error('Error en el análisis:', err);
       }
     };
-
     // --- Crear Expand ---
     const expandAnalisis = new Expand({
       view: this.view,
@@ -1129,10 +1120,8 @@ export class GeovisorSharedService {
         expandAnalisis.container.style.display = 'block'; // mostrar en desktop
       }
     }
-
     // Ejecutar al cargar
     toggleAnalisisWidget();
-
     // Escuchar cambios de tamaño de pantalla
     window.addEventListener('resize', toggleAnalisisWidget);
     this.legend = new Legend({
@@ -1258,13 +1247,13 @@ export class GeovisorSharedService {
       maximumFractionDigits: 0,
     });
   }
+  //*Funcion que importa un archivo GeoJson
   async dataImport(
     file: File,
     coordType?: 'UTM' | 'GEOGRAFICA'
   ): Promise<void> {
     if (!file || !this.view || !this.mapa) return;
     const fileName = file.name.toLowerCase();
-
     if (
       !fileName.endsWith('.json') &&
       !fileName.endsWith('.geojson') &&
@@ -1276,14 +1265,12 @@ export class GeovisorSharedService {
       );
       return;
     }
-
     const utmDefs: Record<string, string> = {
       '17S': '+proj=utm +zone=17 +south +datum=WGS84 +units=m +no_defs',
       '18S': '+proj=utm +zone=18 +south +datum=WGS84 +units=m +no_defs',
       '19S': '+proj=utm +zone=19 +south +datum=WGS84 +units=m +no_defs',
     };
     const wgs84 = '+proj=longlat +datum=WGS84 +no_defs';
-
     // 👉 reemplazo de prompt por select (tipo coordenadas)
     if (!coordType) {
       coordType = await this.showSelect<'UTM' | 'GEOGRAFICA'>(
@@ -1295,7 +1282,6 @@ export class GeovisorSharedService {
       );
       if (!coordType) return;
     }
-
     // 👉 si eligió UTM, pedimos zona con otro select
     let utmZone: '17S' | '18S' | '19S' | undefined;
     if (coordType === 'UTM') {
@@ -1309,12 +1295,10 @@ export class GeovisorSharedService {
       );
       if (!utmZone) return;
     }
-
     function reproyectarCoord(coord: number[]): number[] {
       if (!utmZone) return coord;
       return proj4(utmDefs[utmZone!], wgs84, coord);
     }
-
     function reproyectarGeoJSONGeometry(geom: any): any {
       if (!geom) return geom;
       const mapCoord = (c: number[]) => reproyectarCoord(c);
@@ -1346,7 +1330,6 @@ export class GeovisorSharedService {
           return geom;
       }
     }
-
     try {
       let geojson: any;
       let layer: __esri.Layer | null = null;
@@ -1358,7 +1341,6 @@ export class GeovisorSharedService {
         const text = await file.text();
         geojson = JSON.parse(text);
       }
-
       if (!layer && geojson) {
         const validFeatures =
           geojson.features?.filter((f: any) => f.geometry) || [];
@@ -1369,18 +1351,15 @@ export class GeovisorSharedService {
           );
           return;
         }
-
         // --- contar polígonos ---
         const polygonCount = validFeatures.filter(
           (f: any) =>
             f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'
         ).length;
-
         const featuresProcesadas = validFeatures.map((f: any) => ({
           ...f,
           geometry: reproyectarGeoJSONGeometry(f.geometry),
         }));
-
         const blob = new Blob(
           [
             JSON.stringify({
@@ -1391,7 +1370,6 @@ export class GeovisorSharedService {
           { type: 'application/json' }
         );
         const blobUrl = URL.createObjectURL(blob);
-
         const sampleGeom = featuresProcesadas[0].geometry;
         let renderer: any;
         if (!sampleGeom) {
@@ -1434,9 +1412,7 @@ export class GeovisorSharedService {
             },
           };
         }
-
         layer = new GeoJSONLayer({ url: blobUrl, title: file.name, renderer });
-
         // --- mostrar cantidad de polígonos ---
         if (polygonCount > 0) {
           //console.log(`📌 Se importaron ${polygonCount} polígonos`);
@@ -1446,11 +1422,8 @@ export class GeovisorSharedService {
           );
         }
       }
-
       if (!layer) return;
-
       this.mapa.add(layer);
-
       layer
         .when(() => {
           if (layer!.fullExtent && this.view) {
@@ -1497,11 +1470,9 @@ export class GeovisorSharedService {
         error: 'Error',
         info: 'Aviso',
       };
-
       // determinar type y título final según lo que se pase
       let type: 'success' | 'error' | 'info' = 'info';
       let finalTitle: string | undefined = title;
-
       if (typeof typeOrTitle === 'string') {
         // si es exactamente uno de los tipos
         if (
@@ -1524,14 +1495,11 @@ export class GeovisorSharedService {
           finalTitle = typeOrTitle;
         }
       }
-
       const icon = icons[type];
       const header = finalTitle || defaultTitles[type];
-
       const wrapper = document.createElement('div');
       wrapper.className =
         'modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
-
       wrapper.innerHTML = `
         <div class="bg-white rounded-lg shadow-lg p-6 w-96">
           <div class="flex items-center mb-4">
@@ -1545,13 +1513,11 @@ export class GeovisorSharedService {
         </div>
       `;
       document.body.appendChild(wrapper);
-
       const btn = wrapper.querySelector<HTMLButtonElement>('#modalOk')!;
       btn.onclick = () => {
         wrapper.remove();
         resolve();
       };
-
       // opcional: cerrar con ESC
       const onKey = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
@@ -1571,7 +1537,6 @@ export class GeovisorSharedService {
       const wrapper = document.createElement('div');
       wrapper.className =
         'modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
-
       wrapper.innerHTML = `
         <div class="bg-white rounded-lg shadow-lg p-6 w-96">
           <div class="flex items-center mb-4">
@@ -1589,10 +1554,8 @@ export class GeovisorSharedService {
         </div>
       `;
       document.body.appendChild(wrapper);
-
       const select = wrapper.querySelector<HTMLSelectElement>('#modalSelect')!;
       const btn = wrapper.querySelector<HTMLButtonElement>('#modalOk')!;
-
       btn.onclick = () => {
         const value = select.value as T;
         wrapper.remove();
@@ -1600,7 +1563,7 @@ export class GeovisorSharedService {
       };
     });
   }
-  // Funcion que analiza la superposicion de una capa con la capa BPP
+  //*Funcion que analiza la superposicion de una capa con la capa BPP(SERFOR)
   async analizarSuperposicion(): Promise<void> {
     if (!this.view || !this.mapa) return;
     this.highlightLayer.removeAll();
@@ -1656,7 +1619,7 @@ export class GeovisorSharedService {
 
       const featuresA: __esri.Graphic[] = [];
       const num = 2000;
-      for (let startA = 0;; startA += num) {
+      for (let startA = 0; ; startA += num) {
         const res = await capaSerfor.queryFeatures({
           where: "1=1",
           outFields: ["*"],
@@ -1718,7 +1681,7 @@ export class GeovisorSharedService {
       // --- Cargar features de la capa B ---
       let featuresB: __esri.Graphic[] = [];
       if ("queryFeatures" in capaB) {
-        for (let startB = 0;; startB += num) {
+        for (let startB = 0; ; startB += num) {
           const resB = await (capaB as __esri.FeatureLayer).queryFeatures({
             where: "1=1",
             outFields: ["*"],
@@ -1875,9 +1838,7 @@ export class GeovisorSharedService {
       this.showToast(toastMessage, "success", false);
     }
   }
-
-
-  //Funcion para actualizar las capas del Visor
+  //*Funcion para actualizar las capas del Visor
   actualizarSelectCapas() {
     const selectEl = document.querySelector<HTMLSelectElement>(
       '.file-upload-widget select'
@@ -1897,6 +1858,7 @@ export class GeovisorSharedService {
       'COMUNIDADES NATIVAS',
       'ZA-ZONAS DE AMORTIGUAMIENTO',
       'ACR-AREAS DE CONSERVACION REGIONAL',
+      'VISITAS DE MONITOREO'
     ];
     this.mapa.layers.toArray().forEach((lyr) => {
       const tituloLyr = lyr.title?.toUpperCase() || '';
