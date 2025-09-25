@@ -240,7 +240,7 @@ export class DashboardComponent implements AfterViewInit {
     // 🔹 Colores por ORG (mapa)
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
-      'OZ PUCALPA': '#B7D9FE',
+      'OZ PUCALLPA': '#B7D9FE',
       'OZ LA MERCED': '#FFC0B6',
       'OZ TINGO MARIA': '#D6F9FD',
       'OZ TARAPOTO': '#C2BBFE',
@@ -367,7 +367,7 @@ export class DashboardComponent implements AfterViewInit {
 
     const metasOZ: Record<string, number> = {
       'OZ SAN FRANCISCO': 2344,
-      'OZ PUCALPA': 0,
+      'OZ PUCALLPA': 0,
       'OZ LA MERCED': 1973,
       'OZ TINGO MARIA': 2133,
       'OZ TARAPOTO': 688,
@@ -379,7 +379,7 @@ export class DashboardComponent implements AfterViewInit {
 
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
-      'OZ PUCALPA': '#B7D9FE',
+      'OZ PUCALLPA': '#B7D9FE',
       'OZ LA MERCED': '#FFC0B6',
       'OZ TINGO MARIA': '#D6F9FD',
       'OZ TARAPOTO': '#C2BBFE',
@@ -529,7 +529,7 @@ export class DashboardComponent implements AfterViewInit {
 
     const metasOZ: Record<string, number> = {
       'OZ SAN FRANCISCO': 4824,
-      'OZ PUCALPA': 10154,
+      'OZ PUCALLPA': 10154,
       'OZ LA MERCED': 5134,
       'OZ TINGO MARIA': 4629,
       'OZ TARAPOTO': 7383,
@@ -541,7 +541,7 @@ export class DashboardComponent implements AfterViewInit {
 
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
-      'OZ PUCALPA': '#B7D9FE',
+      'OZ PUCALLPA': '#B7D9FE',
       'OZ LA MERCED': '#FFC0B6',
       'OZ TINGO MARIA': '#D6F9FD',
       'OZ TARAPOTO': '#C2BBFE',
@@ -856,7 +856,7 @@ export class DashboardComponent implements AfterViewInit {
     // 🔹 Colores por ORG (mapa de referencia)
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
-      'OZ PUCALPA': '#B7D9FE',
+      'OZ PUCALLPA': '#B7D9FE',
       'OZ LA MERCED': '#FFC0B6',
       'OZ TINGO MARIA': '#D6F9FD',
       'OZ TARAPOTO': '#C2BBFE',
@@ -1112,7 +1112,7 @@ export class DashboardComponent implements AfterViewInit {
     // 🔹 Colores por ORG
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
-      'OZ PUCALPA': '#B7D9FE',
+      'OZ PUCALLPA': '#B7D9FE',
       'OZ LA MERCED': '#FFC0B6',
       'OZ TINGO MARIA': '#D6F9FD',
       'OZ TARAPOTO': '#C2BBFE',
@@ -1247,7 +1247,7 @@ export class DashboardComponent implements AfterViewInit {
     // 🔹 Colores por ORG
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
-      'OZ PUCALPA': '#B7D9FE',
+      'OZ PUCALLPA': '#B7D9FE',
       'OZ LA MERCED': '#FFC0B6',
       'OZ TINGO MARIA': '#D6F9FD',
       'OZ TARAPOTO': '#C2BBFE',
@@ -1378,7 +1378,7 @@ export class DashboardComponent implements AfterViewInit {
     // 🔹 Colores por ORG
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
-      'OZ PUCALPA': '#B7D9FE',
+      'OZ PUCALLPA': '#B7D9FE',
       'OZ LA MERCED': '#FFC0B6',
       'OZ TINGO MARIA': '#D6F9FD',
       'OZ TARAPOTO': '#C2BBFE',
@@ -1508,7 +1508,7 @@ export class DashboardComponent implements AfterViewInit {
     // 🔹 Colores por ORG
     const colorMap: Record<string, string> = {
       'OZ SAN FRANCISCO': '#FEEFD8',
-      'OZ PUCALPA': '#B7D9FE',
+      'OZ PUCALLPA': '#B7D9FE',
       'OZ LA MERCED': '#FFC0B6',
       'OZ TINGO MARIA': '#D6F9FD',
       'OZ TARAPOTO': '#C2BBFE',
