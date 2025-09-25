@@ -964,19 +964,22 @@ export class GeovisorSharedService {
       searchElement.sources = buscaCapasDEVIDA; // tus capas personalizadas
     }
 
+    //*Widget de Zoom
     this.view.ui.add(new Zoom({ view: this.view }), {
       position: 'top-right',
       index: 1,
     });
+    //*Widget de Home
     const homeEl = document.createElement('arcgis-home') as any;
     homeEl.autoDestroyDisabled = true; // 👈 evita que se destruya
     homeEl.view = this.view;
     this.view.ui.add(homeEl, { position: 'top-right', index: 2 });
+    //*Widget de Locate
     const locateEl = document.createElement('arcgis-locate') as any;
     locateEl.autoDestroyDisabled = true; // 👈 evita que se destruya
     locateEl.view = this.view;
     this.view.ui.add(locateEl, { position: 'top-right', index: 3 });
-    //Nueva version del boton de Galeria de mapas
+    //*Widget de Galeria de Mapas
     const galleryEl = document.createElement('arcgis-basemap-gallery') as any;
     galleryEl.autoDestroyDisabled = true; // 👈 evita que se destruya
     galleryEl.view = this.view;
@@ -987,19 +990,16 @@ export class GeovisorSharedService {
       expandIcon: 'basemap',
     });
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
-
     //*Funcion para importar Data (GeoJson)-Widget
     // --- Crear contenedor del widget ---
     const uploadEl = document.createElement('div');
     uploadEl.className = 'file-upload-widget p-2 bg-white rounded shadow';
-
     // --- Crear input de archivos ---
     const inputEl = document.createElement('input');
     inputEl.type = 'file';
     inputEl.accept = '.json,.geojson,.csv'; // solo los formatos permitidos
     inputEl.style.cursor = 'pointer';
     inputEl.className = 'border rounded p-1';
-
     // Conectar evento change
     inputEl.addEventListener('change', (evt: Event) => {
       const target = evt.target as HTMLInputElement;
@@ -1010,9 +1010,7 @@ export class GeovisorSharedService {
         });
       }
     });
-
     uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
-
     // --- Crear Expand ---
     const expanduploadEl = new Expand({
       view: this.view,
@@ -1020,13 +1018,11 @@ export class GeovisorSharedService {
       expandTooltip: 'Cargar archivo',
       expandIcon: 'upload',
     });
-
     // Añadir el widget a la vista
     this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
     // --- Función para ocultar o mostrar en móviles ---
     function toggleUploadWidget() {
       if (!expanduploadEl.container) return; // verificar que exista
-
       if (window.innerWidth < 768) {
         expanduploadEl.container.style.display = 'none'; // ocultar en móviles
         expanduploadEl.collapse(); // asegurar que esté cerrado
@@ -1038,9 +1034,7 @@ export class GeovisorSharedService {
     toggleUploadWidget();
     // Escuchar cambios de tamaño de pantalla
     window.addEventListener('resize', toggleUploadWidget);
-    //*Fin de Funcion para importar Data (GeoJson)-Widget
-
-    //*Funcion para Superposicion capa BBP(SERFOR)
+    //*Widget de Carga de GeoJson
     const uploadEl6 = document.createElement('div');
     uploadEl6.className = 'file-upload-widget p-2 bg-white rounded shadow';
     // Título
@@ -1108,7 +1102,6 @@ export class GeovisorSharedService {
       expandIcon: 'analysis',
     });
     this.view.ui.add(expandAnalisis, { position: 'top-right', index: 6 });
-
     // --- Función para ocultar o mostrar widget en móviles ---
     function toggleAnalisisWidget() {
       if (!expandAnalisis.container) return;
@@ -1120,14 +1113,17 @@ export class GeovisorSharedService {
         expandAnalisis.container.style.display = 'block'; // mostrar en desktop
       }
     }
+    //*Fin de Widgets
     // Ejecutar al cargar
     toggleAnalisisWidget();
     // Escuchar cambios de tamaño de pantalla
     window.addEventListener('resize', toggleAnalisisWidget);
+
     this.legend = new Legend({
       view: this.view,
       container: document.createElement('div'),
     });
+
     const ccWidget = new CoordinateConversion({ view: this.view });
     if (this.view) {
       this.view.when(() => {
@@ -1145,7 +1141,8 @@ export class GeovisorSharedService {
       });
     }
     return this.view.when();
-  } //*FIN <InitializeMap>
+  }
+  //*FIN <InitializeMap>
   destroyMap(): void {
     if (this.view) {
       this.view.container = null;
@@ -1157,7 +1154,8 @@ export class GeovisorSharedService {
     if (layer) {
       layer.visible = visibility;
     }
-  } //*Fin de toggleLayerVisibility
+  }
+  //*Fin de toggleLayerVisibility
   //*Inicio carga de capa
   getLayerVisibility(layerTitle: string): boolean {
     const layer = this.mapa.layers.find((layer) => layer.title === layerTitle);
