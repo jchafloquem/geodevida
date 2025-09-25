@@ -1649,7 +1649,8 @@ export class GeovisorSharedService {
       // --- Cargar capa SERFOR ---
       progressText.textContent = "🔹Cargando la capa Bosque Proteccion Permanente (SERFOR)...!";
       const capaSerfor = new FeatureLayer({
-        url: "https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer/1"
+        url: "https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer/1",
+
       });
       await capaSerfor.load();
 
@@ -1661,7 +1662,8 @@ export class GeovisorSharedService {
           outFields: ["*"],
           returnGeometry: true,
           start: startA,
-          num
+          num,
+
         });
         featuresA.push(...res.features);
         if (res.features.length < num) break;
@@ -1738,7 +1740,7 @@ export class GeovisorSharedService {
       }
 
       // --- Procesamiento por bloques ---
-      const blockSize = 50;
+      const blockSize = 25;
       overlaps = [];
       intersectedFeaturesB = [];
       for (let i = 0; i < featuresB.length; i += blockSize) {
