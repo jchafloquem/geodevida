@@ -783,7 +783,7 @@ export class GeovisorSharedService {
           visible: false,
           labelsVisible: false,
           opacity: 1,
-          group: 'PIRDAIS',
+          group: '(PIRDAIS)',
      },
   ];
 
