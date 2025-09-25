@@ -1,7 +1,7 @@
 import { ElementRef, Injectable } from '@angular/core';
 
 //Libreria actual de ArcGIS 4.33
-import "@arcgis/map-components/components/arcgis-search";
+import '@arcgis/map-components/components/arcgis-search';
 import { LayerConfig } from '../interface/layerConfig';
 import * as reactiveUtils from '@arcgis/core/core/reactiveUtils';
 import CoordinateConversion from '@arcgis/core/widgets/CoordinateConversion.js';
@@ -11,20 +11,18 @@ import FeatureLayer from '@arcgis/core/layers/FeatureLayer.js';
 import GeoJSONLayer from '@arcgis/core/layers/GeoJSONLayer';
 import Legend from '@arcgis/core/widgets/Legend.js';
 import Map from '@arcgis/core/Map.js';
-import MapImageLayer from "@arcgis/core/layers/MapImageLayer";
+import MapImageLayer from '@arcgis/core/layers/MapImageLayer';
 import MapView from '@arcgis/core/views/MapView.js';
-import PopupTemplate from "@arcgis/core/PopupTemplate.js";
-import proj4 from "proj4";
-import SimpleMarkerSymbol from "@arcgis/core/symbols/SimpleMarkerSymbol";
-import SimpleRenderer from "@arcgis/core/renderers/SimpleRenderer";
-import WebTileLayer from "@arcgis/core/layers/WebTileLayer";
+import PopupTemplate from '@arcgis/core/PopupTemplate.js';
+import proj4 from 'proj4';
+import SimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
+import SimpleRenderer from '@arcgis/core/renderers/SimpleRenderer';
+import WebTileLayer from '@arcgis/core/layers/WebTileLayer';
 import Zoom from '@arcgis/core/widgets/Zoom.js';
 
-import * as geometryEngineAsync from "@arcgis/core/geometry/geometryEngineAsync";
-import Graphic from "@arcgis/core/Graphic";
-import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
-
-
+import * as geometryEngineAsync from '@arcgis/core/geometry/geometryEngineAsync';
+import Graphic from '@arcgis/core/Graphic';
+import GraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 
 //* POPUP & CLUSTERS
 const popupPoligonoCultivo = new PopupTemplate({
@@ -33,7 +31,7 @@ const popupPoligonoCultivo = new PopupTemplate({
   content: [
     {
       type: 'text',
-      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Datos del poligono de Cultivo: {nombre}</div>`
+      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Datos del poligono de Cultivo: {nombre}</div>`,
     },
     {
       type: 'fields',
@@ -110,8 +108,8 @@ const popupPoligonoCultivo = new PopupTemplate({
           visible: true,
           stringFieldOption: 'text-box',
           format: {
-            dateFormat: "short-date" // opciones: short-date, long-date
-          }
+            dateFormat: 'short-date', // opciones: short-date, long-date
+          },
         },
         {
           fieldName: 'area_cultivo',
@@ -120,12 +118,12 @@ const popupPoligonoCultivo = new PopupTemplate({
           stringFieldOption: 'text-box',
           format: {
             places: 3,
-            digitSeparator: true
-          }
+            digitSeparator: true,
+          },
         },
-      ]
+      ],
     },
-  ]
+  ],
 });
 const popupLimitesOficinaZonal = new PopupTemplate({
   title: '',
@@ -133,7 +131,7 @@ const popupLimitesOficinaZonal = new PopupTemplate({
   content: [
     {
       type: 'text',
-      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Ambito de la Oficina Zonal: {nombre}</div>`
+      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Ambito de la Oficina Zonal: {nombre}</div>`,
     },
     {
       type: 'fields',
@@ -175,8 +173,8 @@ const popupLimitesOficinaZonal = new PopupTemplate({
           stringFieldOption: 'text-box',
           format: {
             places: 3,
-            digitSeparator: true
-          }
+            digitSeparator: true,
+          },
         },
         {
           fieldName: 'perimetro_st',
@@ -185,12 +183,12 @@ const popupLimitesOficinaZonal = new PopupTemplate({
           stringFieldOption: 'text-box',
           format: {
             places: 3,
-            digitSeparator: true
-          }
-        }
-      ]
+            digitSeparator: true,
+          },
+        },
+      ],
     },
-  ]
+  ],
 });
 const caribANP = new PopupTemplate({
   title: '',
@@ -198,7 +196,7 @@ const caribANP = new PopupTemplate({
   content: [
     {
       type: 'text',
-      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Area Natural Protegida: {nombre}</div>`
+      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Area Natural Protegida: {nombre}</div>`,
     },
     {
       type: 'fields',
@@ -209,9 +207,9 @@ const caribANP = new PopupTemplate({
           visible: true,
           stringFieldOption: 'text-box',
         },
-      ]
+      ],
     },
-  ]
+  ],
 });
 const caribZA = new PopupTemplate({
   title: '',
@@ -226,7 +224,7 @@ const caribZA = new PopupTemplate({
           <span style="font-size: 16px; color: #1565C0;">{c_nomb}</span>
         </div>
         <hr style="border-top: 1px solid #ccc; margin: 8px 0;">
-      `
+      `,
     },
     {
       type: 'fields',
@@ -235,11 +233,11 @@ const caribZA = new PopupTemplate({
           fieldName: 'anp_nomb',
           label: 'Área Natural Protegida:',
           visible: true,
-          stringFieldOption: 'text-box'
-        }
-      ]
-    }
-  ]
+          stringFieldOption: 'text-box',
+        },
+      ],
+    },
+  ],
 });
 const restCaribSurveyPercepcionCacao = new PopupTemplate({
   // ✔️ Quitar el título evita el encabezado automático de Esri
@@ -263,7 +261,7 @@ const restCaribSurveyPercepcionCacao = new PopupTemplate({
         } else {
           return "Código desconocido: " + cod;
         }
-      `
+      `,
     },
     {
       name: 'fechaHoraFormateada',
@@ -279,7 +277,7 @@ const restCaribSurveyPercepcionCacao = new PopupTemplate({
         var hora = Text(f, 'HH');
         var minuto = Text(f, 'mm');
         return dia + "/" + mes + "/" + anio + " " + hora + ":" + minuto;
-      `
+      `,
     },
     {
       name: 'fechaHoraFormateadaEnvio',
@@ -295,31 +293,31 @@ const restCaribSurveyPercepcionCacao = new PopupTemplate({
         var hora = Text(f, 'HH');
         var minuto = Text(f, 'mm');
         return dia + "/" + mes + "/" + anio + " " + hora + ":" + minuto;
-      `
-    }
+      `,
+    },
   ],
   content: [
     {
       type: 'text',
-      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Nro PTA: {nro_pta}</div>`
+      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Nro PTA: {nro_pta}</div>`,
     },
     {
       type: 'text',
-      text: `<div style="margin-top: 8px;"><b><font>Técnico:</font></b> {expression/nombreTecnico}</div>`
+      text: `<div style="margin-top: 8px;"><b><font>Técnico:</font></b> {expression/nombreTecnico}</div>`,
     },
     {
       type: 'text',
-      text: `<div><b><font>Fecha de monitoreo:</font></b> {expression/fechaHoraFormateada}</div>`
+      text: `<div><b><font>Fecha de monitoreo:</font></b> {expression/fechaHoraFormateada}</div>`,
     },
     {
       type: 'text',
-      text: `<div><b><font>Fecha de Envío:</font></b> {expression/fechaHoraFormateadaEnvio}</div>`
+      text: `<div><b><font>Fecha de Envío:</font></b> {expression/fechaHoraFormateadaEnvio}</div>`,
     },
     {
-      type: 'attachments' // ✔️ Galería automática de imágenes
-    }
-  ]
-})
+      type: 'attachments', // ✔️ Galería automática de imágenes
+    },
+  ],
+});
 const restCaribSurveyPercepcionCafe = new PopupTemplate({
   // ✔️ Quitar el título evita el encabezado automático de Esri
   title: '',
@@ -342,7 +340,7 @@ const restCaribSurveyPercepcionCafe = new PopupTemplate({
         } else {
           return "Código desconocido: " + cod;
         }
-      `
+      `,
     },
     {
       name: 'fechaHoraFormateada',
@@ -358,7 +356,7 @@ const restCaribSurveyPercepcionCafe = new PopupTemplate({
         var hora = Text(f, 'HH');
         var minuto = Text(f, 'mm');
         return dia + "/" + mes + "/" + anio + " " + hora + ":" + minuto;
-      `
+      `,
     },
     {
       name: 'fechaHoraFormateadaEnvio',
@@ -374,84 +372,84 @@ const restCaribSurveyPercepcionCafe = new PopupTemplate({
         var hora = Text(f, 'HH');
         var minuto = Text(f, 'mm');
         return dia + "/" + mes + "/" + anio + " " + hora + ":" + minuto;
-      `
-    }
+      `,
+    },
   ],
   content: [
     {
       type: 'text',
-      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Nro PTA: {nro_pta}</div>`
+      text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">Nro PTA: {nro_pta}</div>`,
     },
     {
       type: 'text',
-      text: `<div style="margin-top: 8px;"><b><font>Técnico:</font></b> {expression/nombreTecnico}</div>`
+      text: `<div style="margin-top: 8px;"><b><font>Técnico:</font></b> {expression/nombreTecnico}</div>`,
     },
     {
       type: 'text',
-      text: `<div><b><font>Fecha de monitoreo:</font></b> {expression/fechaHoraFormateada}</div>`
+      text: `<div><b><font>Fecha de monitoreo:</font></b> {expression/fechaHoraFormateada}</div>`,
     },
     {
       type: 'text',
-      text: `<div><b><font>Fecha de Envío:</font></b> {expression/fechaHoraFormateadaEnvio}</div>`
+      text: `<div><b><font>Fecha de Envío:</font></b> {expression/fechaHoraFormateadaEnvio}</div>`,
     },
     {
-      type: 'attachments' // ✔️ Galería automática de imágenes
-    }
-  ]
+      type: 'attachments', // ✔️ Galería automática de imágenes
+    },
+  ],
 });
 const cafeRenderer = new SimpleRenderer({
   symbol: new SimpleMarkerSymbol({
-    color: [255, 0, 0, 0.8],      // rojo
+    color: [255, 0, 0, 0.8], // rojo
     outline: { color: [0, 0, 0], width: 1 },
     size: 10,
-    style: "circle"
-  })
+    style: 'circle',
+  }),
 });
 const recopilacionRenderer = new SimpleRenderer({
   symbol: new SimpleMarkerSymbol({
-    color: [139, 69, 19, 0.9],   // café sólido
+    color: [139, 69, 19, 0.9], // café sólido
     outline: {
       color: [255, 255, 255, 1], // borde blanco como GPS
-      width: 1
+      width: 1,
     },
     size: 12,
-    style: "circle"
-  })
+    style: 'circle',
+  }),
 });
 const restCaribRecopilacion = new PopupTemplate({
-  title: "Ficha de Recopilación",
-  outFields: ["*"],
+  title: 'Ficha de Recopilación',
+  outFields: ['*'],
   content: [
     {
-      type: "text",
+      type: 'text',
       text: `<div style="text-align: center; font-weight: bold; font-size: 16px;">
                PARTICIPANTE: {nombre_participante}
-             </div>`
+             </div>`,
     },
     {
-      type: "fields",
+      type: 'fields',
       fieldInfos: [
         {
-          fieldName: "dni_participante",
-          label: "DNI del participante",
-          visible: true
+          fieldName: 'dni_participante',
+          label: 'DNI del participante',
+          visible: true,
         },
         {
-          fieldName: "objectid",
-          label: "ID interno",
-          visible: false
+          fieldName: 'objectid',
+          label: 'ID interno',
+          visible: false,
         },
         {
-          fieldName: "globalid",
-          label: "ID global",
-          visible: false
-        }
-      ]
+          fieldName: 'globalid',
+          label: 'ID global',
+          visible: false,
+        },
+      ],
     },
     {
-      type: "attachments"
-    }
-  ]
+      type: 'attachments',
+    },
+  ],
 });
 
 @Injectable({
@@ -460,77 +458,20 @@ const restCaribRecopilacion = new PopupTemplate({
 export class GeovisorSharedService {
   public mapa = new Map({ basemap: 'satellite' });
   public view: MapView | null = null;
-  private highlightLayer = new GraphicsLayer({ id: "highlight-overlaps" });
-  private overlaps: __esri.Graphic[] = [];
-
-
-  private handleResultModal(overlapsCount: number, capaBTitle: string): void {
-    let modal = document.getElementById("resultado-modal") as HTMLDivElement | null;
-    if (!modal) {
-      modal = document.createElement("div");
-      modal.id = "resultado-modal";
-      modal.className = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[10002]";
-      modal.innerHTML = `
-        <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
-            <h2 class="text-lg font-bold mb-4">Resultado del análisis</h2>
-            <p id="modal-message" class="mb-4 text-gray-700"></p>
-            <div class="flex justify-center gap-2">
-                <button id="modal-export" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">Exportar</button>
-                <button id="modal-close" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Cerrar</button>
-            </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-    }
-
-    const modalMessage = modal.querySelector<HTMLElement>("#modal-message");
-    if (modalMessage) {
-      modalMessage.textContent = overlapsCount > 0
-        ? `✅ Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.`
-        : `✅ No se encontraron superposiciones en la capa seleccionada.`;
-    }
-
-    const closeBtn = modal.querySelector<HTMLButtonElement>("#modal-close");
-    if (closeBtn) {
-      const prev = (modal as any).__closeHandler as EventListener | undefined;
-      if (prev) closeBtn.removeEventListener("click", prev);
-      const handler = () => {
-        modal!.style.display = "none";
-        this.highlightLayer.removeAll();
-        this.overlaps = [];
-      };
-      (modal as any).__closeHandler = handler;
-      closeBtn.addEventListener("click", handler);
-    }
-
-    // Clic en backdrop
-    const prevBackdrop = (modal as any).__backdropHandler as EventListener | undefined;
-    if (prevBackdrop) modal.removeEventListener("click", prevBackdrop);
-    const backdropHandler = (evt: MouseEvent) => {
-      if (evt.target === modal) {
-        modal!.style.display = "none";
-        this.highlightLayer.removeAll();
-        this.overlaps = [];
-      }
-    };
-    (modal as any).__backdropHandler = backdropHandler;
-    modal.addEventListener("click", backdropHandler);
-
-    modal.style.display = "flex";
-  }
+  private highlightLayer = new GraphicsLayer({ id: 'highlight-overlaps' });
 
   // Método auxiliar para mostrar los mensajes toast.
   private showToast(
     mensaje: string,
-    tipo: "success" | "error" = "success",
+    tipo: 'success' | 'error' = 'success',
     autoHide: boolean = true
   ): void {
-    let toast = document.getElementById("toast");
+    let toast = document.getElementById('toast');
     if (!toast) {
-      toast = document.createElement("div");
-      toast.id = "toast";
-      toast.style.opacity = "0";
-      toast.style.zIndex = "10000";
+      toast = document.createElement('div');
+      toast.id = 'toast';
+      toast.style.opacity = '0';
+      toast.style.zIndex = '10000';
       document.body.appendChild(toast);
     }
     toast!.innerHTML = `
@@ -542,33 +483,38 @@ export class GeovisorSharedService {
     toast!.className = `
       fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
       px-4 py-2 rounded shadow text-white
-      ${tipo === "success" ? "bg-green-600" : "bg-red-600"}
+      ${tipo === 'success' ? 'bg-green-600' : 'bg-red-600'}
       text-center
       transition-opacity duration-500
     `;
-    toast!.style.opacity = "1";
+    toast!.style.opacity = '1';
 
     if (autoHide) {
-      setTimeout(() => (toast!.style.opacity = "0"), 10000);
+      setTimeout(() => (toast!.style.opacity = '0'), 10000);
     }
-    document.getElementById("toast-close")?.addEventListener("click", () => {
-      toast!.style.opacity = "0";
+    document.getElementById('toast-close')?.addEventListener('click', () => {
+      toast!.style.opacity = '0';
     });
   }
 
   //*SERVICIO SISCOD-DEVIDA
-  public restApiDevida = 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer';
+  public restApiDevida =
+    'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer';
   public restCaribSurvey = {
-    serviceBase: 'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/ArcGIS/rest/services',
+    serviceBase:
+      'https://services8.arcgis.com/tPY1NaqA2ETpJ86A/ArcGIS/rest/services',
     capas: {
-      infraestructura: 'FICHA_DE_MONITOREO_TIPOLOGÍA_INFRAESTRUCTURA_vista/FeatureServer/0',
-      cacao: 'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_–_PTA_DEVIDA_vista/FeatureServer/0',
+      infraestructura:
+        'FICHA_DE_MONITOREO_TIPOLOGÍA_INFRAESTRUCTURA_vista/FeatureServer/0',
+      cacao:
+        'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_–_PTA_DEVIDA_vista/FeatureServer/0',
       cafe: 'CUESTIONARIO_DE_PERCEPCION_DE_LA_FAMILIA_%E2%80%93_CAFE_vista/FeatureServer/0',
       registroForestal: 'REGISTRO_FORESTAL_vista/FeatureServer/0',
       medidasAmbientales: 'MEDIDAS_AMBIENTALES_vista/FeatureServer/0',
-      recopilacion: 'survey123_b76b6ab3a7fa403384473a05b7ecce49_results/FeatureServer/0'
-    }
-  }
+      recopilacion:
+        'survey123_b76b6ab3a7fa403384473a05b7ecce49_results/FeatureServer/0',
+    },
+  };
   public layers: LayerConfig[] = [
     //* (DEVIDA)
     {
@@ -589,9 +535,9 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-          popupTemplate: popupPoligonoCultivo
-        }
-      ]
+          popupTemplate: popupPoligonoCultivo,
+        },
+      ],
     },
     //* (SERFOR)
     {
@@ -611,8 +557,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'map-image',
@@ -632,8 +578,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'map-image',
@@ -653,8 +599,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'map-image',
@@ -674,8 +620,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'map-image',
@@ -695,8 +641,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'feature',
@@ -716,8 +662,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'map-image',
@@ -738,8 +684,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     //*(LIMITES POLITICOS)
     {
@@ -760,8 +706,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'map-image',
@@ -781,8 +727,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'map-image',
@@ -802,8 +748,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     {
       type: 'map-image',
@@ -824,8 +770,8 @@ export class GeovisorSharedService {
           labelsVisible: true,
           minScale: 0,
           maxScale: 0,
-        }
-      ]
+        },
+      ],
     },
     /*     {
           type: 'feature',
@@ -869,17 +815,24 @@ export class GeovisorSharedService {
           title: layerConfig.title,
           visible: layerConfig.visible,
         };
-        if (layerConfig.popupTemplate) layerOptions.popupTemplate = layerConfig.popupTemplate;
+        if (layerConfig.popupTemplate)
+          layerOptions.popupTemplate = layerConfig.popupTemplate;
         if (layerConfig.renderer) layerOptions.renderer = layerConfig.renderer;
-        if (layerConfig.labelingInfo) layerOptions.labelingInfo = layerConfig.labelingInfo;
+        if (layerConfig.labelingInfo)
+          layerOptions.labelingInfo = layerConfig.labelingInfo;
         if (layerConfig.labelsVisible !== undefined) {
           layerOptions.labelsVisible = layerConfig.labelsVisible;
         }
-        if (layerConfig.outFields) layerOptions.outFields = layerConfig.outFields;
-        if (layerConfig.maxScale !== undefined) layerOptions.maxScale = layerConfig.maxScale;
-        if (layerConfig.minScale !== undefined) layerOptions.minScale = layerConfig.minScale;
-        if (layerConfig.featureReduction) layerOptions.featureReduction = layerConfig.featureReduction;
-        if (layerConfig.opacity !== undefined) layerOptions.opacity = layerConfig.opacity;
+        if (layerConfig.outFields)
+          layerOptions.outFields = layerConfig.outFields;
+        if (layerConfig.maxScale !== undefined)
+          layerOptions.maxScale = layerConfig.maxScale;
+        if (layerConfig.minScale !== undefined)
+          layerOptions.minScale = layerConfig.minScale;
+        if (layerConfig.featureReduction)
+          layerOptions.featureReduction = layerConfig.featureReduction;
+        if (layerConfig.opacity !== undefined)
+          layerOptions.opacity = layerConfig.opacity;
         layer = new FeatureLayer(layerOptions);
       } else if (isMapImage) {
         // 🔹 Es un MapImageLayer
@@ -889,9 +842,12 @@ export class GeovisorSharedService {
           visible: layerConfig.visible,
           opacity: layerConfig.opacity ?? 1,
         };
-        if (layerConfig.minScale !== undefined) layerOptions.minScale = layerConfig.minScale;
-        if (layerConfig.maxScale !== undefined) layerOptions.maxScale = layerConfig.maxScale;
-        if (layerConfig.sublayers) layerOptions.sublayers = layerConfig.sublayers;
+        if (layerConfig.minScale !== undefined)
+          layerOptions.minScale = layerConfig.minScale;
+        if (layerConfig.maxScale !== undefined)
+          layerOptions.maxScale = layerConfig.maxScale;
+        if (layerConfig.sublayers)
+          layerOptions.sublayers = layerConfig.sublayers;
         layer = new MapImageLayer(layerOptions);
       } else {
         // 🔹 Es un WebTileLayer
@@ -899,7 +855,7 @@ export class GeovisorSharedService {
           urlTemplate: layerConfig.url,
           title: layerConfig.title,
           visible: layerConfig.visible,
-          opacity: layerConfig.opacity ?? 1
+          opacity: layerConfig.opacity ?? 1,
         });
       }
       this.mapa.add(layer);
@@ -909,7 +865,7 @@ export class GeovisorSharedService {
     this.view = new MapView({
       container: mapViewEl.nativeElement,
       map: this.mapa,
-      center: [-74.00000, -10.00000],
+      center: [-74.0, -10.0],
       zoom: 6,
       rotation: 0,
       constraints: {
@@ -923,30 +879,32 @@ export class GeovisorSharedService {
       },
     });
 
-    this.mapa.layers.on("after-add", (event) => {
+    this.mapa.layers.on('after-add', (event) => {
       const lyr = event.item;
-      console.log("Nueva capa agregada:", lyr.title || lyr.id);
+      console.log('Nueva capa agregada:', lyr.title || lyr.id);
 
       // Forzar carga interna de la capa o sublayer
-      if (lyr.type === "feature") {
-        (lyr as __esri.FeatureLayer).load().then(() => this.actualizarSelectCapas());
-      } else if (lyr.type === "map-image") {
-        (lyr as __esri.MapImageLayer).sublayers?.forEach(sub => {
-          (sub as unknown as __esri.FeatureLayer).load().then(() => this.actualizarSelectCapas());
+      if (lyr.type === 'feature') {
+        (lyr as __esri.FeatureLayer)
+          .load()
+          .then(() => this.actualizarSelectCapas());
+      } else if (lyr.type === 'map-image') {
+        (lyr as __esri.MapImageLayer).sublayers?.forEach((sub) => {
+          (sub as unknown as __esri.FeatureLayer)
+            .load()
+            .then(() => this.actualizarSelectCapas());
         });
       }
     });
 
-
-
     //*ESCALA DEL MAPA
     this.view.when(() => {
       this.actualizarSelectCapas();
-      this.mapa.layers.on("change", () => {
+      this.mapa.layers.on('change', () => {
         this.actualizarSelectCapas();
       });
       reactiveUtils.watch(
-        () => this.view!.scale,   // <- aquí el "!" le dice a TS que no es null
+        () => this.view!.scale, // <- aquí el "!" le dice a TS que no es null
         (scale) => {
           this.scale = this.formatScale(scale);
         }
@@ -956,14 +914,14 @@ export class GeovisorSharedService {
     const buscaCapasDEVIDA = [
       {
         layer: new FeatureLayer({
-          url: `${this.restApiDevida}/0`
+          url: `${this.restApiDevida}/0`,
         }),
-        searchFields: ["dni", "nombres"],
-        displayField: "nombres",
+        searchFields: ['dni', 'nombres'],
+        displayField: 'nombres',
         exactMatch: true,
-        outFields: ["*"],
-        name: "CULTIVOS",
-        placeholder: "Digite el DNI",
+        outFields: ['*'],
+        name: 'CULTIVOS',
+        placeholder: 'Digite el DNI',
         maxResults: 1,
         maxSuggestions: 20,
         suggestionsEnabled: true,
@@ -971,14 +929,14 @@ export class GeovisorSharedService {
       },
       {
         layer: new FeatureLayer({
-          url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`
+          url: `${this.restCaribSurvey.serviceBase}/${this.restCaribSurvey.capas.recopilacion}`,
         }),
-        searchFields: ["dni_participante", "nombre_participante"],
-        displayField: "nombre_participante",
+        searchFields: ['dni_participante', 'nombre_participante'],
+        displayField: 'nombre_participante',
         exactMatch: true,
-        outFields: ["*"],
-        name: "VISITAS DE MONITOREO",
-        placeholder: "Digite el DNI",
+        outFields: ['*'],
+        name: 'VISITAS DE MONITOREO',
+        placeholder: 'Digite el DNI',
         maxResults: 10,
         maxSuggestions: 10,
         suggestionsEnabled: true,
@@ -986,27 +944,30 @@ export class GeovisorSharedService {
       },
       {
         layer: new FeatureLayer({
-          url: `${this.restApiDevida}/5`
+          url: `${this.restApiDevida}/5`,
         }),
-        searchFields: ["nombre"],
-        displayField: "nombre",
+        searchFields: ['nombre'],
+        displayField: 'nombre',
         exactMatch: false,
-        outFields: ["*"],
-        name: "OFICINA ZONAL",
-        placeholder: "Nombre OZ",
+        outFields: ['*'],
+        name: 'OFICINA ZONAL',
+        placeholder: 'Nombre OZ',
         maxResults: 5,
         maxSuggestions: 5,
         suggestionsEnabled: true,
         minSuggestCharacters: 1,
       },
-    ]
-    const searchElement = document.querySelector("arcgis-search") as any;
+    ];
+    const searchElement = document.querySelector('arcgis-search') as any;
     if (searchElement) {
       searchElement.view = this.view;
       searchElement.sources = buscaCapasDEVIDA; // tus capas personalizadas
     }
 
-    this.view.ui.add(new Zoom({ view: this.view }), { position: 'top-right', index: 1 });
+    this.view.ui.add(new Zoom({ view: this.view }), {
+      position: 'top-right',
+      index: 1,
+    });
     const homeEl = document.createElement('arcgis-home') as any;
     homeEl.autoDestroyDisabled = true; // 👈 evita que se destruya
     homeEl.view = this.view;
@@ -1023,29 +984,29 @@ export class GeovisorSharedService {
       view: this.view,
       content: galleryEl,
       expandTooltip: 'Galería de Mapas Base',
-      expandIcon: 'basemap'
+      expandIcon: 'basemap',
     });
     this.view.ui.add(expand, { position: 'top-right', index: 4 });
 
     //*Funcion para importar Data (GeoJson)-Widget
     // --- Crear contenedor del widget ---
-    const uploadEl = document.createElement("div");
-    uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
+    const uploadEl = document.createElement('div');
+    uploadEl.className = 'file-upload-widget p-2 bg-white rounded shadow';
 
     // --- Crear input de archivos ---
-    const inputEl = document.createElement("input");
-    inputEl.type = "file";
-    inputEl.accept = ".json,.geojson,.csv"; // solo los formatos permitidos
-    inputEl.style.cursor = "pointer";
-    inputEl.className = "border rounded p-1";
+    const inputEl = document.createElement('input');
+    inputEl.type = 'file';
+    inputEl.accept = '.json,.geojson,.csv'; // solo los formatos permitidos
+    inputEl.style.cursor = 'pointer';
+    inputEl.className = 'border rounded p-1';
 
     // Conectar evento change
-    inputEl.addEventListener("change", (evt: Event) => {
+    inputEl.addEventListener('change', (evt: Event) => {
       const target = evt.target as HTMLInputElement;
       const file = target.files?.[0];
       if (file) {
         this.dataImport(file).then(() => {
-          target.value = ""; // limpiar input después de cargar
+          target.value = ''; // limpiar input después de cargar
         });
       }
     });
@@ -1056,8 +1017,8 @@ export class GeovisorSharedService {
     const expanduploadEl = new Expand({
       view: this.view,
       content: uploadEl,
-      expandTooltip: "Cargar archivo",
-      expandIcon: "upload"
+      expandTooltip: 'Cargar archivo',
+      expandIcon: 'upload',
     });
 
     // Añadir el widget a la vista
@@ -1068,10 +1029,10 @@ export class GeovisorSharedService {
       if (!expanduploadEl.container) return; // verificar que exista
 
       if (window.innerWidth < 768) {
-        expanduploadEl.container.style.display = "none"; // ocultar en móviles
+        expanduploadEl.container.style.display = 'none'; // ocultar en móviles
         expanduploadEl.collapse(); // asegurar que esté cerrado
       } else {
-        expanduploadEl.container.style.display = "block"; // mostrar en desktop
+        expanduploadEl.container.style.display = 'block'; // mostrar en desktop
       }
     }
 
@@ -1079,34 +1040,36 @@ export class GeovisorSharedService {
     toggleUploadWidget();
 
     // Escuchar cambios de tamaño de pantalla
-    window.addEventListener("resize", toggleUploadWidget);
+    window.addEventListener('resize', toggleUploadWidget);
 
     //*Fin de Funcion para importar Data (GeoJson)-Widget
     // --- Crear contenedor del widget ---
-    const uploadEl6 = document.createElement("div");
-    uploadEl6.className = "file-upload-widget p-2 bg-white rounded shadow";
+    const uploadEl6 = document.createElement('div');
+    uploadEl6.className = 'file-upload-widget p-2 bg-white rounded shadow';
 
     // Título
-    const titleEl = document.createElement("div");
-    titleEl.textContent = "Selecciona capas para superposición:";
-    titleEl.className = "mb-2 font-semibold";
+    const titleEl = document.createElement('div');
+    titleEl.textContent = 'Selecciona capas para superposición:';
+    titleEl.className = 'mb-2 font-semibold';
     uploadEl6.appendChild(titleEl);
 
     // Select multiple
-    const selectEl = document.createElement("select");
+    const selectEl = document.createElement('select');
     selectEl.multiple = true;
-    selectEl.className = "w-full p-1 border rounded mb-2";
+    selectEl.className = 'w-full p-1 border rounded mb-2';
     uploadEl6.appendChild(selectEl);
 
     // Botón analizar
-    const buttonEl = document.createElement("button");
-    buttonEl.textContent = "🔎 Analizar superposición";
+    const buttonEl = document.createElement('button');
+    buttonEl.textContent = '🔎 Analizar superposición';
     buttonEl.className = `
-        w-full px-4 py-2
+        px-4 py-1
         bg-blue-600 hover:bg-blue-700
         text-white font-semibold rounded
-        text-sm
+        text-base
         transition-colors
+        mx-auto
+        block
       `;
     uploadEl6.appendChild(buttonEl);
 
@@ -1115,21 +1078,22 @@ export class GeovisorSharedService {
     this.mapa.layers.forEach((lyr) => {
       const layerType = (lyr as any).type;
 
-      if (layerType === "feature" && lyr.visible) {
+      if (layerType === 'feature' && lyr.visible) {
         capasVisibles.push(lyr as __esri.FeatureLayer);
-        const opt = document.createElement("option");
+        const opt = document.createElement('option');
         opt.value = lyr.id;
         opt.text = (lyr as any).title || (lyr as any).name || lyr.id;
         selectEl.appendChild(opt);
-      } else if (layerType === "map-image" && lyr.visible) {
+      } else if (layerType === 'map-image' && lyr.visible) {
         const mapImg = lyr as __esri.MapImageLayer;
         mapImg.sublayers?.forEach((sub) => {
           if (sub.visible && 'queryFeatures' in sub) {
             const fl = sub as unknown as __esri.FeatureLayer;
             capasVisibles.push(fl);
-            const opt = document.createElement("option");
+            const opt = document.createElement('option');
             opt.value = fl.id.toString();
-            opt.text = (sub as any).title || (sub as any).name || `${mapImg.title}`;
+            opt.text =
+              (sub as any).title || (sub as any).name || `${mapImg.title}`;
             selectEl.appendChild(opt);
           }
         });
@@ -1141,7 +1105,7 @@ export class GeovisorSharedService {
       try {
         await this.analizarSuperposicion();
       } catch (err) {
-        console.error("Error en el análisis:", err);
+        console.error('Error en el análisis:', err);
       }
     };
 
@@ -1149,20 +1113,20 @@ export class GeovisorSharedService {
     const expandAnalisis = new Expand({
       view: this.view,
       content: uploadEl6,
-      expandTooltip: "Analizar superposición",
-      expandIcon: "analysis"
+      expandTooltip: 'Analizar superposición',
+      expandIcon: 'analysis',
     });
-    this.view.ui.add(expandAnalisis, { position: "top-right", index: 6 });
+    this.view.ui.add(expandAnalisis, { position: 'top-right', index: 6 });
 
     // --- Función para ocultar o mostrar widget en móviles ---
     function toggleAnalisisWidget() {
       if (!expandAnalisis.container) return;
 
       if (window.innerWidth < 768) {
-        expandAnalisis.container.style.display = "none"; // ocultar en móvil
+        expandAnalisis.container.style.display = 'none'; // ocultar en móvil
         expandAnalisis.collapse(); // asegurar que esté cerrado
       } else {
-        expandAnalisis.container.style.display = "block"; // mostrar en desktop
+        expandAnalisis.container.style.display = 'block'; // mostrar en desktop
       }
     }
 
@@ -1170,14 +1134,20 @@ export class GeovisorSharedService {
     toggleAnalisisWidget();
 
     // Escuchar cambios de tamaño de pantalla
-    window.addEventListener("resize", toggleAnalisisWidget);
-    this.legend = new Legend({ view: this.view, container: document.createElement('div') });
+    window.addEventListener('resize', toggleAnalisisWidget);
+    this.legend = new Legend({
+      view: this.view,
+      container: document.createElement('div'),
+    });
     const ccWidget = new CoordinateConversion({ view: this.view });
     if (this.view) {
       this.view.when(() => {
         this.view!.on('pointer-move', (event) => {
           // Convertir posición de pantalla a mapa
-          const point = this.view!.toMap({ x: event.x, y: event.y }) as __esri.Point;
+          const point = this.view!.toMap({
+            x: event.x,
+            y: event.y,
+          }) as __esri.Point;
 
           if (point?.latitude != null && point?.longitude != null) {
             this.updateCoordinates(point.latitude, point.longitude);
@@ -1188,7 +1158,9 @@ export class GeovisorSharedService {
     return this.view.when();
   } //*FIN <InitializeMap>
   destroyMap(): void {
-    if (this.view) { this.view.container = null }
+    if (this.view) {
+      this.view.container = null;
+    }
   }
   //*Inicio del Toogle
   toggleLayerVisibility(layerTitle: string, visibility: boolean): void {
@@ -1216,36 +1188,58 @@ export class GeovisorSharedService {
     this.utmZone = `${zoneNumber} ${utmBand}`;
     const utm = latLonToUTM(lat, lon);
     this.utmZone = `${utm.zoneNumber} ${utm.zoneLetter}`;
-    this.utmEast = `${utm.easting.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m`;
-    this.utmNorth = `${utm.northing.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} m`;
+    this.utmEast = `${utm.easting.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} m`;
+    this.utmNorth = `${utm.northing.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })} m`;
     function latLonToUTM(lat: number, lon: number) {
       const a = 6378137.0;
       const f = 1 / 298.257223563;
       const k0 = 0.9996;
       const zoneNumber = Math.floor((lon + 180) / 6) + 1;
       const lonOrigin = (zoneNumber - 1) * 6 - 180 + 3;
-      const lonOriginRad = lonOrigin * Math.PI / 180;
-      const latRad = lat * Math.PI / 180;
-      const lonRad = lon * Math.PI / 180;
+      const lonOriginRad = (lonOrigin * Math.PI) / 180;
+      const latRad = (lat * Math.PI) / 180;
+      const lonRad = (lon * Math.PI) / 180;
       const e = Math.sqrt(f * (2 - f));
       const N = a / Math.sqrt(1 - Math.pow(e * Math.sin(latRad), 2));
       const T = Math.tan(latRad) ** 2;
-      const C = (e * e) / (1 - e * e) * Math.cos(latRad) ** 2;
+      const C = ((e * e) / (1 - e * e)) * Math.cos(latRad) ** 2;
       const A = Math.cos(latRad) * (lonRad - lonOriginRad);
-      const M = a * (
-        (1 - e * e / 4 - 3 * e ** 4 / 64 - 5 * e ** 6 / 256) * latRad
-        - (3 * e * e / 8 + 3 * e ** 4 / 32 + 45 * e ** 6 / 1024) * Math.sin(2 * latRad)
-        + (15 * e ** 4 / 256 + 45 * e ** 6 / 1024) * Math.sin(4 * latRad)
-        - (35 * e ** 6 / 3072) * Math.sin(6 * latRad)
-      );
-      const easting = k0 * N * (
-        A + (1 - T + C) * A ** 3 / 6
-        + (5 - 18 * T + T ** 2 + 72 * C - 58 * (e * e / (1 - e * e))) * A ** 5 / 120
-      ) + 500000;
-      let northing = k0 * (M + N * Math.tan(latRad) * (
-        A ** 2 / 2 + (5 - T + 9 * C + 4 * C ** 2) * A ** 4 / 24
-        + (61 - 58 * T + T ** 2 + 600 * C - 330 * (e * e / (1 - e * e))) * A ** 6 / 720
-      ));
+      const M =
+        a *
+        ((1 - (e * e) / 4 - (3 * e ** 4) / 64 - (5 * e ** 6) / 256) * latRad -
+          ((3 * e * e) / 8 + (3 * e ** 4) / 32 + (45 * e ** 6) / 1024) *
+          Math.sin(2 * latRad) +
+          ((15 * e ** 4) / 256 + (45 * e ** 6) / 1024) * Math.sin(4 * latRad) -
+          ((35 * e ** 6) / 3072) * Math.sin(6 * latRad));
+      const easting =
+        k0 *
+        N *
+        (A +
+          ((1 - T + C) * A ** 3) / 6 +
+          ((5 - 18 * T + T ** 2 + 72 * C - 58 * ((e * e) / (1 - e * e))) *
+            A ** 5) /
+          120) +
+        500000;
+      let northing =
+        k0 *
+        (M +
+          N *
+          Math.tan(latRad) *
+          (A ** 2 / 2 +
+            ((5 - T + 9 * C + 4 * C ** 2) * A ** 4) / 24 +
+            ((61 -
+              58 * T +
+              T ** 2 +
+              600 * C -
+              330 * ((e * e) / (1 - e * e))) *
+              A ** 6) /
+            720));
       if (lat < 0) northing += 10000000;
       const bands = 'CDEFGHJKLMNPQRSTUVWX';
       const index = Math.floor((lat + 80) / 8);
@@ -1264,43 +1258,53 @@ export class GeovisorSharedService {
       maximumFractionDigits: 0,
     });
   }
-  async dataImport(file: File, coordType?: "UTM" | "GEOGRAFICA"): Promise<void> {
+  async dataImport(
+    file: File,
+    coordType?: 'UTM' | 'GEOGRAFICA'
+  ): Promise<void> {
     if (!file || !this.view || !this.mapa) return;
     const fileName = file.name.toLowerCase();
 
-    if (!fileName.endsWith(".json") && !fileName.endsWith(".geojson") && !fileName.endsWith(".csv")) {
-      await this.showModal("Formato no soportado. Solo se permiten archivos .json, .geojson o .csv", "⚠️ Error");
+    if (
+      !fileName.endsWith('.json') &&
+      !fileName.endsWith('.geojson') &&
+      !fileName.endsWith('.csv')
+    ) {
+      await this.showModal(
+        'Formato no soportado. Solo se permiten archivos .json, .geojson o .csv',
+        '⚠️ Error'
+      );
       return;
     }
 
     const utmDefs: Record<string, string> = {
-      "17S": "+proj=utm +zone=17 +south +datum=WGS84 +units=m +no_defs",
-      "18S": "+proj=utm +zone=18 +south +datum=WGS84 +units=m +no_defs",
-      "19S": "+proj=utm +zone=19 +south +datum=WGS84 +units=m +no_defs"
+      '17S': '+proj=utm +zone=17 +south +datum=WGS84 +units=m +no_defs',
+      '18S': '+proj=utm +zone=18 +south +datum=WGS84 +units=m +no_defs',
+      '19S': '+proj=utm +zone=19 +south +datum=WGS84 +units=m +no_defs',
     };
-    const wgs84 = "+proj=longlat +datum=WGS84 +no_defs";
+    const wgs84 = '+proj=longlat +datum=WGS84 +no_defs';
 
     // 👉 reemplazo de prompt por select (tipo coordenadas)
     if (!coordType) {
-      coordType = await this.showSelect<"UTM" | "GEOGRAFICA">(
-        "Seleccione el tipo de coordenadas:",
+      coordType = await this.showSelect<'UTM' | 'GEOGRAFICA'>(
+        'Seleccione el tipo de coordenadas:',
         [
-          { value: "UTM", label: "UTM" },
-          { value: "GEOGRAFICA", label: "GEOGRÁFICA" }
+          { value: 'UTM', label: 'UTM' },
+          { value: 'GEOGRAFICA', label: 'GEOGRÁFICA' },
         ]
       );
       if (!coordType) return;
     }
 
     // 👉 si eligió UTM, pedimos zona con otro select
-    let utmZone: "17S" | "18S" | "19S" | undefined;
-    if (coordType === "UTM") {
-      utmZone = await this.showSelect<"17S" | "18S" | "19S">(
-        "Seleccione la zona UTM:",
+    let utmZone: '17S' | '18S' | '19S' | undefined;
+    if (coordType === 'UTM') {
+      utmZone = await this.showSelect<'17S' | '18S' | '19S'>(
+        'Seleccione la zona UTM:',
         [
-          { value: "17S", label: "17S" },
-          { value: "18S", label: "18S" },
-          { value: "19S", label: "19S" }
+          { value: '17S', label: '17S' },
+          { value: '18S', label: '18S' },
+          { value: '19S', label: '19S' },
         ]
       );
       if (!utmZone) return;
@@ -1315,20 +1319,28 @@ export class GeovisorSharedService {
       if (!geom) return geom;
       const mapCoord = (c: number[]) => reproyectarCoord(c);
       switch (geom.type) {
-        case "Point":
-          return { type: "Point", coordinates: mapCoord(geom.coordinates) };
-        case "LineString":
-        case "MultiPoint":
-          return { type: geom.type, coordinates: geom.coordinates.map(mapCoord) };
-        case "Polygon":
-        case "MultiLineString":
-          return { type: geom.type, coordinates: geom.coordinates.map((ring: any) => ring.map(mapCoord)) };
-        case "MultiPolygon":
+        case 'Point':
+          return { type: 'Point', coordinates: mapCoord(geom.coordinates) };
+        case 'LineString':
+        case 'MultiPoint':
           return {
-            type: "MultiPolygon",
+            type: geom.type,
+            coordinates: geom.coordinates.map(mapCoord),
+          };
+        case 'Polygon':
+        case 'MultiLineString':
+          return {
+            type: geom.type,
+            coordinates: geom.coordinates.map((ring: any) =>
+              ring.map(mapCoord)
+            ),
+          };
+        case 'MultiPolygon':
+          return {
+            type: 'MultiPolygon',
             coordinates: geom.coordinates.map((poly: any) =>
               poly.map((ring: any) => ring.map(mapCoord))
-            )
+            ),
           };
         default:
           return geom;
@@ -1339,7 +1351,7 @@ export class GeovisorSharedService {
       let geojson: any;
       let layer: __esri.Layer | null = null;
 
-      if (fileName.endsWith(".csv")) {
+      if (fileName.endsWith('.csv')) {
         const blobUrl = URL.createObjectURL(file);
         layer = new CSVLayer({ url: blobUrl, title: file.name });
       } else {
@@ -1348,25 +1360,35 @@ export class GeovisorSharedService {
       }
 
       if (!layer && geojson) {
-        const validFeatures = geojson.features?.filter((f: any) => f.geometry) || [];
+        const validFeatures =
+          geojson.features?.filter((f: any) => f.geometry) || [];
         if (validFeatures.length === 0) {
-          await this.showModal("El archivo no contiene geometrías válidas para mostrar en el mapa.", "⚠️ Error");
+          await this.showModal(
+            'El archivo no contiene geometrías válidas para mostrar en el mapa.',
+            '⚠️ Error'
+          );
           return;
         }
 
         // --- contar polígonos ---
         const polygonCount = validFeatures.filter(
-          (f: any) => f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon"
+          (f: any) =>
+            f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'
         ).length;
 
         const featuresProcesadas = validFeatures.map((f: any) => ({
           ...f,
-          geometry: reproyectarGeoJSONGeometry(f.geometry)
+          geometry: reproyectarGeoJSONGeometry(f.geometry),
         }));
 
         const blob = new Blob(
-          [JSON.stringify({ type: "FeatureCollection", features: featuresProcesadas })],
-          { type: "application/json" }
+          [
+            JSON.stringify({
+              type: 'FeatureCollection',
+              features: featuresProcesadas,
+            }),
+          ],
+          { type: 'application/json' }
         );
         const blobUrl = URL.createObjectURL(blob);
 
@@ -1374,33 +1396,42 @@ export class GeovisorSharedService {
         let renderer: any;
         if (!sampleGeom) {
           renderer = undefined;
-        } else if (sampleGeom.type === "Point" || sampleGeom.type === "MultiPoint") {
+        } else if (
+          sampleGeom.type === 'Point' ||
+          sampleGeom.type === 'MultiPoint'
+        ) {
           renderer = {
-            type: "simple",
+            type: 'simple',
             symbol: {
-              type: "simple-marker",
+              type: 'simple-marker',
               color: [0, 128, 255, 0.8],
               size: 8,
-              outline: { color: [0, 0, 0, 0.8], width: 1 }
-            }
+              outline: { color: [0, 0, 0, 0.8], width: 1 },
+            },
           };
-        } else if (sampleGeom.type === "LineString" || sampleGeom.type === "MultiLineString") {
+        } else if (
+          sampleGeom.type === 'LineString' ||
+          sampleGeom.type === 'MultiLineString'
+        ) {
           renderer = {
-            type: "simple",
+            type: 'simple',
             symbol: {
-              type: "simple-line",
+              type: 'simple-line',
               color: [0, 255, 0, 0.8],
-              width: 2
-            }
+              width: 2,
+            },
           };
-        } else if (sampleGeom.type === "Polygon" || sampleGeom.type === "MultiPolygon") {
+        } else if (
+          sampleGeom.type === 'Polygon' ||
+          sampleGeom.type === 'MultiPolygon'
+        ) {
           renderer = {
-            type: "simple",
+            type: 'simple',
             symbol: {
-              type: "simple-fill",
+              type: 'simple-fill',
               color: [0, 0, 255, 0.3],
-              outline: { color: [255, 0, 0, 1], width: 1 }
-            }
+              outline: { color: [255, 0, 0, 1], width: 1 },
+            },
           };
         }
 
@@ -1409,7 +1440,10 @@ export class GeovisorSharedService {
         // --- mostrar cantidad de polígonos ---
         if (polygonCount > 0) {
           console.log(`📌 Se importaron ${polygonCount} polígonos`);
-          await this.showModal(`Se importaron ${polygonCount} polígonos.`, "✅ Importación exitosa");
+          await this.showModal(
+            `Se importaron ${polygonCount} polígonos.`,
+            '✅ Importación exitosa'
+          );
         }
       }
 
@@ -1417,55 +1451,73 @@ export class GeovisorSharedService {
 
       this.mapa.add(layer);
 
-      layer.when(() => {
-        if (layer!.fullExtent && this.view) {
-          this.view.goTo(layer!.fullExtent).catch(err => console.warn("No se pudo hacer zoom a la capa:", err));
-        }
-        this.showModal(`Capa "${file.name}" cargada correctamente.`, "✅ Éxito");
-      }).catch(err => {
-        console.error("Error cargando la capa:", err);
-        this.showModal("Ocurrió un error cargando la capa. Revisa la consola.", "⚠️ Error");
-      });
-
+      layer
+        .when(() => {
+          if (layer!.fullExtent && this.view) {
+            this.view
+              .goTo(layer!.fullExtent)
+              .catch((err) =>
+                console.warn('No se pudo hacer zoom a la capa:', err)
+              );
+          }
+          this.showModal(
+            `Capa "${file.name}" cargada correctamente.`,
+            '✅ Éxito'
+          );
+        })
+        .catch((err) => {
+          console.error('Error cargando la capa:', err);
+          this.showModal(
+            'Ocurrió un error cargando la capa. Revisa la consola.',
+            '⚠️ Error'
+          );
+        });
     } catch (err) {
-      console.error("Error procesando el archivo:", err);
-      this.showModal("Ocurrió un error procesando el archivo. Revisa la consola.", "⚠️ Error");
+      console.error('Error procesando el archivo:', err);
+      this.showModal(
+        'Ocurrió un error procesando el archivo. Revisa la consola.',
+        '⚠️ Error'
+      );
     }
   }
   private showModal(
     message: string,
-    typeOrTitle?: "success" | "error" | "info" | string,
+    typeOrTitle?: 'success' | 'error' | 'info' | string,
     title?: string
   ): Promise<void> {
     return new Promise<void>((resolve) => {
       // mapa de iconos y títulos por defecto
-      const icons: Record<"success" | "error" | "info", string> = {
-        success: "✅",
-        error: "⚠️",
-        info: "ℹ️"
+      const icons: Record<'success' | 'error' | 'info', string> = {
+        success: '✅',
+        error: '⚠️',
+        info: 'ℹ️',
       };
-      const defaultTitles: Record<"success" | "error" | "info", string> = {
-        success: "Éxito",
-        error: "Error",
-        info: "Aviso"
+      const defaultTitles: Record<'success' | 'error' | 'info', string> = {
+        success: 'Éxito',
+        error: 'Error',
+        info: 'Aviso',
       };
 
       // determinar type y título final según lo que se pase
-      let type: "success" | "error" | "info" = "info";
+      let type: 'success' | 'error' | 'info' = 'info';
       let finalTitle: string | undefined = title;
 
-      if (typeof typeOrTitle === "string") {
+      if (typeof typeOrTitle === 'string') {
         // si es exactamente uno de los tipos
-        if (typeOrTitle === "success" || typeOrTitle === "error" || typeOrTitle === "info") {
+        if (
+          typeOrTitle === 'success' ||
+          typeOrTitle === 'error' ||
+          typeOrTitle === 'info'
+        ) {
           type = typeOrTitle;
-        } else if (typeOrTitle.includes("✅")) {
-          type = "success";
+        } else if (typeOrTitle.includes('✅')) {
+          type = 'success';
           finalTitle = typeOrTitle;
-        } else if (typeOrTitle.includes("⚠️")) {
-          type = "error";
+        } else if (typeOrTitle.includes('⚠️')) {
+          type = 'error';
           finalTitle = typeOrTitle;
-        } else if (typeOrTitle.includes("ℹ️")) {
-          type = "info";
+        } else if (typeOrTitle.includes('ℹ️')) {
+          type = 'info';
           finalTitle = typeOrTitle;
         } else {
           // si no contiene emoji ni es literal tipo, lo tratamos como título personalizado
@@ -1476,8 +1528,9 @@ export class GeovisorSharedService {
       const icon = icons[type];
       const header = finalTitle || defaultTitles[type];
 
-      const wrapper = document.createElement("div");
-      wrapper.className = "modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
+      const wrapper = document.createElement('div');
+      wrapper.className =
+        'modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
 
       wrapper.innerHTML = `
         <div class="bg-white rounded-lg shadow-lg p-6 w-96">
@@ -1493,29 +1546,31 @@ export class GeovisorSharedService {
       `;
       document.body.appendChild(wrapper);
 
-      const btn = wrapper.querySelector<HTMLButtonElement>("#modalOk")!;
+      const btn = wrapper.querySelector<HTMLButtonElement>('#modalOk')!;
       btn.onclick = () => {
         wrapper.remove();
         resolve();
       };
 
-
-
       // opcional: cerrar con ESC
       const onKey = (e: KeyboardEvent) => {
-        if (e.key === "Escape") {
+        if (e.key === 'Escape') {
           wrapper.remove();
-          window.removeEventListener("keydown", onKey);
+          window.removeEventListener('keydown', onKey);
           resolve();
         }
       };
-      window.addEventListener("keydown", onKey);
+      window.addEventListener('keydown', onKey);
     });
   }
-  private showSelect<T extends string>(label: string, options: { value: T, label: string }[]): Promise<T | undefined> {
+  private showSelect<T extends string>(
+    label: string,
+    options: { value: T; label: string }[]
+  ): Promise<T | undefined> {
     return new Promise<T | undefined>((resolve) => {
-      const wrapper = document.createElement("div");
-      wrapper.className = "modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50";
+      const wrapper = document.createElement('div');
+      wrapper.className =
+        'modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50';
 
       wrapper.innerHTML = `
         <div class="bg-white rounded-lg shadow-lg p-6 w-96">
@@ -1526,15 +1581,17 @@ export class GeovisorSharedService {
           <p class="mb-2">${label}</p>
           <select id="modalSelect" class="p-2 border rounded w-full mb-4">
             <option value="">-- Seleccione --</option>
-            ${options.map(o => `<option value="${o.value}">${o.label}</option>`).join("")}
+            ${options
+          .map((o) => `<option value="${o.value}">${o.label}</option>`)
+          .join('')}
           </select>
           <button id="modalOk" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Aceptar</button>
         </div>
       `;
       document.body.appendChild(wrapper);
 
-      const select = wrapper.querySelector<HTMLSelectElement>("#modalSelect")!;
-      const btn = wrapper.querySelector<HTMLButtonElement>("#modalOk")!;
+      const select = wrapper.querySelector<HTMLSelectElement>('#modalSelect')!;
+      const btn = wrapper.querySelector<HTMLButtonElement>('#modalOk')!;
 
       btn.onclick = () => {
         const value = select.value as T;
@@ -1543,9 +1600,7 @@ export class GeovisorSharedService {
       };
     });
   }
-
   // Funcion que analiza la superposicion de una capa con la capa BPP
-
   async analizarSuperposicion(): Promise<void> {
     if (!this.view || !this.mapa) return;
     this.highlightLayer.removeAll();
@@ -1591,7 +1646,7 @@ export class GeovisorSharedService {
 
     try {
       // --- Cargar capa SERFOR ---
-      progressText.textContent = "🔹 Cargando capa BBP-SERFOR...";
+      progressText.textContent = "🔹Cargando la capa Bosque Proteccion Permanente (SERFOR)...!";
       const capaSerfor = new FeatureLayer({
         url: "https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer/1"
       });
@@ -1599,7 +1654,7 @@ export class GeovisorSharedService {
 
       const featuresA: __esri.Graphic[] = [];
       const num = 2000;
-      for (let startA = 0;; startA += num) {
+      for (let startA = 0; ; startA += num) {
         const res = await capaSerfor.queryFeatures({
           where: "1=1",
           outFields: ["*"],
@@ -1660,7 +1715,7 @@ export class GeovisorSharedService {
       // --- Cargar features de la capa B ---
       let featuresB: __esri.Graphic[] = [];
       if ("queryFeatures" in capaB) {
-        for (let startB = 0;; startB += num) {
+        for (let startB = 0; ; startB += num) {
           const resB = await (capaB as __esri.FeatureLayer).queryFeatures({
             where: "1=1",
             outFields: ["*"],
@@ -1735,8 +1790,27 @@ export class GeovisorSharedService {
       modal.innerHTML = `
         <div style="background:white;padding:20px;border-radius:8px;max-width:400px;text-align:center;">
           <h2>Resultado del análisis</h2>
-          <p>${overlapsCount > 0 ? `Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.` : `No se encontraron superposiciones.`}</p>
-          <button id="modal-close" style="margin-top:10px;padding:6px 12px;">Cerrar</button>
+          <p>${
+        overlapsCount > 0
+          ? `Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.`
+          : `No se encontraron superposiciones.`
+          }</p>
+          <button id="modal-close"
+              style="
+                margin-top:10px;
+                padding:6px 12px;
+                background-color:#2563EB; /* azul similar a bg-blue-600 */
+                color:white;
+                border:none;
+                border-radius:6px;
+                font-weight:bold;
+                cursor:pointer;
+                transition: background-color 0.3s;
+              "
+              onmouseover="this.style.backgroundColor='#1D4ED8'"
+              onmouseout="this.style.backgroundColor='#2563EB'">
+              Cerrar
+          </button>
         </div>
       `;
       document.body.appendChild(modal);
@@ -1757,43 +1831,46 @@ export class GeovisorSharedService {
     }
   }
 
-
-
-
-
   //Funcion para actualizar las capas del Visor
   actualizarSelectCapas() {
-    const selectEl = document.querySelector<HTMLSelectElement>(".file-upload-widget select");
+    const selectEl = document.querySelector<HTMLSelectElement>(
+      '.file-upload-widget select'
+    );
     if (!selectEl) return;
     // Limpiar opciones existentes
-    selectEl.innerHTML = "";
-    const capasExcluir = ["DISTRITO",
-      "PROVINCIA",
-      "DEPARTAMENTO",
-      "PERU",
-      "OFICINAS ZONALES",
-      "BPP-BOSQUE DE PRODUCCION PERMANENTE",
-      "ANP - AREAS NATURALES PROTEGIDAS",
-      "MONITOREO DEFORESTACION",
-      "COMUNIDADES NATIVAS",
-      "ZA-ZONAS DE AMORTIGUAMIENTO",
-      "ACR-AREAS DE CONSERVACION REGIONAL"
+    selectEl.innerHTML = '';
+    const capasExcluir = [
+      'DISTRITO',
+      'PROVINCIA',
+      'DEPARTAMENTO',
+      'PERU',
+      'OFICINAS ZONALES',
+      'BPP-BOSQUE DE PRODUCCION PERMANENTE',
+      'ANP - AREAS NATURALES PROTEGIDAS',
+      'MONITOREO DEFORESTACION',
+      'COMUNIDADES NATIVAS',
+      'ZA-ZONAS DE AMORTIGUAMIENTO',
+      'ACR-AREAS DE CONSERVACION REGIONAL',
     ];
-    this.mapa.layers.toArray().forEach(lyr => {
-      const tituloLyr = lyr.title?.toUpperCase() || "";
+    this.mapa.layers.toArray().forEach((lyr) => {
+      const tituloLyr = lyr.title?.toUpperCase() || '';
       // Ignorar capas excluidas
       if (capasExcluir.includes(tituloLyr)) return;
-      if (lyr.type === "feature" || lyr.type === "geojson" || lyr.type === "csv") {
+      if (
+        lyr.type === 'feature' ||
+        lyr.type === 'geojson' ||
+        lyr.type === 'csv'
+      ) {
         // Para capas FeatureLayer, CSVLayer o GeoJSONLayer
-        const opt = document.createElement("option");
+        const opt = document.createElement('option');
         opt.value = lyr.id;
         opt.text = lyr.title || lyr.id;
         selectEl.appendChild(opt);
-      } else if (lyr.type === "map-image") {
-        (lyr as __esri.MapImageLayer).sublayers?.forEach(sub => {
-          const tituloSub = (sub as any).title?.toUpperCase() || "";
+      } else if (lyr.type === 'map-image') {
+        (lyr as __esri.MapImageLayer).sublayers?.forEach((sub) => {
+          const tituloSub = (sub as any).title?.toUpperCase() || '';
           if (capasExcluir.includes(tituloSub)) return;
-          const opt = document.createElement("option");
+          const opt = document.createElement('option');
           opt.value = sub.id.toString();
           opt.text = (sub as any).title || `${lyr.title}`;
           selectEl.appendChild(opt);
@@ -1801,6 +1878,4 @@ export class GeovisorSharedService {
       }
     });
   }
-
-
 }
