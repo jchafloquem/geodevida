@@ -39,7 +39,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // ⚡ Aquí inicializamos el mapa SOLO cuando el DOM ya existe
   ngAfterViewInit(): void {
     this._geovisorSharedService.initializeMap(this.mapViewEl).then(() => {
-      console.log('Mapa inicializado correctamente ✅');
+      //console.log('Mapa inicializado correctamente ✅');
     });
 
     this._authStateService.authState$.subscribe(user => {

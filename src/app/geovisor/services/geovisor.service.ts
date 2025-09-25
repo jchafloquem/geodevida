@@ -881,7 +881,7 @@ export class GeovisorSharedService {
 
     this.mapa.layers.on('after-add', (event) => {
       const lyr = event.item;
-      console.log('Nueva capa agregada:', lyr.title || lyr.id);
+      //console.log('Nueva capa agregada:', lyr.title || lyr.id);
 
       // Forzar carga interna de la capa o sublayer
       if (lyr.type === 'feature') {
@@ -1439,7 +1439,7 @@ export class GeovisorSharedService {
 
         // --- mostrar cantidad de polígonos ---
         if (polygonCount > 0) {
-          console.log(`📌 Se importaron ${polygonCount} polígonos`);
+          //console.log(`📌 Se importaron ${polygonCount} polígonos`);
           await this.showModal(
             `Se importaron ${polygonCount} polígonos.`,
             '✅ Importación exitosa'
