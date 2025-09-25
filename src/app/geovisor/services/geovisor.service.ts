@@ -461,6 +461,100 @@ export class GeovisorSharedService {
   public mapa = new Map({ basemap: 'satellite' });
   public view: MapView | null = null;
   private highlightLayer = new GraphicsLayer({ id: "highlight-overlaps" });
+  private overlaps: __esri.Graphic[] = [];
+
+
+  private handleResultModal(overlapsCount: number, capaBTitle: string): void {
+    let modal = document.getElementById("resultado-modal") as HTMLDivElement | null;
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "resultado-modal";
+      modal.className = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[10002]";
+      modal.innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+            <h2 class="text-lg font-bold mb-4">Resultado del análisis</h2>
+            <p id="modal-message" class="mb-4 text-gray-700"></p>
+            <div class="flex justify-center gap-2">
+                <button id="modal-export" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">Exportar</button>
+                <button id="modal-close" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Cerrar</button>
+            </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    const modalMessage = modal.querySelector<HTMLElement>("#modal-message");
+    if (modalMessage) {
+      modalMessage.textContent = overlapsCount > 0
+        ? `✅ Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.`
+        : `✅ No se encontraron superposiciones en la capa seleccionada.`;
+    }
+
+    const closeBtn = modal.querySelector<HTMLButtonElement>("#modal-close");
+    if (closeBtn) {
+      const prev = (modal as any).__closeHandler as EventListener | undefined;
+      if (prev) closeBtn.removeEventListener("click", prev);
+      const handler = () => {
+        modal!.style.display = "none";
+        this.highlightLayer.removeAll();
+        this.overlaps = [];
+      };
+      (modal as any).__closeHandler = handler;
+      closeBtn.addEventListener("click", handler);
+    }
+
+    // Clic en backdrop
+    const prevBackdrop = (modal as any).__backdropHandler as EventListener | undefined;
+    if (prevBackdrop) modal.removeEventListener("click", prevBackdrop);
+    const backdropHandler = (evt: MouseEvent) => {
+      if (evt.target === modal) {
+        modal!.style.display = "none";
+        this.highlightLayer.removeAll();
+        this.overlaps = [];
+      }
+    };
+    (modal as any).__backdropHandler = backdropHandler;
+    modal.addEventListener("click", backdropHandler);
+
+    modal.style.display = "flex";
+  }
+
+  // Método auxiliar para mostrar los mensajes toast.
+  private showToast(
+    mensaje: string,
+    tipo: "success" | "error" = "success",
+    autoHide: boolean = true
+  ): void {
+    let toast = document.getElementById("toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "toast";
+      toast.style.opacity = "0";
+      toast.style.zIndex = "10000";
+      document.body.appendChild(toast);
+    }
+    toast!.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:320px;">
+        <span>${mensaje}</span>
+        <button id="toast-close" style="background:none;border:none;color:white;font-weight:bold;cursor:pointer;">✖</button>
+      </div>
+    `;
+    toast!.className = `
+      fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+      px-4 py-2 rounded shadow text-white
+      ${tipo === "success" ? "bg-green-600" : "bg-red-600"}
+      text-center
+      transition-opacity duration-500
+    `;
+    toast!.style.opacity = "1";
+
+    if (autoHide) {
+      setTimeout(() => (toast!.style.opacity = "0"), 10000);
+    }
+    document.getElementById("toast-close")?.addEventListener("click", () => {
+      toast!.style.opacity = "0";
+    });
+  }
 
   //*SERVICIO SISCOD-DEVIDA
   public restApiDevida = 'https://siscod.devida.gob.pe/server/rest/services/DPM_LIMITES_PIRDAIS/MapServer';
@@ -988,9 +1082,6 @@ export class GeovisorSharedService {
     window.addEventListener("resize", toggleUploadWidget);
 
     //*Fin de Funcion para importar Data (GeoJson)-Widget
-
-
-
     // --- Crear contenedor del widget ---
     const uploadEl6 = document.createElement("div");
     uploadEl6.className = "file-upload-widget p-2 bg-white rounded shadow";
@@ -1011,12 +1102,12 @@ export class GeovisorSharedService {
     const buttonEl = document.createElement("button");
     buttonEl.textContent = "🔎 Analizar superposición";
     buttonEl.className = `
-  w-full px-4 py-2
-  bg-blue-600 hover:bg-blue-700
-  text-white font-semibold rounded
-  text-sm
-  transition-colors
-`;
+        w-full px-4 py-2
+        bg-blue-600 hover:bg-blue-700
+        text-white font-semibold rounded
+        text-sm
+        transition-colors
+      `;
     uploadEl6.appendChild(buttonEl);
 
     // --- Llenar select con capas visibles ---
@@ -1452,111 +1543,63 @@ export class GeovisorSharedService {
       };
     });
   }
+
   // Funcion que analiza la superposicion de una capa con la capa BPP
 
   async analizarSuperposicion(): Promise<void> {
     if (!this.view || !this.mapa) return;
-
     this.highlightLayer.removeAll();
 
     // --- Overlay de carga ---
-    let overlay = document.getElementById("loading-overlay");
+    let overlay = document.getElementById("loading-overlay") as HTMLDivElement | null;
     if (!overlay) {
       overlay = document.createElement("div");
       overlay.id = "loading-overlay";
-      overlay.style.position = "absolute";
-      overlay.style.top = "0";
-      overlay.style.left = "0";
-      overlay.style.width = "100%";
-      overlay.style.height = "100%";
-      overlay.style.backgroundColor = "rgba(0,0,0,0.3)";
-      overlay.style.display = "flex";
-      overlay.style.flexDirection = "column";
-      overlay.style.justifyContent = "center";
-      overlay.style.alignItems = "center";
-      overlay.style.zIndex = "9999";
-      overlay.style.fontSize = "1.2rem";
-      overlay.style.color = "#fff";
-
-      // Spinner + progreso
-      const progressContainer = document.createElement("div");
-      progressContainer.style.display = "flex";
-      progressContainer.style.alignItems = "center";
-      progressContainer.style.gap = "10px";
-
+      Object.assign(overlay.style, {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(0,0,0,0.3)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: "9999",
+        color: "#fff",
+        fontSize: "1.2rem",
+      });
       const spinner = document.createElement("div");
       spinner.className = "animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white";
-
-      const progressText = document.createElement("div");
-      progressText.id = "progress-text";
-      progressText.textContent = "Analizando superposición, por favor espere...";
-
-      progressContainer.appendChild(spinner);
-      progressContainer.appendChild(progressText);
-      overlay.appendChild(progressContainer);
-
+      const text = document.createElement("div");
+      text.id = "progress-text";
+      text.textContent = "Analizando superposición, por favor espere...";
+      text.style.marginLeft = "10px";
+      const container = document.createElement("div");
+      container.style.display = "flex";
+      container.style.alignItems = "center";
+      container.appendChild(spinner);
+      container.appendChild(text);
+      overlay.appendChild(container);
       document.body.appendChild(overlay);
     }
     overlay.style.display = "flex";
+
     const progressText = document.getElementById("progress-text")!;
-
-    // --- Toast centrado ---
-    let toast = document.getElementById("toast");
-    if (!toast) {
-      toast = document.createElement("div");
-      toast.id = "toast";
-      toast.style.opacity = "0";
-      toast.style.zIndex = "10000";
-      document.body.appendChild(toast);
-    }
-
-    const showToast = (
-      mensaje: string,
-      tipo: "success" | "error" = "success",
-      autoHide: boolean = true
-    ) => {
-      toast!.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:320px;">
-          <span>${mensaje}</span>
-          <button id="toast-close" style="background:none;border:none;color:white;font-weight:bold;cursor:pointer;">✖</button>
-        </div>
-      `;
-
-      toast!.className = `
-        fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-        px-4 py-2 rounded shadow text-white
-        ${tipo === "success" ? "bg-green-600" : "bg-red-600"}
-        text-center
-        transition-opacity duration-500
-      `;
-      toast!.style.opacity = "1";
-
-      // Auto ocultar solo si está habilitado
-      if (autoHide) {
-        setTimeout(() => (toast!.style.opacity = "0"), 10000);
-      }
-
-      // Botón cerrar
-      document.getElementById("toast-close")?.addEventListener("click", () => {
-        toast!.style.opacity = "0";
-      });
-    };
-
     let overlaps: __esri.Graphic[] = [];
+    let capaBTitle = "la capa seleccionada";
 
     try {
-      console.log("🔹 Cargando capa BBP-SERFOR...");
+      // --- Cargar capa SERFOR ---
       progressText.textContent = "🔹 Cargando capa BBP-SERFOR...";
-
       const capaSerfor = new FeatureLayer({
         url: "https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer/1"
       });
       await capaSerfor.load();
 
-      let featuresA: __esri.Graphic[] = [];
-      let startA = 0;
+      const featuresA: __esri.Graphic[] = [];
       const num = 2000;
-      while (true) {
+      for (let startA = 0;; startA += num) {
         const res = await capaSerfor.queryFeatures({
           where: "1=1",
           outFields: ["*"],
@@ -1566,32 +1609,32 @@ export class GeovisorSharedService {
         });
         featuresA.push(...res.features);
         if (res.features.length < num) break;
-        startA += num;
       }
-
-      console.log(`✅ Capa SERFOR cargada con ${featuresA.length} features.`);
-      progressText.textContent = `✅ Capa BPP-SERFOR cargada con ${featuresA.length} features.`;
 
       const validGeometriesA = featuresA
         .map(f => f.geometry)
         .filter((g): g is __esri.Polygon => !!g && ["polygon", "multipolygon"].includes(g.type.toLowerCase()));
 
       if (!validGeometriesA.length) {
-        showToast("⚠️ No hay geometrías válidas en BPP-SERFOR.", "error");
+        this.showToast("⚠️ No hay geometrías válidas en BPP-SERFOR.", "error");
+        overlay.style.display = "none";
         return;
       }
 
       const geomA = await geometryEngineAsync.union(validGeometriesA) as __esri.GeometryUnion;
       if (!geomA) {
-        showToast("⚠️ No se pudieron unir las geometrías de SERFOR.", "error");
+        this.showToast("⚠️ No se pudieron unir las geometrías de SERFOR.", "error");
+        overlay.style.display = "none";
         return;
       }
 
+      // --- Obtener capa seleccionada ---
       const selectEl = document.querySelector<HTMLSelectElement>(".file-upload-widget select");
-      if (!selectEl) return;
+      if (!selectEl) { overlay.style.display = "none"; return; }
       const selectedId = selectEl.value;
       if (!selectedId) {
-        showToast("⚠️ Selecciona una capa para analizar.", "error");
+        this.showToast("⚠️ Selecciona una capa para analizar.", "error");
+        overlay.style.display = "none";
         return;
       }
 
@@ -1601,27 +1644,23 @@ export class GeovisorSharedService {
           if (l.type === "map-image") {
             const mapImg = l as __esri.MapImageLayer;
             const sub = mapImg.sublayers?.find(s => s.id.toString() === selectedId);
-            if (sub) {
-              capaB = sub as unknown as __esri.Layer;
-              break;
-            }
+            if (sub) { capaB = sub as unknown as __esri.Layer; break; }
           }
         }
       }
       if (!capaB) {
-        showToast("⚠️ No se encontró la capa seleccionada en el mapa.", "error");
+        this.showToast("⚠️ No se encontró la capa seleccionada en el mapa.", "error");
+        overlay.style.display = "none";
         return;
       }
-
-      console.log(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`);
-      progressText.textContent = `⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`;
-
+      capaBTitle = capaB.title || capaB.id;
+      progressText.textContent = `⏳ Analizando superposición con la capa: ${capaBTitle}`;
       await capaB.load?.();
 
+      // --- Cargar features de la capa B ---
       let featuresB: __esri.Graphic[] = [];
       if ("queryFeatures" in capaB) {
-        let startB = 0;
-        while (true) {
+        for (let startB = 0;; startB += num) {
           const resB = await (capaB as __esri.FeatureLayer).queryFeatures({
             where: "1=1",
             outFields: ["*"],
@@ -1631,171 +1670,92 @@ export class GeovisorSharedService {
           });
           featuresB.push(...resB.features);
           if (resB.features.length < num) break;
-          startB += num;
         }
       } else if ("source" in capaB) {
         featuresB = ((capaB as any).source as __esri.Collection<__esri.Graphic>).toArray();
       }
 
-      console.log(`   → Capas B: ${featuresB.length} features`);
-      progressText.textContent = `   → ${capaB.title} : ${featuresB.length} features`;
-
       if (!featuresB.length) {
-        showToast("⚠️ La capa seleccionada no contiene geometrías.", "error");
+        this.showToast("⚠️ La capa seleccionada no contiene geometrías.", "error");
+        overlay.style.display = "none";
         return;
       }
 
+      // --- Procesamiento por bloques ---
+      const blockSize = 50;
       overlaps = [];
-      let contador = 0;
-      for (const fB of featuresB) {
-        contador++;
-
-        if (!fB.geometry || !["polygon", "multipolygon"].includes(fB.geometry.type.toLowerCase())) continue;
-        const geomB = fB.geometry as __esri.GeometryUnion;
-        const intersecta = await geometryEngineAsync.intersects(geomB, geomA);
-
-        if (intersecta) {
-          overlaps.push(
-            new Graphic({
-              geometry: geomB,
+      for (let i = 0; i < featuresB.length; i += blockSize) {
+        const block = featuresB.slice(i, i + blockSize);
+        const promises = block.map(fB => (async () => {
+          if (!fB.geometry || !["polygon", "multipolygon"].includes(fB.geometry.type.toLowerCase())) return null;
+          const intersecta = await geometryEngineAsync.intersects(fB.geometry as __esri.GeometryUnion, geomA);
+          if (intersecta) {
+            return new Graphic({
+              geometry: fB.geometry,
               attributes: { capaA: "Ordenamiento Forestal", capaB: capaB.title || capaB.id, ...fB.attributes },
               symbol: { type: "simple-fill", color: [255, 0, 0, 0.4], outline: { color: [255, 0, 0], width: 2 } } as any,
               popupTemplate: {
                 title: "Superposición detectada",
                 content: `Polígono de <b>${capaB.title || capaB.id}</b> se superpone con <b>Ordenamiento Forestal</b>.`
               }
-            })
-          );
-        }
-
-        if (contador % 50 === 0 || contador === featuresB.length) {
-          const linea1 = `Procesadas ${contador} de ${featuresB.length} features de ${(capaB.title || capaB.id)}`;
-          const linea2 = `Superposiciones detectadas hasta ahora: ${overlaps.length}`;
-
-          console.log("🔹 " + linea1 + " | " + linea2);
-          progressText.innerHTML = `${linea1}<br>${linea2}`;
-        }
+            });
+          }
+          return null;
+        })());
+        const results = await Promise.all(promises);
+        overlaps.push(...results.filter(r => r !== null) as __esri.Graphic[]);
+        progressText.innerHTML = `Procesadas ${Math.min(i + blockSize, featuresB.length)} de ${featuresB.length} features<br>Superposiciones detectadas: ${overlaps.length}`;
+        await new Promise(r => setTimeout(r, 0));
       }
 
       this.highlightLayer.addMany(overlaps);
-      console.log("🔹 Proceso finalizado.");
+
     } catch (error) {
       console.error("Error analizando superposiciones:", error);
-      showToast("❌ Ocurrió un error al analizar superposiciones.", "error");
+      this.showToast("❌ Ocurrió un error al analizar superposiciones.", "error");
     } finally {
-      // --- Aquí manejamos el modal final sin tocar tu lógica de análisis ---
       const overlapsCount = overlaps.length;
 
-      // Actualiza message en overlay y espera un instante para que el usuario vea que terminó
-      if (overlay) {
-        const p = document.getElementById("progress-text");
-        if (p) {
-          p.textContent = `✅ Análisis finalizado. Se detectaron ${overlapsCount} superposiciones.`;
-        }
-        // Espera breve y luego oculta overlay
-        setTimeout(() => {
-          overlay!.style.display = "none";
-        }, 800);
-      }
+      // 🔹 Ocultar overlay
+      if (overlay) overlay.style.display = "none";
 
-      console.log("📊 Total de superposiciones detectadas:", overlapsCount);
+      // 🔹 Modal interactivo separado
+      const modal = document.createElement("div");
+      modal.id = "resultado-modal";
+      Object.assign(modal.style, {
+        position: "fixed",
+        top: "0", left: "0",
+        width: "100%", height: "100%",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: "10001",
+      });
+      modal.innerHTML = `
+        <div style="background:white;padding:20px;border-radius:8px;max-width:400px;text-align:center;">
+          <h2>Resultado del análisis</h2>
+          <p>${overlapsCount > 0 ? `Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.` : `No se encontraron superposiciones.`}</p>
+          <button id="modal-close" style="margin-top:10px;padding:6px 12px;">Cerrar</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
 
-      // --- Modal Tailwind robusto (creación / reuso / reenganche del botón cerrar) ---
-      let modal = document.getElementById("resultado-modal") as HTMLDivElement | null;
-
-      if (!modal) {
-        modal = document.createElement("div");
-        modal.id = "resultado-modal";
-        // z-index mayor que overlay (overlay tiene 9999)
-        modal.className = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[10002]";
-        modal.innerHTML = `
-          <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
-            <h2 class="text-lg font-bold mb-4">Resultado del análisis</h2>
-            <p id="modal-message" class="mb-4 text-gray-700"></p>
-            <div class="flex justify-center gap-2">
-              <button id="modal-export" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">Exportar</button>
-              <button id="modal-close" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Cerrar</button>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      // Actualizar el mensaje del modal
-      const modalMessage = modal.querySelector<HTMLElement>("#modal-message");
-      if (modalMessage) {
-        modalMessage.textContent = overlapsCount > 0
-          ? `✅ Se encontraron ${overlapsCount} superposiciones en ${(overlaps[0]?.attributes?.capaB || "la capa seleccionada")}.`
-          : `✅ No se encontraron superposiciones en la capa seleccionada.`;
-      }
-
-      // Reenganchar el handler del botón Cerrar de forma segura
       const closeBtn = modal.querySelector<HTMLButtonElement>("#modal-close");
       if (closeBtn) {
-        const prev = (modal as any).__closeHandler as EventListener | undefined;
-        if (prev) closeBtn.removeEventListener("click", prev);
-
-        const handler = () => {
-          modal!.style.display = "none";
-        };
-        (modal as any).__closeHandler = handler;
-        closeBtn.addEventListener("click", handler);
+        closeBtn.addEventListener("click", () => {
+          modal.remove();
+          this.highlightLayer.removeAll();
+        });
       }
 
-      // (opcional) Export button: si quieres que haga algo, engancha aquí
-      const exportBtn = modal.querySelector<HTMLButtonElement>("#modal-export");
-      if (exportBtn) {
-        const prevE = (modal as any).__exportHandler as EventListener | undefined;
-        if (prevE) exportBtn.removeEventListener("click", prevE);
-
-        const expHandler = () => {
-          // ejemplo: podrías exportar atributos o IDs
-          try {
-            const rows = overlaps.map(g => g.attributes || {});
-            console.log("Exportando overlaps (preview):", rows.slice(0, 10));
-            // aquí podrías llamar a una función que genere CSV y descargue
-          } catch (e) {
-            console.warn("Error exportando:", e);
-          }
-        };
-        (modal as any).__exportHandler = expHandler;
-        exportBtn.addEventListener("click", expHandler);
-      }
-
-      // Cerrar modal si clic en backdrop (fondo)
-      const prevBackdrop = (modal as any).__backdropHandler as EventListener | undefined;
-      if (prevBackdrop) modal.removeEventListener("click", prevBackdrop);
-      const backdropHandler = (evt: MouseEvent) => {
-        if (evt.target === modal) {
-          modal!.style.display = "none";
-        }
-      };
-      (modal as any).__backdropHandler = backdropHandler;
-      modal.addEventListener("click", backdropHandler);
-
-      // Mostrar modal
-      modal.style.display = "flex";
-
-      // También mostrar toast persistente con el resultado (sin auto-hide)
-      if (overlapsCount > 0) {
-        showToast(
-          `✅ Se encontraron ${overlapsCount} superposiciones en ${(overlaps[0]?.attributes?.capaB || "la capa seleccionada")}.`,
-          "success",
-          false
-        );
-      } else {
-        showToast(
-          `✅ No se encontraron superposiciones en la capa seleccionada.`,
-          "success",
-          false
-        );
-      }
+      // 🔹 Toast resumen
+      const toastMessage = overlapsCount > 0
+        ? `✅ Se encontraron ${overlapsCount} superposiciones en ${capaBTitle}.`
+        : `✅ No se encontraron superposiciones en la capa seleccionada.`;
+      this.showToast(toastMessage, "success", false);
     }
-
   }
-
-
-
 
 
 
