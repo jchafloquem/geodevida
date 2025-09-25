@@ -564,7 +564,7 @@ export class GeovisorSharedService {
     },
     {
       type: 'map-image',
-      title: 'ZA - ZONAS DE AMORTIGUAMIENTO',
+      title: 'ZA-ZONAS DE AMORTIGUAMIENTO',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
       visible: false,
       opacity: 0.5,
@@ -585,7 +585,7 @@ export class GeovisorSharedService {
     },
     {
       type: 'map-image',
-      title: 'ACR - AREAS DE CONSERVACION REGIONAL',
+      title: 'ACR-AREAS DE CONSERVACION REGIONAL',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/OCAPAS_SERNANP/MapServer`,
       visible: false,
       opacity: 0.5,
@@ -606,7 +606,7 @@ export class GeovisorSharedService {
     },
     {
       type: 'feature',
-      title: 'BPP - BOSQUE DE PRODUCCION PERMANENTE',
+      title: 'BPP-BOSQUE DE PRODUCCION PERMANENTE',
       url: `https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer`,
       visible: true,
       opacity: 0.5,
@@ -761,7 +761,7 @@ export class GeovisorSharedService {
 
   constructor() {
     this.mapa.add(this.highlightLayer);
-   }
+  }
 
   initializeMap(mapViewEl: ElementRef): Promise<void> {
     this.layers.forEach((layerConfig) => {
@@ -935,186 +935,151 @@ export class GeovisorSharedService {
 
     //*Funcion para importar Data (GeoJson)-Widget
     // --- Crear contenedor del widget ---
-const uploadEl = document.createElement("div");
-uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
+    const uploadEl = document.createElement("div");
+    uploadEl.className = "file-upload-widget p-2 bg-white rounded shadow";
 
-// --- Crear input de archivos ---
-const inputEl = document.createElement("input");
-inputEl.type = "file";
-inputEl.accept = ".json,.geojson,.csv"; // solo los formatos permitidos
-inputEl.style.cursor = "pointer";
-inputEl.className = "border rounded p-1";
+    // --- Crear input de archivos ---
+    const inputEl = document.createElement("input");
+    inputEl.type = "file";
+    inputEl.accept = ".json,.geojson,.csv"; // solo los formatos permitidos
+    inputEl.style.cursor = "pointer";
+    inputEl.className = "border rounded p-1";
 
-// Conectar evento change
-inputEl.addEventListener("change", (evt: Event) => {
-  const target = evt.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (file) {
-    this.dataImport(file).then(() => {
-      target.value = ""; // limpiar input después de cargar
+    // Conectar evento change
+    inputEl.addEventListener("change", (evt: Event) => {
+      const target = evt.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (file) {
+        this.dataImport(file).then(() => {
+          target.value = ""; // limpiar input después de cargar
+        });
+      }
     });
-  }
-});
 
-uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
+    uploadEl.appendChild(inputEl); // Esto es clave para que se muestre el input
 
-// --- Crear Expand ---
-const expanduploadEl = new Expand({
-  view: this.view,
-  content: uploadEl,
-  expandTooltip: "Cargar archivo",
-  expandIcon: "upload"
-});
+    // --- Crear Expand ---
+    const expanduploadEl = new Expand({
+      view: this.view,
+      content: uploadEl,
+      expandTooltip: "Cargar archivo",
+      expandIcon: "upload"
+    });
 
-// Añadir el widget a la vista
-this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
+    // Añadir el widget a la vista
+    this.view.ui.add(expanduploadEl, { position: 'top-right', index: 5 });
 
-// --- Función para ocultar o mostrar en móviles ---
-function toggleUploadWidget() {
-  if (!expanduploadEl.container) return; // verificar que exista
+    // --- Función para ocultar o mostrar en móviles ---
+    function toggleUploadWidget() {
+      if (!expanduploadEl.container) return; // verificar que exista
 
-  if (window.innerWidth < 768) {
-    expanduploadEl.container.style.display = "none"; // ocultar en móviles
-    expanduploadEl.collapse(); // asegurar que esté cerrado
-  } else {
-    expanduploadEl.container.style.display = "block"; // mostrar en desktop
-  }
-}
+      if (window.innerWidth < 768) {
+        expanduploadEl.container.style.display = "none"; // ocultar en móviles
+        expanduploadEl.collapse(); // asegurar que esté cerrado
+      } else {
+        expanduploadEl.container.style.display = "block"; // mostrar en desktop
+      }
+    }
 
-// Ejecutar al cargar
-toggleUploadWidget();
+    // Ejecutar al cargar
+    toggleUploadWidget();
 
-// Escuchar cambios de tamaño de pantalla
-window.addEventListener("resize", toggleUploadWidget);
+    // Escuchar cambios de tamaño de pantalla
+    window.addEventListener("resize", toggleUploadWidget);
 
     //*Fin de Funcion para importar Data (GeoJson)-Widget
 
 
 
     // --- Crear contenedor del widget ---
-const uploadEl6 = document.createElement("div");
-uploadEl6.className = "file-upload-widget p-2 bg-white rounded shadow";
+    const uploadEl6 = document.createElement("div");
+    uploadEl6.className = "file-upload-widget p-2 bg-white rounded shadow";
 
-// Título
-const titleEl = document.createElement("div");
-titleEl.textContent = "Selecciona capas para superposición:";
-titleEl.className = "mb-2 font-semibold";
-uploadEl6.appendChild(titleEl);
+    // Título
+    const titleEl = document.createElement("div");
+    titleEl.textContent = "Selecciona capas para superposición:";
+    titleEl.className = "mb-2 font-semibold";
+    uploadEl6.appendChild(titleEl);
 
-// Select multiple
-const selectEl = document.createElement("select");
-selectEl.multiple = true;
-selectEl.className = "w-full p-1 border rounded mb-2";
-uploadEl6.appendChild(selectEl);
+    // Select multiple
+    const selectEl = document.createElement("select");
+    selectEl.multiple = true;
+    selectEl.className = "w-full p-1 border rounded mb-2";
+    uploadEl6.appendChild(selectEl);
 
-// Botón analizar
-const buttonEl = document.createElement("button");
-buttonEl.textContent = "🔎 Analizar superposición";
-buttonEl.className = `
+    // Botón analizar
+    const buttonEl = document.createElement("button");
+    buttonEl.textContent = "🔎 Analizar superposición";
+    buttonEl.className = `
   w-full px-4 py-2
   bg-blue-600 hover:bg-blue-700
   text-white font-semibold rounded
   text-sm
   transition-colors
 `;
-uploadEl6.appendChild(buttonEl);
+    uploadEl6.appendChild(buttonEl);
 
-// --- Llenar select con capas visibles ---
-const capasVisibles: __esri.FeatureLayer[] = [];
-this.mapa.layers.forEach((lyr) => {
-  const layerType = (lyr as any).type;
+    // --- Llenar select con capas visibles ---
+    const capasVisibles: __esri.FeatureLayer[] = [];
+    this.mapa.layers.forEach((lyr) => {
+      const layerType = (lyr as any).type;
 
-  if (layerType === "feature" && lyr.visible) {
-    capasVisibles.push(lyr as __esri.FeatureLayer);
-    const opt = document.createElement("option");
-    opt.value = lyr.id;
-    opt.text = (lyr as any).title || (lyr as any).name || lyr.id;
-    selectEl.appendChild(opt);
-  } else if (layerType === "map-image" && lyr.visible) {
-    const mapImg = lyr as __esri.MapImageLayer;
-    mapImg.sublayers?.forEach((sub) => {
-      if (sub.visible && 'queryFeatures' in sub) {
-        const fl = sub as unknown as __esri.FeatureLayer;
-        capasVisibles.push(fl);
+      if (layerType === "feature" && lyr.visible) {
+        capasVisibles.push(lyr as __esri.FeatureLayer);
         const opt = document.createElement("option");
-        opt.value = fl.id.toString();
-        opt.text = (sub as any).title || (sub as any).name || `${mapImg.title}`;
+        opt.value = lyr.id;
+        opt.text = (lyr as any).title || (lyr as any).name || lyr.id;
         selectEl.appendChild(opt);
+      } else if (layerType === "map-image" && lyr.visible) {
+        const mapImg = lyr as __esri.MapImageLayer;
+        mapImg.sublayers?.forEach((sub) => {
+          if (sub.visible && 'queryFeatures' in sub) {
+            const fl = sub as unknown as __esri.FeatureLayer;
+            capasVisibles.push(fl);
+            const opt = document.createElement("option");
+            opt.value = fl.id.toString();
+            opt.text = (sub as any).title || (sub as any).name || `${mapImg.title}`;
+            selectEl.appendChild(opt);
+          }
+        });
       }
     });
-  }
-});
 
-// --- Evento del botón ---
-buttonEl.onclick = async () => {
-  try {
-    await this.analizarSuperposicion();
-  } catch (err) {
-    console.error("Error en el análisis:", err);
-  }
-};
+    // --- Evento del botón ---
+    buttonEl.onclick = async () => {
+      try {
+        await this.analizarSuperposicion();
+      } catch (err) {
+        console.error("Error en el análisis:", err);
+      }
+    };
 
-// --- Crear Expand ---
-const expandAnalisis = new Expand({
-  view: this.view,
-  content: uploadEl6,
-  expandTooltip: "Analizar superposición",
-  expandIcon: "analysis"
-});
-this.view.ui.add(expandAnalisis, { position: "top-right", index: 6 });
+    // --- Crear Expand ---
+    const expandAnalisis = new Expand({
+      view: this.view,
+      content: uploadEl6,
+      expandTooltip: "Analizar superposición",
+      expandIcon: "analysis"
+    });
+    this.view.ui.add(expandAnalisis, { position: "top-right", index: 6 });
 
-// --- Función para ocultar o mostrar widget en móviles ---
-function toggleAnalisisWidget() {
-  if (!expandAnalisis.container) return;
+    // --- Función para ocultar o mostrar widget en móviles ---
+    function toggleAnalisisWidget() {
+      if (!expandAnalisis.container) return;
 
-  if (window.innerWidth < 768) {
-    expandAnalisis.container.style.display = "none"; // ocultar en móvil
-    expandAnalisis.collapse(); // asegurar que esté cerrado
-  } else {
-    expandAnalisis.container.style.display = "block"; // mostrar en desktop
-  }
-}
+      if (window.innerWidth < 768) {
+        expandAnalisis.container.style.display = "none"; // ocultar en móvil
+        expandAnalisis.collapse(); // asegurar que esté cerrado
+      } else {
+        expandAnalisis.container.style.display = "block"; // mostrar en desktop
+      }
+    }
 
-// Ejecutar al cargar
-toggleAnalisisWidget();
+    // Ejecutar al cargar
+    toggleAnalisisWidget();
 
-// Escuchar cambios de tamaño de pantalla
-window.addEventListener("resize", toggleAnalisisWidget);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // Escuchar cambios de tamaño de pantalla
+    window.addEventListener("resize", toggleAnalisisWidget);
     this.legend = new Legend({ view: this.view, container: document.createElement('div') });
     const ccWidget = new CoordinateConversion({ view: this.view });
     if (this.view) {
@@ -1443,6 +1408,8 @@ window.addEventListener("resize", toggleAnalisisWidget);
         resolve();
       };
 
+
+
       // opcional: cerrar con ESC
       const onKey = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
@@ -1485,13 +1452,14 @@ window.addEventListener("resize", toggleAnalisisWidget);
       };
     });
   }
+  // Funcion que analiza la superposicion de una capa con la capa BPP
 
   async analizarSuperposicion(): Promise<void> {
     if (!this.view || !this.mapa) return;
 
     this.highlightLayer.removeAll();
 
-    // --- Crear overlay de carga ---
+    // --- Overlay de carga ---
     let overlay = document.getElementById("loading-overlay");
     if (!overlay) {
       overlay = document.createElement("div");
@@ -1503,40 +1471,88 @@ window.addEventListener("resize", toggleAnalisisWidget);
       overlay.style.height = "100%";
       overlay.style.backgroundColor = "rgba(0,0,0,0.3)";
       overlay.style.display = "flex";
+      overlay.style.flexDirection = "column";
       overlay.style.justifyContent = "center";
       overlay.style.alignItems = "center";
       overlay.style.zIndex = "9999";
       overlay.style.fontSize = "1.2rem";
       overlay.style.color = "#fff";
-      overlay.textContent = "Analizando superposición, por favor espere...";
+
+      // Spinner + progreso
+      const progressContainer = document.createElement("div");
+      progressContainer.style.display = "flex";
+      progressContainer.style.alignItems = "center";
+      progressContainer.style.gap = "10px";
+
+      const spinner = document.createElement("div");
+      spinner.className = "animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white";
+
+      const progressText = document.createElement("div");
+      progressText.id = "progress-text";
+      progressText.textContent = "Analizando superposición, por favor espere...";
+
+      progressContainer.appendChild(spinner);
+      progressContainer.appendChild(progressText);
+      overlay.appendChild(progressContainer);
+
       document.body.appendChild(overlay);
     }
     overlay.style.display = "flex";
+    const progressText = document.getElementById("progress-text")!;
 
-    const showToast = (msg: string, type: "info" | "success" | "error" = "info") => {
-      const toast = document.createElement("div");
-      toast.className = `
-        fixed top-4 right-4 z-50
-        px-4 py-2 rounded shadow
-        text-white font-semibold
-        ${type === "info" ? "bg-blue-500" : type === "success" ? "bg-green-500" : "bg-red-500"}
-        animate-fadein animate-fadeout
-      `;
-      toast.textContent = msg;
+    // --- Toast centrado ---
+    let toast = document.getElementById("toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "toast";
+      toast.style.opacity = "0";
+      toast.style.zIndex = "10000";
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+    }
+
+    const showToast = (
+      mensaje: string,
+      tipo: "success" | "error" = "success",
+      autoHide: boolean = true
+    ) => {
+      toast!.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:320px;">
+          <span>${mensaje}</span>
+          <button id="toast-close" style="background:none;border:none;color:white;font-weight:bold;cursor:pointer;">✖</button>
+        </div>
+      `;
+
+      toast!.className = `
+        fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+        px-4 py-2 rounded shadow text-white
+        ${tipo === "success" ? "bg-green-600" : "bg-red-600"}
+        text-center
+        transition-opacity duration-500
+      `;
+      toast!.style.opacity = "1";
+
+      // Auto ocultar solo si está habilitado
+      if (autoHide) {
+        setTimeout(() => (toast!.style.opacity = "0"), 10000);
+      }
+
+      // Botón cerrar
+      document.getElementById("toast-close")?.addEventListener("click", () => {
+        toast!.style.opacity = "0";
+      });
     };
 
+    let overlaps: __esri.Graphic[] = [];
+
     try {
-      console.log("🔹 Cargando capa SERFOR...");
-      showToast("🔹 Cargando capa SERFOR...", "info");
+      console.log("🔹 Cargando capa BBP-SERFOR...");
+      progressText.textContent = "🔹 Cargando capa BBP-SERFOR...";
 
       const capaSerfor = new FeatureLayer({
         url: "https://geo.serfor.gob.pe/geoservicios/rest/services/Visor/Ordenamiento_Forestal/MapServer/1"
       });
       await capaSerfor.load();
 
-      // --- Paginación para obtener todos los features de SERFOR ---
       let featuresA: __esri.Graphic[] = [];
       let startA = 0;
       const num = 2000;
@@ -1552,39 +1568,33 @@ window.addEventListener("resize", toggleAnalisisWidget);
         if (res.features.length < num) break;
         startA += num;
       }
-      console.log(`✅ Capa SERFOR cargada con ${featuresA.length} features.`);
-      showToast(`✅ Capa SERFOR cargada con ${featuresA.length} features.`, "success");
 
-      // --- Filtrar solo geometrías válidas ---
+      console.log(`✅ Capa SERFOR cargada con ${featuresA.length} features.`);
+      progressText.textContent = `✅ Capa BPP-SERFOR cargada con ${featuresA.length} features.`;
+
       const validGeometriesA = featuresA
         .map(f => f.geometry)
         .filter((g): g is __esri.Polygon => !!g && ["polygon", "multipolygon"].includes(g.type.toLowerCase()));
 
       if (!validGeometriesA.length) {
-        showToast("⚠️ No hay geometrías válidas en SERFOR.", "error");
-        overlay.style.display = "none";
+        showToast("⚠️ No hay geometrías válidas en BPP-SERFOR.", "error");
         return;
       }
 
-      // --- Unir todas las geometrías de SERFOR ---
       const geomA = await geometryEngineAsync.union(validGeometriesA) as __esri.GeometryUnion;
       if (!geomA) {
         showToast("⚠️ No se pudieron unir las geometrías de SERFOR.", "error");
-        overlay.style.display = "none";
         return;
       }
 
-      // --- Capa B seleccionada ---
       const selectEl = document.querySelector<HTMLSelectElement>(".file-upload-widget select");
       if (!selectEl) return;
       const selectedId = selectEl.value;
       if (!selectedId) {
         showToast("⚠️ Selecciona una capa para analizar.", "error");
-        overlay.style.display = "none";
         return;
       }
 
-      // Buscar la capa B
       let capaB: __esri.Layer | undefined = this.mapa.layers.find(l => l.id === selectedId);
       if (!capaB) {
         for (const l of this.mapa.layers.toArray()) {
@@ -1600,15 +1610,14 @@ window.addEventListener("resize", toggleAnalisisWidget);
       }
       if (!capaB) {
         showToast("⚠️ No se encontró la capa seleccionada en el mapa.", "error");
-        overlay.style.display = "none";
         return;
       }
 
       console.log(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`);
-      showToast(`⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`, "info");
+      progressText.textContent = `⏳ Analizando superposición con la capa: ${capaB.title || capaB.id}`;
+
       await capaB.load?.();
 
-      // --- Obtener features de B con paginación ---
       let featuresB: __esri.Graphic[] = [];
       if ("queryFeatures" in capaB) {
         let startB = 0;
@@ -1625,82 +1634,195 @@ window.addEventListener("resize", toggleAnalisisWidget);
           startB += num;
         }
       } else if ("source" in capaB) {
-        featuresB = (capaB as any).source.items as __esri.Graphic[];
+        featuresB = ((capaB as any).source as __esri.Collection<__esri.Graphic>).toArray();
       }
 
       console.log(`   → Capas B: ${featuresB.length} features`);
-      showToast(`   → Capas B: ${featuresB.length} features`, "info");
+      progressText.textContent = `   → ${capaB.title} : ${featuresB.length} features`;
 
       if (!featuresB.length) {
         showToast("⚠️ La capa seleccionada no contiene geometrías.", "error");
-        overlay.style.display = "none";
         return;
       }
 
-      // --- Analizar intersecciones con contador ---
-      const overlaps: __esri.Graphic[] = [];
+      overlaps = [];
       let contador = 0;
-
       for (const fB of featuresB) {
         contador++;
-        if (contador % 50 === 0) {
-          console.log(`🔹 Procesadas ${contador} de ${featuresB.length} features de B...`);
-          overlay.textContent = `Procesadas ${contador} de ${featuresB.length} features de B...`;
-        }
 
         if (!fB.geometry || !["polygon", "multipolygon"].includes(fB.geometry.type.toLowerCase())) continue;
-
         const geomB = fB.geometry as __esri.GeometryUnion;
         const intersecta = await geometryEngineAsync.intersects(geomB, geomA);
 
         if (intersecta) {
-          overlaps.push(new Graphic({
-            geometry: geomB,
-            attributes: { capaA: "Ordenamiento Forestal", capaB: capaB.title || capaB.id, ...fB.attributes },
-            symbol: { type: "simple-fill", color: [255,0,0,0.4], outline: { color: [255,0,0], width: 2 } } as any,
-            popupTemplate: {
-              title: "Superposición detectada",
-              content: `Polígono de <b>${capaB.title || capaB.id}</b> se superpone con <b>Ordenamiento Forestal</b>.`
-            }
-          }));
+          overlaps.push(
+            new Graphic({
+              geometry: geomB,
+              attributes: { capaA: "Ordenamiento Forestal", capaB: capaB.title || capaB.id, ...fB.attributes },
+              symbol: { type: "simple-fill", color: [255, 0, 0, 0.4], outline: { color: [255, 0, 0], width: 2 } } as any,
+              popupTemplate: {
+                title: "Superposición detectada",
+                content: `Polígono de <b>${capaB.title || capaB.id}</b> se superpone con <b>Ordenamiento Forestal</b>.`
+              }
+            })
+          );
+        }
+
+        if (contador % 50 === 0 || contador === featuresB.length) {
+          const linea1 = `Procesadas ${contador} de ${featuresB.length} features de ${(capaB.title || capaB.id)}`;
+          const linea2 = `Superposiciones detectadas hasta ahora: ${overlaps.length}`;
+
+          console.log("🔹 " + linea1 + " | " + linea2);
+          progressText.innerHTML = `${linea1}<br>${linea2}`;
         }
       }
 
-      // --- Resultado final ---
-      console.log("🔹 Proceso de análisis de superposición finalizado.");
-      if (overlaps.length) {
-        this.highlightLayer.addMany(overlaps);
-        this.view.goTo(overlaps.map(g => g.geometry));
-        showToast(`✅ Se encontraron ${overlaps.length} superposiciones.`, "success");
-      } else {
-        showToast("✅ No se encontraron superposiciones.", "success");
-      }
-
+      this.highlightLayer.addMany(overlaps);
+      console.log("🔹 Proceso finalizado.");
     } catch (error) {
       console.error("Error analizando superposiciones:", error);
       showToast("❌ Ocurrió un error al analizar superposiciones.", "error");
     } finally {
-      if (overlay) overlay.style.display = "none";
+      // --- Aquí manejamos el modal final sin tocar tu lógica de análisis ---
+      const overlapsCount = overlaps.length;
+
+      // Actualiza message en overlay y espera un instante para que el usuario vea que terminó
+      if (overlay) {
+        const p = document.getElementById("progress-text");
+        if (p) {
+          p.textContent = `✅ Análisis finalizado. Se detectaron ${overlapsCount} superposiciones.`;
+        }
+        // Espera breve y luego oculta overlay
+        setTimeout(() => {
+          overlay!.style.display = "none";
+        }, 800);
+      }
+
+      console.log("📊 Total de superposiciones detectadas:", overlapsCount);
+
+      // --- Modal Tailwind robusto (creación / reuso / reenganche del botón cerrar) ---
+      let modal = document.getElementById("resultado-modal") as HTMLDivElement | null;
+
+      if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "resultado-modal";
+        // z-index mayor que overlay (overlay tiene 9999)
+        modal.className = "fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[10002]";
+        modal.innerHTML = `
+          <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full text-center">
+            <h2 class="text-lg font-bold mb-4">Resultado del análisis</h2>
+            <p id="modal-message" class="mb-4 text-gray-700"></p>
+            <div class="flex justify-center gap-2">
+              <button id="modal-export" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded">Exportar</button>
+              <button id="modal-close" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Cerrar</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      // Actualizar el mensaje del modal
+      const modalMessage = modal.querySelector<HTMLElement>("#modal-message");
+      if (modalMessage) {
+        modalMessage.textContent = overlapsCount > 0
+          ? `✅ Se encontraron ${overlapsCount} superposiciones en ${(overlaps[0]?.attributes?.capaB || "la capa seleccionada")}.`
+          : `✅ No se encontraron superposiciones en la capa seleccionada.`;
+      }
+
+      // Reenganchar el handler del botón Cerrar de forma segura
+      const closeBtn = modal.querySelector<HTMLButtonElement>("#modal-close");
+      if (closeBtn) {
+        const prev = (modal as any).__closeHandler as EventListener | undefined;
+        if (prev) closeBtn.removeEventListener("click", prev);
+
+        const handler = () => {
+          modal!.style.display = "none";
+        };
+        (modal as any).__closeHandler = handler;
+        closeBtn.addEventListener("click", handler);
+      }
+
+      // (opcional) Export button: si quieres que haga algo, engancha aquí
+      const exportBtn = modal.querySelector<HTMLButtonElement>("#modal-export");
+      if (exportBtn) {
+        const prevE = (modal as any).__exportHandler as EventListener | undefined;
+        if (prevE) exportBtn.removeEventListener("click", prevE);
+
+        const expHandler = () => {
+          // ejemplo: podrías exportar atributos o IDs
+          try {
+            const rows = overlaps.map(g => g.attributes || {});
+            console.log("Exportando overlaps (preview):", rows.slice(0, 10));
+            // aquí podrías llamar a una función que genere CSV y descargue
+          } catch (e) {
+            console.warn("Error exportando:", e);
+          }
+        };
+        (modal as any).__exportHandler = expHandler;
+        exportBtn.addEventListener("click", expHandler);
+      }
+
+      // Cerrar modal si clic en backdrop (fondo)
+      const prevBackdrop = (modal as any).__backdropHandler as EventListener | undefined;
+      if (prevBackdrop) modal.removeEventListener("click", prevBackdrop);
+      const backdropHandler = (evt: MouseEvent) => {
+        if (evt.target === modal) {
+          modal!.style.display = "none";
+        }
+      };
+      (modal as any).__backdropHandler = backdropHandler;
+      modal.addEventListener("click", backdropHandler);
+
+      // Mostrar modal
+      modal.style.display = "flex";
+
+      // También mostrar toast persistente con el resultado (sin auto-hide)
+      if (overlapsCount > 0) {
+        showToast(
+          `✅ Se encontraron ${overlapsCount} superposiciones en ${(overlaps[0]?.attributes?.capaB || "la capa seleccionada")}.`,
+          "success",
+          false
+        );
+      } else {
+        showToast(
+          `✅ No se encontraron superposiciones en la capa seleccionada.`,
+          "success",
+          false
+        );
+      }
     }
+
   }
 
 
 
+
+
+
+
+
+  //Funcion para actualizar las capas del Visor
   actualizarSelectCapas() {
     const selectEl = document.querySelector<HTMLSelectElement>(".file-upload-widget select");
     if (!selectEl) return;
-
     // Limpiar opciones existentes
     selectEl.innerHTML = "";
-
-    const capasExcluir = ["DISTRITO", "PROVINCIA", "DEPARTAMENTO", "PERU"];
-
+    const capasExcluir = ["DISTRITO",
+      "PROVINCIA",
+      "DEPARTAMENTO",
+      "PERU",
+      "OFICINAS ZONALES",
+      "BPP-BOSQUE DE PRODUCCION PERMANENTE",
+      "ANP - AREAS NATURALES PROTEGIDAS",
+      "MONITOREO DEFORESTACION",
+      "COMUNIDADES NATIVAS",
+      "ZA-ZONAS DE AMORTIGUAMIENTO",
+      "ACR-AREAS DE CONSERVACION REGIONAL"
+    ];
     this.mapa.layers.toArray().forEach(lyr => {
       const tituloLyr = lyr.title?.toUpperCase() || "";
-
       // Ignorar capas excluidas
       if (capasExcluir.includes(tituloLyr)) return;
-
       if (lyr.type === "feature" || lyr.type === "geojson" || lyr.type === "csv") {
         // Para capas FeatureLayer, CSVLayer o GeoJSONLayer
         const opt = document.createElement("option");
@@ -1711,7 +1833,6 @@ window.addEventListener("resize", toggleAnalisisWidget);
         (lyr as __esri.MapImageLayer).sublayers?.forEach(sub => {
           const tituloSub = (sub as any).title?.toUpperCase() || "";
           if (capasExcluir.includes(tituloSub)) return;
-
           const opt = document.createElement("option");
           opt.value = sub.id.toString();
           opt.text = (sub as any).title || `${lyr.title}`;
@@ -1720,4 +1841,6 @@ window.addEventListener("resize", toggleAnalisisWidget);
       }
     });
   }
+
+
 }
