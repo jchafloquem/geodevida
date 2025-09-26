@@ -24,6 +24,7 @@
     "@angular/router": "^19.1.0",
     "@arcgis/core": "^4.33.9",
     "@arcgis/map-components": "^4.33.10",
+    "@esri/calcite-ui-icons": "^4.3.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@mapbox/togeojson": "^0.16.2",
     "@tmcw/togeojson": "^7.1.2",

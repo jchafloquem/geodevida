@@ -72,7 +72,5 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Limpia el intervalo de sesión
     clearInterval(this.intervaloSesion);
   }
-  capaSelect() {
-    this._geovisorSharedService.analizarSuperposicion();
-  }
+ 
 }
